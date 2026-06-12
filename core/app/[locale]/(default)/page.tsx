@@ -16,6 +16,8 @@ import { Slideshow } from './_components/slideshow';
 import { TrustBadges } from './_components/trust-badges';
 import { getPageData } from './page-data';
 
+import BrandStoryImage from './_images/Canada Lifestyle/instagram_DM7rh5pORvi.jpg';
+
 interface Props {
   params: Promise<{ locale: string }>;
 }
@@ -86,7 +88,13 @@ export default async function Home({ params }: Props) {
 
       <TrustBadges />
 
-      <BrandStory />
+      <BrandStory
+        image={{
+          src: BrandStoryImage.src,
+          alt: 'Our Story',
+          blurDataUrl: BrandStoryImage.blurDataURL,
+        }}
+      />
 
       <Stream fallback={null} value={streamableShowNewsletterSignup}>
         {(showNewsletterSignup) => showNewsletterSignup && <Subscribe />}

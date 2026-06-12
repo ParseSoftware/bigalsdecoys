@@ -34,6 +34,7 @@
       }
     ],
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/vibes/*": ["./vibes/*"],
       "~/*": ["./*"]

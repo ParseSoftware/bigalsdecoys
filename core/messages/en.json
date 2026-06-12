@@ -2,22 +2,22 @@
   "Home": {
     "Slideshow": {
       "Slide01": {
-        "title": "Fresh finds for every occasion",
-        "description": "Explore our latest arrivals, curated to bring you style, functionality, and inspiration. Shop now and discover your next favorite.",
-        "alt": "Five small potted plants displayed on beige stacked blocks, featuring a variety of green foliage in dark gray pots against a neutral background.",
-        "cta": "Shop Now"
+        "title": "Decoys Built for the Field",
+        "description": "Quality waterfowl decoys at a price that makes sense. Designed, printed, and assembled right here in the USA.",
+        "alt": "Geese landing in a harvested cornfield at sunrise.",
+        "cta": "Shop All Decoys"
       },
       "Slide02": {
-        "title": "Discover what's new",
-        "description": "Shop our latest arrivals and find something fresh and exciting for your home.",
-        "alt": "Hands reaching out to hold a green fern in a woven basket with a decorative bow, against a beige background with soft shadows.",
-        "cta": "Shop Now"
+        "title": "New for 2026",
+        "description": "Field-tested designs refined over decades of hunting. Our best lineup yet — built to fool the wariest birds.",
+        "alt": "Hunter setting full-body goose decoys in a cut wheat field at dawn.",
+        "cta": "See What's New"
       },
       "Slide03": {
-        "title": "Something for everyone",
-        "description": "Don’t miss out on exclusive offers across our best-selling products. Shop today and save big on the items you love.",
-        "alt": "Close-up of a vibrant green leaf with perforations, showcasing its smooth texture and natural details.",
-        "cta": "Shop Now"
+        "title": "Made in the USA",
+        "description": "Every decoy is printed and assembled stateside using premium materials that hold up season after season.",
+        "alt": "Close-up of a Big Al's full-body Canada goose decoy in a field spread.",
+        "cta": "Our Story"
       }
     },
     "FeaturedProducts": {
@@ -28,13 +28,45 @@
       "emptyStateSubtitle": "Try browsing our complete catalog of products."
     },
     "NewestProducts": {
-      "title": "New arrivals",
-      "description": "Our latest products are here. Check out what's new in store.",
-      "cta": "See all",
+      "title": "Best Sellers",
+      "description": "Field-tested favorites — the decoys serious hunters reach for first.",
+      "cta": "View All",
       "emptyStateTitle": "No products found",
       "emptyStateSubtitle": "Try browsing our complete catalog of products.",
       "previousProducts": "Previous products",
       "nextProducts": "Next products"
+    },
+    "CategoryGrid": {
+      "eyebrow": "Shop by species",
+      "title": "Collections",
+      "cta": "View all",
+      "viewAll": "View All"
+    },
+    "TrustBadges": {
+      "madeInUSA": {
+        "title": "Made in USA",
+        "subtitle": "Printed & assembled stateside"
+      },
+      "freeShipping": {
+        "title": "Free Shipping $150+",
+        "subtitle": "Ships in 2 business days"
+      },
+      "returns": {
+        "title": "30-Day Returns",
+        "subtitle": "No-hassle exchanges"
+      },
+      "secureCheckout": {
+        "title": "Secure Checkout",
+        "subtitle": "All major cards accepted"
+      }
+    },
+    "BrandStory": {
+      "eyebrow": "Family-owned",
+      "title": "The Big Al's Story",
+      "paragraph1": "Born out of a passion for waterfowl hunting and a family background in high-quality printing, Big Al's brings decades of field experience together with cutting-edge print technology.",
+      "paragraph2": "Every decoy is designed, printed, and assembled in the United States — built to fool the wariest birds and stand up to season after season in the blind.",
+      "cta": "Learn More",
+      "badge": "Est. 2018 · USA"
     }
   },
   "Auth": {

@@ -77,6 +77,37 @@ const HomePageQuery = graphql(
   [FeaturedProductsCarouselFragment, FeaturedProductsListFragment],
 );
 
+const CategoryTreeQuery = graphql(`
+  query CategoryTreeQuery {
+    site {
+      categoryTree {
+        name
+        path
+        image {
+          urlTemplate
+          altText
+        }
+      }
+    }
+  }
+`);
+
+export interface CategoryTreeItem {
+  name: string;
+  path: string;
+  image: { urlTemplate: string; altText: string } | null;
+}
+
+export const getCategoryTree = cache(async (): Promise<CategoryTreeItem[]> => {
+  const { data } = await client.fetch({
+    document: CategoryTreeQuery,
+    fetchOptions: { next: { revalidate } },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return data.site.categoryTree as CategoryTreeItem[];
+});
+
 export const getPageData = cache(
   async (currencyCode?: CurrencyCode, customerAccessToken?: string) => {
     const { data } = await client.fetch({

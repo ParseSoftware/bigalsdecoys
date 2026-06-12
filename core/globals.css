@@ -3,21 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --primary: 96 100% 68%;
-  --accent: 96 100% 88%;
-  --background: 0 0% 100%;
-  --foreground: 0 0% 7%;
+  /* Big Al's Decoys — brand palette */
+  --primary: 28 65% 52%; /* hunter orange */
+  --accent: 28 65% 52%;
+  --background: 45 20% 97%; /* warm off-white */
+  --foreground: 30 5% 18%; /* warm near-black */
   --success: 116 78% 65%;
   --error: 0 100% 60%;
   --warning: 40 100% 60%;
   --info: 220 70% 45%;
-  --contrast-100: 0 0% 93%;
-  --contrast-200: 0 0% 82%;
-  --contrast-300: 0 0% 70%;
-  --contrast-400: 0 0% 54%;
-  --contrast-500: 0 0% 34%;
-  --font-variation-settings-body: 'slnt' 0;
-  --font-variation-settings-heading: 'slnt' 0;
+  --contrast-100: 40 8% 93%; /* warm light gray */
+  --contrast-200: 38 6% 82%;
+  --contrast-300: 35 5% 70%;
+  --contrast-400: 33 5% 54%;
+  --contrast-500: 32 5% 34%;
+  --ink: 30 5% 18%; /* dedicated dark token: announcement bar, footers, dark buttons */
+  --font-variation-settings-body: 'wght' 400;
+  --font-variation-settings-heading: 'wght' 600;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -29,4 +31,51 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* ── Component token overrides ── */
+
+  /* Announcement banner — dark field, white text */
+  --banner-background: hsl(var(--ink));
+  --banner-text: hsl(0 0% 100%);
+  --banner-close-icon: hsl(0 0% 100% / 60%);
+  --banner-close-icon-hover: hsl(0 0% 100%);
+  --banner-close-background: transparent;
+  --banner-close-background-hover: hsl(0 0% 100% / 10%);
+
+  /* Navigation — display font for nav links */
+  --nav-link-font-family: var(--font-family-heading);
+  --nav-group-font-family: var(--font-family-heading);
+
+  /* Buttons — white text on orange primary; display font */
+  --button-font-family: var(--font-family-heading);
+  --button-primary-text: hsl(0 0% 100%);
+  --button-primary-background: hsl(var(--primary));
+  --button-primary-background-hover: color-mix(in oklab, hsl(var(--primary)), black 12%);
+  --button-primary-border: hsl(var(--primary));
+  --button-secondary-background: hsl(var(--ink));
+  --button-secondary-background-hover: color-mix(in oklab, hsl(var(--ink)), white 10%);
+  --button-secondary-text: hsl(0 0% 100%);
+  --button-secondary-border: hsl(var(--ink));
+
+  /* Product cards — warm backgrounds */
+  --product-card-background: hsl(0 0% 100%);
+  --product-card-title-font-family: var(--font-family-heading);
+
+  /* Slideshow — bottom-left overlay, display font title */
+  --slideshow-mask: hsl(var(--ink) / 75%);
+  --slideshow-background: hsl(var(--ink));
+  --slideshow-title-font-family: var(--font-family-heading);
+
+  /* Footer — dark ink background */
+  --footer-background: hsl(var(--ink));
+  --footer-border-top: hsl(0 0% 100% / 10%);
+  --footer-border-bottom: hsl(var(--primary));
+  --footer-section-title: hsl(0 0% 100%);
+  --footer-link: hsl(0 0% 100% / 65%);
+  --footer-link-hover: hsl(0 0% 100%);
+  --footer-contact-title: hsl(0 0% 100% / 65%);
+  --footer-contact-text: hsl(0 0% 100%);
+  --footer-social-icon: hsl(0 0% 100% / 50%);
+  --footer-social-icon-hover: hsl(0 0% 100%);
+  --footer-copyright: hsl(0 0% 100% / 45%);
 }

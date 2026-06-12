@@ -1,4 +1,4 @@
-import { DM_Serif_Text, Inter, Roboto_Mono } from 'next/font/google';
+import { Inter, Oswald, Roboto_Mono } from 'next/font/google';
 
 const inter = Inter({
   display: 'swap',
@@ -6,10 +6,10 @@ const inter = Inter({
   variable: '--font-family-body',
 });
 
-const dmSerifText = DM_Serif_Text({
+const oswald = Oswald({
   display: 'swap',
   subsets: ['latin'],
-  weight: '400',
+  weight: ['400', '500', '600', '700'],
   variable: '--font-family-heading',
 });
 
@@ -19,4 +19,4 @@ const robotoMono = Roboto_Mono({
   variable: '--font-family-mono',
 });
 
-export const fonts = [inter, dmSerifText, robotoMono];
+export const fonts = [inter, oswald, robotoMono];

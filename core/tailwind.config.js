@@ -110,6 +110,7 @@ const config = {
         },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        ink: 'hsl(var(--ink))',
         contrast: {
           100: 'hsl(var(--contrast-100))',
           200: 'hsl(var(--contrast-200))',

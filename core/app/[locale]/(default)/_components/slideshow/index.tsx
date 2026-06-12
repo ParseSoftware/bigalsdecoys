@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 
 import { Slideshow as SlideshowSection } from '~/vibes/soul/sections/slideshow';
 
-import SlideBg01 from './slide-bg-01.jpg';
+import SlideBg01 from '../../_images/Canada Lifestyle/instagram_C_glxEkS2kR.jpg';
 import SlideBg02 from './slide-bg-02.jpg';
 import SlideBg03 from './slide-bg-03.jpg';
 
@@ -21,6 +21,8 @@ export function Slideshow() {
       cta: {
         href: '/shop-all',
         label: t('Slide01.cta'),
+        variant: 'primary' as const,
+        shape: 'square' as const,
       },
     },
     {
@@ -34,6 +36,8 @@ export function Slideshow() {
       cta: {
         href: '/shop-all',
         label: t('Slide02.cta'),
+        variant: 'primary' as const,
+        shape: 'square' as const,
       },
     },
     {
@@ -45,8 +49,10 @@ export function Slideshow() {
       },
       description: t('Slide03.description'),
       cta: {
-        href: '/shop-all',
+        href: '/about',
         label: t('Slide03.cta'),
+        variant: 'primary' as const,
+        shape: 'square' as const,
       },
     },
   ];

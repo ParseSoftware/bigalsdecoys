@@ -155,6 +155,11 @@ export const Header = async () => {
 
   return (
     <HeaderSection
+      banner={{
+        id: 'bigals-announcement',
+        children: 'FREE SHIPPING ON ORDERS OVER $150 · MADE IN THE USA',
+        hideDismiss: true,
+      }}
       navigation={{
         accountHref: '/login',
         accountLabel: t('Icons.account'),

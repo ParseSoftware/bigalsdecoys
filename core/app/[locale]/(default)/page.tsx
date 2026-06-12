@@ -4,14 +4,16 @@ import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/serve
 
 import { Stream, Streamable } from '@/vibes/soul/lib/streamable';
 import { FeaturedProductCarousel } from '@/vibes/soul/sections/featured-product-carousel';
-import { FeaturedProductList } from '@/vibes/soul/sections/featured-product-list';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { Subscribe } from '~/components/subscribe';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
 
+import { BrandStory } from './_components/brand-story';
+import { CategoryGrid } from './_components/category-grid';
 import { Slideshow } from './_components/slideshow';
+import { TrustBadges } from './_components/trust-badges';
 import { getPageData } from './page-data';
 
 interface Props {
@@ -39,22 +41,6 @@ export default async function Home({ params }: Props) {
     const currencyCode = await getPreferredCurrencyCode();
 
     return getPageData(currencyCode, customerAccessToken);
-  });
-
-  const streamableFeaturedProducts = Streamable.from(async () => {
-    const data = await streamablePageData;
-
-    const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts);
-
-    const { defaultOutOfStockMessage, showOutOfStockMessage, showBackorderMessage } =
-      data.site.settings?.inventory ?? {};
-
-    return productCardTransformer(
-      featuredProducts,
-      format,
-      showOutOfStockMessage ? defaultOutOfStockMessage : undefined,
-      showBackorderMessage,
-    );
   });
 
   const streamableNewestProducts = Streamable.from(async () => {
@@ -85,14 +71,7 @@ export default async function Home({ params }: Props) {
     <>
       <Slideshow />
 
-      <FeaturedProductList
-        cta={{ label: t('FeaturedProducts.cta'), href: '/shop-all' }}
-        description={t('FeaturedProducts.description')}
-        emptyStateSubtitle={t('FeaturedProducts.emptyStateSubtitle')}
-        emptyStateTitle={t('FeaturedProducts.emptyStateTitle')}
-        products={streamableFeaturedProducts}
-        title={t('FeaturedProducts.title')}
-      />
+      <CategoryGrid />
 
       <FeaturedProductCarousel
         cta={{ label: t('NewestProducts.cta'), href: '/shop-all/?sort=newest' }}
@@ -104,6 +83,10 @@ export default async function Home({ params }: Props) {
         products={streamableNewestProducts}
         title={t('NewestProducts.title')}
       />
+
+      <TrustBadges />
+
+      <BrandStory />
 
       <Stream fallback={null} value={streamableShowNewsletterSignup}>
         {(showNewsletterSignup) => showNewsletterSignup && <Subscribe />}

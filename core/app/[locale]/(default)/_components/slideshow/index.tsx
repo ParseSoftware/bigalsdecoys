@@ -3,8 +3,8 @@ import { useTranslations } from 'next-intl';
 import { Slideshow as SlideshowSection } from '~/vibes/soul/sections/slideshow';
 
 import SlideBg01 from '../../_images/Canada Lifestyle/instagram_C_glxEkS2kR.jpg';
-import SlideBg02 from './slide-bg-02.jpg';
-import SlideBg03 from './slide-bg-03.jpg';
+import SlideBg02 from '../../_images/Canada Lifestyle/instagram_DCmR-9tpx9_.jpg';
+import SlideBg03 from '../../_images/Brant Lifestyle/654634402_18061550219410823_31687899643549827_n.jpg';
 
 export function Slideshow() {
   const t = useTranslations('Home.Slideshow');
@@ -57,5 +57,12 @@ export function Slideshow() {
     },
   ];
 
-  return <SlideshowSection playOnInit slides={slides} />;
+  return (
+    <SlideshowSection
+      // pass props
+      interval={3000}
+      playOnInit={true}
+      slides={slides}
+    />
+  );
 }

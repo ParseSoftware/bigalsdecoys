@@ -28,8 +28,8 @@ export async function TrustBadges() {
   ] as const;
 
   return (
-    <section className="mx-auto max-w-screen-2xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+    <section className="border-t bg-background px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-6 md:grid-cols-4">
         {badges.map(({ Icon, title, subtitle }) => (
           <div className="flex items-start gap-3" key={title}>
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-contrast-100 text-primary">

@@ -15,7 +15,7 @@ export async function BrandStory({ image }: Props) {
   const t = await getTranslations('Home.BrandStory');
 
   return (
-    <section className="border-y border-contrast-100 bg-white">
+    <section className="border-y bg-white">
       <div className="mx-auto grid max-w-screen-2xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-24">
         {/* Copy */}
         <div className="order-2 lg:order-1">

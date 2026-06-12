@@ -57,5 +57,5 @@ export function Slideshow() {
     },
   ];
 
-  return <SlideshowSection slides={slides} />;
+  return <SlideshowSection playOnInit slides={slides} />;
 }

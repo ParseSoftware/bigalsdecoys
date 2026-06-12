@@ -144,6 +144,7 @@ export const Footer = async () => {
       paymentIcons={paymentIcons}
       sections={streamableSections}
       socialMediaLinks={socialMediaLinks}
+      className="text-[var(--footer-link,hsl(var(--contrast-500)))]"
     />
   );
 };

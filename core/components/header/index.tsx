@@ -175,6 +175,7 @@ export const Header = async () => {
         searchSubmitLabel: t('Search.submitLabel'),
         links: streamableLinks,
         logo,
+        logoHeight: 72,
         mobileMenuTriggerLabel: t('toggleNavigation'),
         openSearchPopupLabel: t('Icons.search'),
         logoLabel: t('home'),

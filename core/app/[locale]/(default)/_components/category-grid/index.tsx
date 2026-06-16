@@ -34,7 +34,7 @@ export async function CategoryGrid() {
       <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
         {categories.map((category) => (
           <Link
-            className="group relative block overflow-hidden rounded-sm bg-contrast-100"
+            className="group relative block overflow-hidden rounded-2xl bg-contrast-100 shadow-lg"
             href={category.path}
             key={category.path}
           >

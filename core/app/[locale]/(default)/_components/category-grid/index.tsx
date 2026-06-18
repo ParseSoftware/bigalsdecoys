@@ -38,7 +38,7 @@ export async function CategoryGrid() {
             href={category.path}
             key={category.path}
           >
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-[5/4] overflow-hidden">
               {category.image ? (
                 <Image
                   alt={category.image.altText}

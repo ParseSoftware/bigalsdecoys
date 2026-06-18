@@ -76,7 +76,7 @@ export function ProductCard({
   colorScheme = 'light',
   className,
   showCompare = false,
-  aspectRatio = '5:6',
+  aspectRatio = 'aspect-[5/6]',
   compareLabel,
   compareParamName,
   imagePriority = false,

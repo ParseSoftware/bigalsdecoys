@@ -55,7 +55,7 @@ export function ProductCarousel({
   products: streamableProducts,
   className,
   colorScheme = 'light',
-  aspectRatio = '5:6',
+  aspectRatio = 'aspect-[5/6]',
   emptyStateTitle = 'No products found',
   emptyStateSubtitle = 'Try browsing our complete catalog of products.',
   scrollbarLabel = 'Scroll',

@@ -59,6 +59,7 @@ export function ProductGallery({
   images: initialImages,
   className,
   thumbnailLabel = 'View image number',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   aspectRatio = '4:5',
   fit = 'contain',
   pageInfo: initialPageInfo,
@@ -243,19 +244,19 @@ export function ProductGallery({
             <div
               className={clsx(
                 'relative w-full shrink-0 grow-0 basis-full',
-                {
-                  '5:6': 'aspect-[5/6]',
-                  '3:4': 'aspect-[3/4]',
-                  '4:5': 'aspect-[4/5]',
-                  '3:2': 'aspect-[3/2]',
-                  '2:3': 'aspect-[2/3]',
-                  '16:9': 'aspect-[16/9]',
-                  '9:16': 'aspect-[9/16]',
-                  '6:5': 'aspect-[6/5]',
-                  '5:4': 'aspect-[5/4]',
-                  '4:3': 'aspect-[4/3]',
-                  '1:1': 'aspect-square',
-                }[aspectRatio],
+                // {
+                //   '5:6': 'aspect-[5/6]',
+                //   '3:4': 'aspect-[3/4]',
+                //   '4:5': 'aspect-[4/5]',
+                //   '3:2': 'aspect-[3/2]',
+                //   '2:3': 'aspect-[2/3]',
+                //   '16:9': 'aspect-[16/9]',
+                //   '9:16': 'aspect-[9/16]',
+                //   '6:5': 'aspect-[6/5]',
+                //   '5:4': 'aspect-[5/4]',
+                //   '4:3': 'aspect-[4/3]',
+                //   '1:1': 'aspect-square',
+                // }[aspectRatio],
               )}
               key={idx}
             >
@@ -267,11 +268,13 @@ export function ProductGallery({
                     contain: 'object-contain',
                     cover: 'object-cover',
                   }[fit],
+                  'rounded-2xl border',
                 )}
-                fill
+                height={600}
                 preload={idx === 0}
                 sizes="(min-width: 42rem) 50vw, 100vw"
                 src={image.src}
+                width={600}
               />
             </div>
           ))}

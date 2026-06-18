@@ -60,7 +60,7 @@ export function Slideshow() {
   return (
     <SlideshowSection
       // pass props
-      interval={3000}
+      interval={5000}
       playOnInit={true}
       slides={slides}
     />

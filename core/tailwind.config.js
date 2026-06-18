@@ -1,11 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 const config = {
+  safelist: [
+    // These classes are generated dynamically based on product aspect ratios, so we need to safelist them to prevent purging
+    'aspect-[5/6]',
+    'aspect-[5/4]',
+    'aspect-[4/5]',
+    'aspect-[3/4]',
+    'aspect-square',
+    'aspect-video',
+  ],
+
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './vibes/**/*.{ts,tsx}',
     '!./node_modules/**', // Exclude everything in node_modules to speed up builds
   ],
+
   theme: {
     extend: {
       typography: {

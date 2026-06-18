@@ -79,6 +79,7 @@ export function FeaturedProductCarousel({
           previousLabel={previousLabel}
           products={products}
           scrollbarLabel={scrollbarLabel}
+          aspectRatio="5:4"
         />
       </div>
     </SectionLayout>

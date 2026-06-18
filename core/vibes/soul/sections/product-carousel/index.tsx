@@ -15,6 +15,7 @@ import {
   ProductCardSkeleton,
 } from '@/vibes/soul/primitives/product-card';
 import * as Skeleton from '@/vibes/soul/primitives/skeleton';
+import { AspectRatio } from '~/lib/types';
 
 export type CarouselProduct = Product;
 
@@ -22,7 +23,7 @@ export interface ProductCarouselProps {
   products: Streamable<CarouselProduct[]>;
   className?: string;
   colorScheme?: 'light' | 'dark';
-  aspectRatio?: '5:6' | '3:4' | '1:1';
+  aspectRatio?: AspectRatio;
   emptyStateTitle?: Streamable<string>;
   emptyStateSubtitle?: Streamable<string>;
   scrollbarLabel?: string;

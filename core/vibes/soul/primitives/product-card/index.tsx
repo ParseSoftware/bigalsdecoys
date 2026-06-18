@@ -9,6 +9,7 @@ import { Link } from '~/components/link';
 import { Rating } from '../rating';
 
 import { Compare } from './compare';
+import { AspectRatio } from '~/lib/types';
 
 export interface Product {
   id: string;
@@ -26,7 +27,7 @@ export interface Product {
 export interface ProductCardProps {
   className?: string;
   colorScheme?: 'light' | 'dark';
-  aspectRatio?: '5:6' | '3:4' | '1:1';
+  aspectRatio?: AspectRatio;
   showCompare?: boolean;
   imagePriority?: boolean;
   imageSizes?: string;
@@ -92,11 +93,7 @@ export function ProductCard({
         <div
           className={clsx(
             'relative overflow-hidden rounded-xl @md:rounded-2xl',
-            {
-              '5:6': 'aspect-[5/6]',
-              '3:4': 'aspect-[3/4]',
-              '1:1': 'aspect-square',
-            }[aspectRatio],
+            aspectRatio,
             {
               light: 'bg-[var(--product-card-light-background,hsl(var(--contrast-100)))]',
               dark: 'bg-[var(--product-card-dark-background,hsl(var(--contrast-500)))]',

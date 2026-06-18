@@ -48,7 +48,7 @@ export default async function Home({ params }: Props) {
   const streamableNewestProducts = Streamable.from(async () => {
     const data = await streamablePageData;
 
-    const newestProducts = removeEdgesAndNodes(data.site.newestProducts);
+    const newestProducts = removeEdgesAndNodes(data.site.featuredProducts);
 
     const { defaultOutOfStockMessage, showOutOfStockMessage, showBackorderMessage } =
       data.site.settings?.inventory ?? {};

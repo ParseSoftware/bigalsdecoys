@@ -8,6 +8,7 @@ import {
   ProductCardSkeleton,
 } from '@/vibes/soul/primitives/product-card';
 import * as Skeleton from '@/vibes/soul/primitives/skeleton';
+import { AspectRatio } from '~/lib/types';
 
 interface ProductListProps {
   products: Streamable<Product[]>;
@@ -15,7 +16,7 @@ interface ProductListProps {
   compareProducts?: Streamable<Product[]>;
   className?: string;
   colorScheme?: 'light' | 'dark';
-  aspectRatio?: '5:6' | '3:4' | '1:1';
+  aspectRatio?: AspectRatio;
   showCompare?: Streamable<boolean>;
   compareHref?: string;
   compareLabel?: Streamable<string>;
@@ -49,7 +50,7 @@ export function ProductList({
   showRating,
   className,
   colorScheme = 'light',
-  aspectRatio = '5:6',
+  aspectRatio = 'aspect-[5/6]',
   showCompare: streamableShowCompare = true,
   compareHref,
   compareProducts: streamableCompareProducts = [],

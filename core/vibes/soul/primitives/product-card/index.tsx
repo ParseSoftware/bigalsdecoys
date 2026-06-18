@@ -211,23 +211,14 @@ export function ProductCard({
 
 export function ProductCardSkeleton({
   className,
-  aspectRatio = '5:6',
+  aspectRatio = 'aspect-[5/6]',
 }: {
-  aspectRatio?: '5:6' | '3:4' | '1:1';
+  aspectRatio?: AspectRatio;
   className?: string;
 }) {
   return (
     <div className={clsx('@container', className)}>
-      <Skeleton.Box
-        className={clsx(
-          'rounded-xl @md:rounded-2xl',
-          {
-            '5:6': 'aspect-[5/6]',
-            '3:4': 'aspect-[3/4]',
-            '1:1': 'aspect-square',
-          }[aspectRatio],
-        )}
-      />
+      <Skeleton.Box className={clsx('rounded-xl @md:rounded-2xl', aspectRatio)} />
       <div className="mt-2 flex flex-col items-start gap-x-4 gap-y-3 px-1 @xs:mt-3 @2xl:flex-row">
         <div className="w-full text-sm @[16rem]:text-base">
           <Skeleton.Text characterCount={10} className="rounded" />

@@ -8,6 +8,7 @@ import { startTransition, useCallback, useEffect, useRef, useState } from 'react
 
 import * as Skeleton from '@/vibes/soul/primitives/skeleton';
 import { Image } from '~/components/image';
+import { AspectRatio } from '~/lib/types';
 
 export type ProductGalleryLoadMoreAction = (
   productId: number,
@@ -22,18 +23,7 @@ export interface ProductGalleryProps {
   images: Array<{ alt: string; src: string }>;
   className?: string;
   thumbnailLabel?: string;
-  aspectRatio?:
-    | '1:1'
-    | '4:5'
-    | '5:4'
-    | '3:4'
-    | '4:3'
-    | '2:3'
-    | '3:2'
-    | '16:9'
-    | '9:16'
-    | '5:6'
-    | '6:5';
+  aspectRatio?: AspectRatio;
   fit?: 'contain' | 'cover';
   pageInfo?: { hasNextPage: boolean; endCursor: string | null };
   productId?: number;
@@ -60,7 +50,7 @@ export function ProductGallery({
   className,
   thumbnailLabel = 'View image number',
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  aspectRatio = '4:5',
+  aspectRatio = 'aspect-[4/5]',
   fit = 'contain',
   pageInfo: initialPageInfo,
   productId,

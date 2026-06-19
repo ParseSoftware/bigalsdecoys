@@ -75,7 +75,7 @@ export default async function Home({ params }: Props) {
       <CategoryGrid />
 
       <FeaturedProductCarousel
-        cta={{ label: t('NewestProducts.cta'), href: '/shop-all/?sort=newest' }}
+        cta={{ label: t('NewestProducts.cta'), href: '/shop/?sort=newest' }}
         description={t('NewestProducts.description')}
         emptyStateSubtitle={t('NewestProducts.emptyStateSubtitle')}
         emptyStateTitle={t('NewestProducts.emptyStateTitle')}

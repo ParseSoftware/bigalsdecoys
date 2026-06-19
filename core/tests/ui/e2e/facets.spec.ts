@@ -1,6 +1,6 @@
 import { expect, Page, test } from '~/tests/fixtures';
 
-const SHOP_ALL_URL = '/shop-all/';
+const SHOP_ALL_URL = '/shop/';
 
 const PRODUCT_LE_PARFAIT_JAR = '[Sample] 1 L Le Parfait Jar';
 const PRODUCT_DUSTPAN_BRUSH = '[Sample] Dustpan & Brush';

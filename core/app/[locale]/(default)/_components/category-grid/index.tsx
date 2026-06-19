@@ -25,7 +25,7 @@ export async function CategoryGrid() {
         </div>
         <Link
           className="hidden border-b-2 border-primary pb-0.5 font-heading text-sm font-semibold uppercase tracking-wider hover:text-primary sm:inline-block"
-          href="/shop-all"
+          href="/shop"
         >
           {t('cta')}
         </Link>

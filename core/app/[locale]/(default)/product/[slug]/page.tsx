@@ -605,7 +605,7 @@ export default async function Product({ params, searchParams }: Props) {
       </ProductAnalyticsProvider>
 
       <FeaturedProductCarousel
-        cta={{ label: t('RelatedProducts.cta'), href: '/shop-all' }}
+        cta={{ label: t('RelatedProducts.cta'), href: '/shop' }}
         emptyStateSubtitle={t('RelatedProducts.browseCatalog')}
         emptyStateTitle={t('RelatedProducts.noRelatedProducts')}
         nextLabel={t('RelatedProducts.nextProducts')}

@@ -33,7 +33,7 @@ test('Featured products CTA link navigates to shop-all page', async ({ page }) =
   const ctaLink = page.getByRole('link', { name: t('FeaturedProducts.cta') });
 
   await expect(ctaLink).toBeVisible();
-  await expect(ctaLink).toHaveAttribute('href', '/shop-all/');
+  await expect(ctaLink).toHaveAttribute('href', '/shop/');
 });
 
 test('Newest products CTA link navigates to shop-all page with sort parameter', async ({
@@ -46,7 +46,7 @@ test('Newest products CTA link navigates to shop-all page with sort parameter', 
   const ctaLink = page.getByRole('link', { name: t('NewestProducts.cta') });
 
   await expect(ctaLink).toBeVisible();
-  await expect(ctaLink).toHaveAttribute('href', '/shop-all/?sort=newest');
+  await expect(ctaLink).toHaveAttribute('href', '/shop/?sort=newest');
 });
 
 test('Homepage displays products when available', async ({ page }) => {

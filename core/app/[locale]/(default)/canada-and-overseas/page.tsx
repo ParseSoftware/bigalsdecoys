@@ -82,10 +82,10 @@ export default function CanadaAndOverseas() {
             to get our products to you affordably.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <ButtonLink href={`mailto:${SUPPORT_EMAIL}`} variant="primary" size="large">
+            <ButtonLink href={`mailto:${SUPPORT_EMAIL}`} size="large" variant="primary">
               Email Before You Order
             </ButtonLink>
-            <ButtonLink href="/shipping-and-returns" variant="tertiary" size="large">
+            <ButtonLink href="/shipping-and-returns" size="large" variant="tertiary">
               Shipping &amp; Returns
             </ButtonLink>
           </div>
@@ -153,10 +153,10 @@ export default function CanadaAndOverseas() {
 
                 <div className="mt-6 space-y-3 border-t pt-6 text-sm">
                   <p className="font-medium text-foreground">{d.contact}</p>
-                  {d.phone ? (
+                  {d.phoneHref ? (
                     <a
                       className="flex items-center gap-2 text-contrast-500 transition hover:text-primary"
-                      href={d.phoneHref ?? undefined}
+                      href={d.phoneHref}
                     >
                       <Phone className="h-4 w-4 shrink-0" strokeWidth={1.5} />
                       {d.phone}
@@ -187,17 +187,18 @@ export default function CanadaAndOverseas() {
                 Shipping direct to Canada &amp; overseas
               </h2>
               <p className="mt-4 text-base leading-relaxed text-contrast-500">
-                When local stock runs out, we’ll ship directly to you. USPS has proven to be our most
-                economical and dependable carrier for international orders. Please note that
-                international destinations aren’t eligible for free shipping — even on 5-dozen-and-up
-                orders — so reach out before checkout and we’ll arrange the best option together.
+                When local stock runs out, we’ll ship directly to you. USPS has proven to be our
+                most economical and dependable carrier for international orders. Please note that
+                international destinations aren’t eligible for free shipping — even on
+                5-dozen-and-up orders — so reach out before checkout and we’ll arrange the best
+                option together.
               </p>
             </div>
             <div className="flex flex-col gap-3">
-              <ButtonLink href={`mailto:${SUPPORT_EMAIL}`} variant="primary" size="large">
+              <ButtonLink href={`mailto:${SUPPORT_EMAIL}`} size="large" variant="primary">
                 Email Our Team
               </ButtonLink>
-              <ButtonLink href="/contact" variant="secondary" size="large">
+              <ButtonLink href="/contact" size="large" variant="secondary">
                 More Ways to Reach Us
               </ButtonLink>
             </div>
@@ -207,33 +208,3 @@ export default function CanadaAndOverseas() {
     </>
   );
 }
-
-/* Original migrated copy retained for reference.
- * Hello Canada and Abroad!
-
- 
-
-For those who are looking for reasonable shipping costs please drop me an e-mail "prior to" ordering on line. We can consider a couple of different shipping options. USPS (United States Postal Service) has been the most economical and dependable carrier for us into Canada and overseas. We can not "Free Ship" to Canada and overseas locations, even if you meet the 5 dozen and up requirement. Please contact us prior to ordering to make arrangements. My direct email is  
-
-Canada
-We have two distribution locations within Canada! Several of our items are in stock at these locations. Please contact them to save time and money!
-We can still ship direct to you if they are out of stock, my direct email is: 
-
-Canada West
-Flight Control Decoys & More
-Lethbridge, AB
-Contact: Dale Isherwood 403-634-7088
-www.flightcontroldecoys.ca
-
-
- Canada East
-
-Canadian Waterfowl Supplies
-Paris, Ont
-Contact: Pat Heinrichs 855-209-9116
-www.canadianwaterfowlsupplies.com
- Europe
-
-For customers in "Europe", please contact DANgate.dk for our silhouette products.
- We can still ship direct to you if they are out of stock, my direct email is: 
- */

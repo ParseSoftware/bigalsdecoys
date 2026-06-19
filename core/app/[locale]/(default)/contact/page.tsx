@@ -129,7 +129,7 @@ export default function ContactPage() {
                 <span>All times listed are Central Standard Time (CST).</span>
               </div>
               <div className="mt-6">
-                <ButtonLink href={SUPPORT_PHONE_HREF} variant="primary" size="medium">
+                <ButtonLink href={SUPPORT_PHONE_HREF} size="medium" variant="primary">
                   Call {SUPPORT_PHONE_DISPLAY}
                 </ButtonLink>
               </div>
@@ -169,12 +169,3 @@ export default function ContactPage() {
     </>
   );
 }
-
-/* Original migrated copy retained for reference.
- * M-F 8am-5pm Central Standard Time
-Closed from 12pm-1pm for lunch
-
-Phone: 605-956-4818
-
-info@bigalsdecoys.com
- */

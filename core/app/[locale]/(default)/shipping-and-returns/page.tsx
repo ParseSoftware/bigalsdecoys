@@ -140,7 +140,7 @@ export default function ShippingAndReturns() {
                   </li>
                 </ol>
                 <div className="mt-6">
-                  <ButtonLink href="/contact" variant="secondary" size="medium">
+                  <ButtonLink href="/contact" size="medium" variant="secondary">
                     Need a Hand? Contact Us
                   </ButtonLink>
                 </div>
@@ -252,10 +252,10 @@ export default function ShippingAndReturns() {
             take care of you.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <ButtonLink href="/contact" variant="primary" size="large">
+            <ButtonLink href="/contact" size="large" variant="primary">
               Contact Us
             </ButtonLink>
-            <ButtonLink href="/" variant="tertiary" size="large">
+            <ButtonLink href="/" size="large" variant="tertiary">
               Keep Shopping
             </ButtonLink>
           </div>
@@ -264,25 +264,3 @@ export default function ShippingAndReturns() {
     </>
   );
 }
-
-/* Original migrated copy retained for reference.
- * Return Policy
-
-You may return unused items in original packaging within 30 days of delivery for a full refund. We'll also pay the return shipping costs if the return is a result of our error.
-
-You should expect to receive your refund within four weeks of giving your package to the return shipper, however, in many cases you will receive a refund more quickly. This time period includes the transit time for us to receive your return from the shipper (5 to 10 business days), the time it takes us to process your return once we receive it (3 to 5 business days), and the time it takes your bank to process our refund request (5 to 10 business days).
-If you need to return an item, simply login to your account, view the order using the "Complete Orders" link under the My Account menu and click the Return Item(s) button. We'll notify you via e-mail of your refund once we've received and processed the returned item.
-
-
-Shipping
-
-We can ship to any address in the USA & Canada. We can not ship to PO Boxes unless arranged to do so by phone.
-
-When you place an order, we will estimate shipping and delivery dates for you based on the availability of your items and the shipping options you choose. We use either UPS or FedEX for our orders.
-
-Please also note that the shipping rates for the item we sell are weight-based. The weight of any such item can be found on its detail page. To reflect shipping policies, all weights will be rounded up to the next full pound.
-
- 
-
-Please contact us prior to ordering to make arrangements if you have a unique situation. We will do our best to work with you to come to a resolution to earn your business. 
- */

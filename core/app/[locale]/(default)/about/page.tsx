@@ -58,10 +58,10 @@ export default function AboutPage() {
             silhouette decoys — proudly made in the USA.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <ButtonLink href="/" variant="primary" size="large">
+            <ButtonLink href="/" size="large" variant="primary">
               Shop the Collection
             </ButtonLink>
-            <ButtonLink href="/contact" variant="tertiary" size="large">
+            <ButtonLink href="/contact" size="large" variant="tertiary">
               Talk to Our Team
             </ButtonLink>
           </div>
@@ -194,10 +194,10 @@ export default function AboutPage() {
             — Big Al &amp; Family
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <ButtonLink href="/" variant="primary" size="large">
+            <ButtonLink href="/" size="large" variant="primary">
               Shop Decoys
             </ButtonLink>
-            <ButtonLink href="/contact" variant="tertiary" size="large">
+            <ButtonLink href="/contact" size="large" variant="tertiary">
               Contact Us
             </ButtonLink>
           </div>
@@ -206,21 +206,3 @@ export default function AboutPage() {
     </>
   );
 }
-
-/* Original migrated copy retained for reference.
- * Hello Friends,
-
-Thanks for visiting my product site! Over the years I have been blessed to share some wonderful experiences in the outdoors with friends and family. As a boy, I grew up waterfowl hunting in the early 70’s. I did not realize this “passion” would continue for all these years! Recently, I have combined my experiences, artist background, and my family’s printing business to manufacture “waterfowl silhouette decoys.”
-
-I personally oversee total design, production, and marketing of these silhouette decoys. These products are proudly made in the USA! You will find these products to be accurate in color, detail, and ultra matte coating. These are all produced and packaged at one facility in N.E. Ohio. This is how I can control production and manufacturing costs, and pass that savings on to you, the consumer.
-
-I know how important quality products are for hunting. I also know how short the seasons can be! You need to make the most out of your hunt every time you have the opportunity to go afield. If you are looking for a quality “silhouette” product that is affordable, and will last you many seasons…you have come to the right place! Feel free to contact me personally if you have any questions or concerns. I want you to be satisfied with your purchase experience, and be successful in the field! You CAN have both…
-
-Your business is greatly appreciated.
-
-Take a youth along with you on your next hunt!
-
-Best Wishes,
-
-Big Al and Family 
- */

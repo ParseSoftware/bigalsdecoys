@@ -52,7 +52,7 @@ export function Slideshow() {
       },
       description: t('Slide03.description'),
       cta: {
-        href: '/about-us',
+        href: '/about',
         label: t('Slide03.cta'),
         variant: 'primary' as const,
         shape: 'square' as const,

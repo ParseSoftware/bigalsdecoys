@@ -20,17 +20,17 @@ const SLIDES = [
   {
     image: CanadaBanner,
     alt: 'Canada geese decoy spread',
-    cta: { label: 'Shop Geese', href: '/shop' },
+    cta: { label: 'Shop Geese', href: '/geese' },
   },
   {
     image: MallardBanner,
     alt: 'Mallard duck decoys',
-    cta: { label: 'Shop Ducks', href: '/shop' },
+    cta: { label: 'Shop Ducks', href: '/ducks' },
   },
   {
     image: PigeonBanner,
     alt: 'Pigeon decoys',
-    cta: { label: 'Shop Pigeons', href: '/shop' },
+    cta: { label: 'Shop Pigeons', href: '/pigeon' },
   },
 ];
 
@@ -203,7 +203,6 @@ export function ImageSlideshow() {
         ))}
       </div>
 
-      {/* CTA - overflows the bottom of the section by 50% of its own height */}
       {currentCta && (
         <div
           className="flex -translate-y-1/2 justify-center"

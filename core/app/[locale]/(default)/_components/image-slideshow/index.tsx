@@ -6,15 +6,13 @@ import Autoplay from 'embla-carousel-autoplay';
 import Fade from 'embla-carousel-fade';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-
-import { ButtonLink } from '@/vibes/soul/primitives/button-link';
 import { Image } from '~/components/image';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from '~/components/link';
 
 import CanadaBanner from '../../_images/Slideshow/canada-banner.png';
 import MallardBanner from '../../_images/Slideshow/mallard-banner.png';
 import PigeonBanner from '../../_images/Slideshow/pigeon-banner.png';
-import Link from 'next/link';
 
 const INTERVAL = 7000;
 
@@ -213,7 +211,7 @@ export function ImageSlideshow() {
           onMouseLeave={resumeAutoplay}
         >
           <Link
-            className="rounded-sm bg-primary px-4 py-2 text-[clamp(12px,2vw,24px)] font-medium tracking-wide text-white shadow-xl"
+            className="flex justify-center rounded-full bg-primary px-[clamp(2rem,3vw,6rem)] py-2 font-heading text-[clamp(12px,2vw,24px)] font-medium font-thin uppercase tracking-wide text-white shadow-xl"
             href={currentCta.href}
           >
             {currentCta.label}

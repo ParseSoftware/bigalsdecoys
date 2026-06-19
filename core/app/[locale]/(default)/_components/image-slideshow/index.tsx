@@ -16,7 +16,7 @@ import MallardBanner from '../../_images/Slideshow/mallard-banner.png';
 import PigeonBanner from '../../_images/Slideshow/pigeon-banner.png';
 import Link from 'next/link';
 
-const INTERVAL = 5000;
+const INTERVAL = 7000;
 
 const SLIDES = [
   {
@@ -188,7 +188,7 @@ export function ImageSlideshow() {
             <div className="relative w-full overflow-hidden">
               <div
                 className={clsx(
-                  'absolute h-1 w-full bg-primary/40 opacity-0 fill-mode-forwards',
+                  'absolute h-1 w-full bg-white/60 opacity-0 fill-mode-forwards',
                   isPlaying ? 'running' : 'paused',
                   index === selectedIndex
                     ? 'opacity-100 ease-linear animate-in slide-in-from-left'
@@ -199,7 +199,7 @@ export function ImageSlideshow() {
                   animationDuration: index === selectedIndex ? `${INTERVAL}ms` : '200ms',
                 }}
               />
-              <div className="h-1 w-full bg-primary/10" />
+              <div className="h-1 w-full bg-white/0" />
             </div>
           </button>
         ))}

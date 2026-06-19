@@ -2,24 +2,30 @@
   "Home": {
     "Slideshow": {
       "Slide01": {
+        "overline": "",
         "title": "Decoys Built for the Field",
         "description": "Quality waterfowl decoys at a price that makes sense. Designed, printed, and assembled right here in the USA.",
         "alt": "Geese landing in a harvested cornfield at sunrise.",
         "cta": "Shop All Decoys"
       },
+
       "Slide02": {
+        "overline": "",
         "title": "New for 2026",
         "description": "Field-tested designs refined over decades of hunting. Our best lineup yet — built to fool the wariest birds.",
         "alt": "Hunter setting full-body goose decoys in a cut wheat field at dawn.",
         "cta": "See What's New"
       },
+
       "Slide03": {
-        "title": "Made in the USA",
+        "overline": "Make your Stand",
+        "title": "Stand Out",
         "description": "Every decoy is printed and assembled stateside using premium materials that hold up season after season.",
         "alt": "Close-up of a Big Al's full-body Canada goose decoy in a field spread.",
         "cta": "Our Story"
       }
     },
+
     "FeaturedProducts": {
       "title": "Featured collection",
       "description": "Explore our top picks in this featured collection. Find the perfect gift or treat yourself!",
@@ -162,6 +168,17 @@
       "subCategories": "Categories",
       "Empty": {
         "title": "No products in this category",
+        "subtitle": "Try using different filters."
+      }
+    },
+    "Shop": {
+      "title": "Shop All",
+      "Breadcrumbs": {
+        "home": "Home",
+        "shop": "Shop All"
+      },
+      "Empty": {
+        "title": "No products found",
         "subtitle": "Try using different filters."
       }
     },

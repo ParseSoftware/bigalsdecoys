@@ -12,7 +12,7 @@ import { getMetadataAlternates } from '~/lib/seo/canonical';
 
 import { BrandStory } from './_components/brand-story';
 import { CategoryGrid } from './_components/category-grid';
-import { Slideshow } from './_components/slideshow';
+import { ImageSlideshow } from './_components/image-slideshow';
 import { TrustBadges } from './_components/trust-badges';
 import { getPageData } from './page-data';
 
@@ -71,7 +71,7 @@ export default async function Home({ params }: Props) {
 
   return (
     <>
-      <Slideshow />
+      <ImageSlideshow />
 
       <CategoryGrid />
 

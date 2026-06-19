@@ -11,6 +11,7 @@ export function Slideshow() {
 
   const slides = [
     {
+      overline: t('Slide01.overline'),
       title: t('Slide01.title'),
       image: {
         src: SlideBg01.src,
@@ -19,13 +20,14 @@ export function Slideshow() {
       },
       description: t('Slide01.description'),
       cta: {
-        href: '/shop-all',
+        href: '/shop',
         label: t('Slide01.cta'),
         variant: 'primary' as const,
         shape: 'square' as const,
       },
     },
     {
+      overline: t('Slide02.overline'),
       title: t('Slide02.title'),
       image: {
         src: SlideBg02.src,
@@ -34,13 +36,14 @@ export function Slideshow() {
       },
       description: t('Slide02.description'),
       cta: {
-        href: '/shop-all',
+        href: '/shop',
         label: t('Slide02.cta'),
         variant: 'primary' as const,
         shape: 'square' as const,
       },
     },
     {
+      overline: t('Slide03.overline'),
       title: t('Slide03.title'),
       image: {
         src: SlideBg03.src,

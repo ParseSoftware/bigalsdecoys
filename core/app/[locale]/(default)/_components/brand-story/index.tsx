@@ -30,7 +30,7 @@ export async function BrandStory({ image }: Props) {
           </p>
           <p className="mt-4 text-base leading-relaxed text-contrast-400">{t('paragraph2')}</p>
           <div className="mt-8">
-            <ButtonLink href="/about" variant="secondary">
+            <ButtonLink href="/about-us" variant="secondary">
               {t('cta')}
             </ButtonLink>
           </div>

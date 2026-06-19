@@ -15,7 +15,6 @@ import { CategoryGrid } from './_components/category-grid';
 import { ImageSlideshow } from './_components/image-slideshow';
 import { TrustBadges } from './_components/trust-badges';
 import { getPageData } from './page-data';
-
 import BrandStoryImage from './_images/Canada Lifestyle/instagram_DM7rh5pORvi.jpg';
 
 interface Props {

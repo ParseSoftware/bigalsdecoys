@@ -14,6 +14,7 @@ import { Image } from '~/components/image';
 import CanadaBanner from '../../_images/Slideshow/canada-banner.png';
 import MallardBanner from '../../_images/Slideshow/mallard-banner.png';
 import PigeonBanner from '../../_images/Slideshow/pigeon-banner.png';
+import Link from 'next/link';
 
 const INTERVAL = 5000;
 
@@ -123,7 +124,7 @@ export function ImageSlideshow() {
       <div
         className="bg-[var(--banner-background,hsl(var(--primary)))]" // Fallback background color for before images load; also adds a subtle overlay to improve text contrast
       >
-        <section className="relative mx-auto w-full max-w-screen-2xl">
+        <section className="relative mx-auto w-full">
           {/* Carousel - aspect-ratio keeps height proportional to the natural image dimensions */}
           <div
             className="max-w-screen overflow-hidden"
@@ -206,16 +207,17 @@ export function ImageSlideshow() {
 
       {/* CTA - overflows the bottom of the section by 50% of its own height */}
       {currentCta && (
-        <div className="bg-primary" onMouseEnter={pauseAutoplay} onMouseLeave={resumeAutoplay}>
-          <ButtonLink
-            className="w-full"
+        <div
+          className="flex -translate-y-1/2 justify-center"
+          onMouseEnter={pauseAutoplay}
+          onMouseLeave={resumeAutoplay}
+        >
+          <Link
+            className="rounded-sm bg-primary px-4 py-2 text-[clamp(12px,2vw,24px)] font-medium tracking-wide text-white shadow-xl"
             href={currentCta.href}
-            shape="square"
-            variant="primary"
-            size="small"
           >
             {currentCta.label}
-          </ButtonLink>
+          </Link>
         </div>
       )}
     </div>

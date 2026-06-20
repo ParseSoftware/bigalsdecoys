@@ -30,7 +30,7 @@ const SLIDES = [
   {
     image: PigeonBanner,
     alt: 'Pigeon decoys',
-    cta: { label: 'Shop Pigeons', href: '/pigeon' },
+    cta: { label: 'Shop Pigeons', href: '/pigeons' },
   },
 ];
 

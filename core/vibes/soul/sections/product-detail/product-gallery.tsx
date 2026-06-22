@@ -258,7 +258,7 @@ export function ProductGallery({
                     contain: 'object-contain',
                     cover: 'object-cover',
                   }[fit],
-                  'rounded-2xl border',
+                  'rounded-2xl',
                 )}
                 height={600}
                 preload={idx === 0}

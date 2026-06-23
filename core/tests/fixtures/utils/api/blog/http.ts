@@ -69,7 +69,7 @@ export const blogHttpClient: BlogApi = {
 
     return BlogSchema.parse(blogPage);
   },
-  getPosts: async (page = 1, limit = 9) => {
+  getPosts: async (page = 1, limit = 24) => {
     const posts = await httpClient
       .get(`/v2/blog/posts?page=${page}&limit=${limit}&is_published=true`)
       .parse(z.array(BlogPostSchema).optional());

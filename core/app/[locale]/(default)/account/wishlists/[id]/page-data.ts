@@ -38,7 +38,7 @@ interface Pagination {
 }
 
 export const getCustomerWishlist = cache(async (entityId: number, pagination: Pagination) => {
-  const { before, after, limit = 9 } = pagination;
+  const { before, after, limit = 24 } = pagination;
   const customerAccessToken = await getSessionCustomerAccessToken();
   const currencyCode = await getPreferredCurrencyCode();
   const paginationArgs = before ? { last: limit, before } : { first: limit, after };

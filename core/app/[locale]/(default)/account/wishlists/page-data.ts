@@ -33,7 +33,7 @@ interface Pagination {
   after: string | null;
 }
 
-export const getCustomerWishlists = cache(async ({ limit = 9, before, after }: Pagination) => {
+export const getCustomerWishlists = cache(async ({ limit = 24, before, after }: Pagination) => {
   const customerAccessToken = await getSessionCustomerAccessToken();
   const currencyCode = await getPreferredCurrencyCode();
   const paginationArgs = before ? { last: limit, before } : { first: limit, after };

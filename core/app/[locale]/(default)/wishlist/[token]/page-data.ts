@@ -51,7 +51,7 @@ interface Pagination {
 }
 
 export const getPublicWishlist = cache(async (token: string, pagination: Pagination) => {
-  const { before, after, limit = 9 } = pagination;
+  const { before, after, limit = 24 } = pagination;
   const currencyCode = await getPreferredCurrencyCode();
   const paginationArgs = before ? { last: limit, before } : { first: limit, after };
   const response = await client.fetch({

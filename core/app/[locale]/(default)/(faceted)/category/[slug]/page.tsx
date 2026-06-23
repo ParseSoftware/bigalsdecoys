@@ -266,7 +266,7 @@ export default async function Category(props: Props) {
         resetFiltersLabel={t('FacetedSearch.resetFilters')}
         showCompare={productComparisonsEnabled}
         showRating={showRating}
-        sortDefaultValue="featured"
+        sortDefaultValue="best_selling"
         sortLabel={t('SortBy.sortBy')}
         sortOptions={[
           { value: 'featured', label: t('SortBy.featuredItems') },

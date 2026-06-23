@@ -227,7 +227,7 @@ export default async function Brand(props: Props) {
       resetFiltersLabel={t('FacetedSearch.resetFilters')}
       showCompare={productComparisonsEnabled}
       showRating={showRating}
-      sortDefaultValue="featured"
+      sortDefaultValue="best_selling"
       sortLabel={t('Search.title')}
       sortOptions={[
         { value: 'featured', label: t('SortBy.featuredItems') },

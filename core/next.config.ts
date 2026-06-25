@@ -91,31 +91,6 @@ export default async (): Promise<NextConfig> => {
         },
       ];
     },
-
-    redirects() {
-      return [
-        {
-          source: '/shop-all/:path*',
-          destination: '/shop/:path*',
-          permanent: true,
-        },
-        {
-          source: '/about-us',
-          destination: '/about',
-          permanent: true,
-        },
-        {
-          source: '/contact-us',
-          destination: '/contact',
-          permanent: true,
-        },
-        {
-          source: '/videos',
-          destination: '/',
-          permanent: true,
-        },
-      ];
-    },
   };
 
   // Apply withNextIntl to the config

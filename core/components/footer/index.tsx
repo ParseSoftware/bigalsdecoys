@@ -106,13 +106,13 @@ export const Footer = async () => {
           href: category.path,
         })),
       },
-      {
-        title: t('brands'),
-        links: removeEdgesAndNodes(sectionsData.brands).map((brand) => ({
-          label: brand.name,
-          href: brand.path,
-        })),
-      },
+      // {
+      //   title: t('brands'),
+      //   links: removeEdgesAndNodes(sectionsData.brands).map((brand) => ({
+      //     label: brand.name,
+      //     href: brand.path,
+      //   })),
+      // },
       {
         title: t('navigate'),
         links: [

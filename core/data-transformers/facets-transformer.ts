@@ -173,6 +173,9 @@ export const facetsTransformer = async ({
     }
 
     if (facet.isFeatured) {
+      return null;
+      // uncomment below to show isFeatured filter in UI
+      /**
       const refinedIsFeaturedSearchFilter =
         refinedFacet.__typename === 'OtherSearchFilter' && refinedFacet.isFeatured
           ? refinedFacet
@@ -192,6 +195,7 @@ export const facetsTransformer = async ({
           },
         ],
       };
+      */
     }
 
     if (facet.isInStock) {

@@ -16,6 +16,16 @@ import { type ProxyFactory } from './compose-proxies';
 
 const trailingSlashDisabled = process.env.TRAILING_SLASH === 'false';
 
+// Custom Next.js routes that should bypass BigCommerce node-based routing.
+// BigCommerce may resolve these paths as NormalPage/ContactPage nodes and redirect
+// them to /webpages/..., but we want to serve our own pages at these paths.
+const CUSTOM_ROUTES = new Set([
+  '/about',
+  '/canada-and-overseas',
+  '/contact',
+  '/shipping-and-returns',
+]);
+
 const GetRouteQuery = graphql(`
   query GetRouteQuery($path: String!) {
     site {
@@ -375,6 +385,17 @@ export const withRoutes: ProxyFactory = () => {
             return NextResponse.redirect(route.redirect.toUrl, redirectConfig);
           }
         }
+      }
+
+      const { pathname: currentPathname } = new URL(req.url);
+      const cleanCustomPath = clearLocaleFromPath(currentPathname, locale);
+
+      if (CUSTOM_ROUTES.has(cleanCustomPath)) {
+        const customRewriteUrl = new URL(`/${locale}${cleanCustomPath}`, req.url);
+
+        customRewriteUrl.search = req.nextUrl.search;
+
+        return NextResponse.rewrite(customRewriteUrl);
       }
 
       const node = route?.node;

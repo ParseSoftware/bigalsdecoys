@@ -32,3 +32,28 @@ export const PricingFragment = graphql(`
     }
   }
 `);
+
+export const BulkPricingFragment = graphql(`
+  fragment BulkPricingFragment on Product {
+    prices(currencyCode: $currencyCode) {
+      price {
+        value
+        currencyCode
+      }
+      bulkPricing {
+        __typename
+        minimumQuantity
+        maximumQuantity
+        ... on BulkPricingFixedPriceDiscount {
+          price
+        }
+        ... on BulkPricingPercentageDiscount {
+          percentOff
+        }
+        ... on BulkPricingRelativePriceDiscount {
+          priceAdjustment
+        }
+      }
+    }
+  }
+`);

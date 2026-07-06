@@ -9,6 +9,16 @@ import {
 } from '~/app/[locale]/(default)/(faceted)/fetch-faceted-search';
 import { ExistingResultType } from '~/client/util';
 
+const SALE_CUSTOM_FIELD_NAME = 'Sale';
+const SALE_CUSTOM_FIELD_VALUE = 'Yes';
+const SALE_FILTER_PARAM_NAME = `attr_${SALE_CUSTOM_FIELD_NAME}`;
+
+const isSaleFilterSelected = (filters: ReturnType<typeof PublicToPrivateParams.parse>['filters']) =>
+  filters.productAttributes?.some(
+    (attr) =>
+      attr.attribute === SALE_CUSTOM_FIELD_NAME && attr.values.includes(SALE_CUSTOM_FIELD_VALUE),
+  ) === true;
+
 export const facetsTransformer = async ({
   refinedFacets,
   allFacets,
@@ -20,17 +30,34 @@ export const facetsTransformer = async ({
 }) => {
   const t = await getTranslations('Faceted.FacetedSearch.Facets');
   const { filters } = PublicToPrivateParams.parse(searchParams);
+  const saleFilterSelected = isSaleFilterSelected(filters);
 
-  return allFacets.map((facet) => {
+  const syntheticSaleFilter = {
+    type: 'toggle-group' as const,
+    paramName: SALE_FILTER_PARAM_NAME,
+    label: t('onSaleLabel'),
+    defaultCollapsed: false,
+    options: [
+      {
+        label: t('onSaleLabel'),
+        value: SALE_CUSTOM_FIELD_VALUE,
+      },
+    ],
+  };
+
+  const transformedFacets = allFacets.map((facet) => {
     const refinedFacet = refinedFacets.find((f) => f.displayName === facet.displayName);
+    const isSaleProductAttributeFilter =
+      facet.__typename === 'ProductAttributeSearchFilter' &&
+      facet.filterKey === SALE_CUSTOM_FIELD_NAME;
 
-    if (refinedFacet == null) {
+    if (refinedFacet == null && !(isSaleProductAttributeFilter && saleFilterSelected)) {
       return null;
     }
 
     if (facet.__typename === 'CategorySearchFilter') {
       const refinedCategorySearchFilter =
-        refinedFacet.__typename === 'CategorySearchFilter' ? refinedFacet : null;
+        refinedFacet?.__typename === 'CategorySearchFilter' ? refinedFacet : null;
 
       return {
         type: 'toggle-group' as const,
@@ -59,7 +86,7 @@ export const facetsTransformer = async ({
 
     if (facet.__typename === 'BrandSearchFilter') {
       const refinedBrandSearchFilter =
-        refinedFacet.__typename === 'BrandSearchFilter' ? refinedFacet : null;
+        refinedFacet?.__typename === 'BrandSearchFilter' ? refinedFacet : null;
 
       return {
         type: 'toggle-group' as const,
@@ -88,12 +115,13 @@ export const facetsTransformer = async ({
 
     if (facet.__typename === 'ProductAttributeSearchFilter') {
       const refinedProductAttributeSearchFilter =
-        refinedFacet.__typename === 'ProductAttributeSearchFilter' ? refinedFacet : null;
+        refinedFacet?.__typename === 'ProductAttributeSearchFilter' ? refinedFacet : null;
+      const isSaleFilter = facet.filterKey === SALE_CUSTOM_FIELD_NAME;
 
       return {
         type: 'toggle-group' as const,
         paramName: `attr_${facet.filterKey}`,
-        label: facet.displayName,
+        label: isSaleFilter ? t('onSaleLabel') : facet.displayName,
         defaultCollapsed: facet.isCollapsedByDefault,
         options: facet.attributes.map((attribute) => {
           const refinedAttribute = refinedProductAttributeSearchFilter?.attributes.find(
@@ -101,14 +129,19 @@ export const facetsTransformer = async ({
           );
 
           const isSelected =
-            filters.productAttributes?.some((attr) => attr.values.includes(attribute.value)) ===
-            true;
+            filters.productAttributes?.some(
+              (attr) => attr.attribute === facet.filterKey && attr.values.includes(attribute.value),
+            ) === true;
 
           const disabled = refinedAttribute == null && !isSelected;
           const productCountLabel = disabled ? '' : ` (${attribute.productCount})`;
+          const valueLabel =
+            isSaleFilter && attribute.value === SALE_CUSTOM_FIELD_VALUE
+              ? t('onSaleLabel')
+              : attribute.value;
           const label = facet.displayProductCount
-            ? `${attribute.value}${productCountLabel}`
-            : attribute.value;
+            ? `${valueLabel}${productCountLabel}`
+            : valueLabel;
 
           return {
             label,
@@ -121,7 +154,7 @@ export const facetsTransformer = async ({
 
     if (facet.__typename === 'RatingSearchFilter') {
       const refinedRatingSearchFilter =
-        refinedFacet.__typename === 'RatingSearchFilter' ? refinedFacet : null;
+        refinedFacet?.__typename === 'RatingSearchFilter' ? refinedFacet : null;
       const isSelected = filters.rating?.minRating != null;
 
       return {
@@ -135,7 +168,7 @@ export const facetsTransformer = async ({
 
     if (facet.__typename === 'PriceSearchFilter') {
       const refinedPriceSearchFilter =
-        refinedFacet.__typename === 'PriceSearchFilter' ? refinedFacet : null;
+        refinedFacet?.__typename === 'PriceSearchFilter' ? refinedFacet : null;
       const isSelected = filters.price?.minPrice != null || filters.price?.maxPrice != null;
 
       return {
@@ -152,7 +185,7 @@ export const facetsTransformer = async ({
 
     if (facet.freeShipping) {
       const refinedFreeShippingSearchFilter =
-        refinedFacet.__typename === 'OtherSearchFilter' && refinedFacet.freeShipping
+        refinedFacet?.__typename === 'OtherSearchFilter' && refinedFacet.freeShipping
           ? refinedFacet
           : null;
       const isSelected = filters.isFreeShipping === true;
@@ -200,7 +233,7 @@ export const facetsTransformer = async ({
 
     if (facet.isInStock) {
       const refinedIsInStockSearchFilter =
-        refinedFacet.__typename === 'OtherSearchFilter' && refinedFacet.isInStock
+        refinedFacet?.__typename === 'OtherSearchFilter' && refinedFacet.isInStock
           ? refinedFacet
           : null;
       const isSelected = filters.hideOutOfStock === true;
@@ -222,4 +255,10 @@ export const facetsTransformer = async ({
 
     return null;
   });
+
+  const hasSaleFilter = transformedFacets.some(
+    (facet) => facet?.type === 'toggle-group' && facet.paramName === SALE_FILTER_PARAM_NAME,
+  );
+
+  return hasSaleFilter ? transformedFacets : [...transformedFacets, syntheticSaleFilter];
 };

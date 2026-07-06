@@ -1,7 +1,7 @@
 import { cache } from 'react';
 
 import { client } from '~/client';
-import { PricingFragment } from '~/client/fragments/pricing';
+import { BulkPricingFragment, PricingFragment } from '~/client/fragments/pricing';
 import { graphql, VariablesOf } from '~/client/graphql';
 import { revalidate } from '~/client/revalidate-target';
 import { FeaturedProductsCarouselFragment } from '~/components/featured-products-carousel/fragment';
@@ -395,6 +395,7 @@ const ProductPricingAndRelatedProductsQuery = graphql(
           useDefaultOptionSelections: $useDefaultOptionSelections
         ) {
           ...PricingFragment
+          ...BulkPricingFragment
           relatedProducts(first: 8) {
             edges {
               node {
@@ -406,7 +407,7 @@ const ProductPricingAndRelatedProductsQuery = graphql(
       }
     }
   `,
-  [PricingFragment, FeaturedProductsCarouselFragment],
+  [PricingFragment, BulkPricingFragment, FeaturedProductsCarouselFragment],
 );
 
 export const getProductPricingAndRelatedProducts = cache(

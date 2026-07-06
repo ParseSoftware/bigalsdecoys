@@ -21,6 +21,12 @@ import {
 import { RatingLink } from './rating-link';
 import { Field } from './schema';
 
+interface BulkPricingTier {
+  label: string;
+  price: string;
+  discount?: string;
+}
+
 interface ProductDetailProduct {
   id: string;
   title: string;
@@ -48,6 +54,7 @@ interface ProductDetailProduct {
   maxQuantity?: Streamable<number | null>;
   stockDisplayData?: Streamable<StockDisplayData | null>;
   backorderDisplayData?: Streamable<BackorderDisplayData | null>;
+  bulkPricing?: Streamable<BulkPricingTier[]>;
 }
 
 export interface ProductDetailProps<F extends Field> {
@@ -65,7 +72,7 @@ export interface ProductDetailProps<F extends Field> {
   thumbnailLabel?: string;
   additionalInformationTitle?: string;
   additionalActions?: ReactNode;
-  reviewFormEmailLabel?: string;
+  bulkPricingTitle?: string;
   reviewFormModalTitle?: string;
   reviewFormNameLabel?: string;
   reviewFormRatingLabel?: string;
@@ -73,6 +80,7 @@ export interface ProductDetailProps<F extends Field> {
   reviewFormSubmitLabel?: string;
   reviewFormTitleLabel?: string;
   reviewFormAction: SubmitReviewAction;
+  reviewFormEmailLabel?: string;
   user: Streamable<{ email: string; name: string }>;
   loadMoreImagesAction?: ProductGalleryLoadMoreAction;
   recaptchaSiteKey?: string;
@@ -108,6 +116,7 @@ export function ProductDetail<F extends Field>({
   thumbnailLabel,
   additionalInformationTitle = 'Additional information',
   additionalActions,
+  bulkPricingTitle = 'Volume pricing',
   reviewFormEmailLabel,
   reviewFormModalTitle,
   reviewFormNameLabel,
@@ -122,7 +131,7 @@ export function ProductDetail<F extends Field>({
 }: ProductDetailProps<F>) {
   return (
     <section className="@container">
-      <div className="group/product-detail mx-auto w-full max-w-screen-2xl px-4 py-10 @xl:px-6 @xl:py-14 @4xl:px-8 @4xl:py-20">
+      <div className="group/product-detail mx-auto w-full max-w-screen-xl px-4 py-10 @xl:px-6 @xl:py-14 @4xl:px-8 @4xl:py-20">
         {breadcrumbs && (
           <div className="group/breadcrumbs mb-6">
             <Breadcrumbs breadcrumbs={breadcrumbs} />
@@ -151,7 +160,7 @@ export function ProductDetail<F extends Field>({
                       {product.subtitle}
                     </p>
                   )}
-                  <h1 className="mb-3 mt-2 font-[family-name:var(--product-detail-title-font-family,var(--font-family-heading))] text-2xl font-medium leading-none @xl:mb-4 @xl:text-3xl @4xl:text-4xl">
+                  <h1 className="mb-3 mt-2 font-[family-name:var(--product-detail-title-font-family,var(--font-family-heading))] text-2xl font-medium uppercase leading-none @xl:mb-4 @xl:text-3xl @4xl:text-4xl">
                     {product.title}
                   </h1>
                   {product.reviewsEnabled && (
@@ -201,6 +210,39 @@ export function ProductDetail<F extends Field>({
                       )}
                     </Stream>
                   </div>
+                  {product.bulkPricing != null && (
+                    <div className="group/product-bulk-pricing">
+                      <Stream fallback={null} value={product.bulkPricing}>
+                        {(bulkPricing) =>
+                          bulkPricing.length > 0 && (
+                            <div className="my-6 rounded-lg border border-[var(--product-detail-border,hsl(var(--contrast-100)))] p-4">
+                              <h3 className="mb-3 font-[family-name:var(--product-detail-subtitle-font-family,var(--font-family-mono))] text-sm uppercase text-[var(--product-detail-primary-text,hsl(var(--foreground)))]">
+                                {bulkPricingTitle}
+                              </h3>
+                              <dl className="flex flex-col gap-2">
+                                {bulkPricing.map((tier, index) => (
+                                  <div
+                                    className="flex items-baseline justify-between gap-4 text-sm"
+                                    key={index}
+                                  >
+                                    <dt className="text-[var(--product-detail-secondary-text,hsl(var(--contrast-500)))]">
+                                      {tier.label}
+                                      {tier.discount != null && (
+                                        <span className="ml-2">({tier.discount})</span>
+                                      )}
+                                    </dt>
+                                    <dd className="font-medium text-[var(--product-detail-primary-text,hsl(var(--foreground)))]">
+                                      {tier.price}
+                                    </dd>
+                                  </div>
+                                ))}
+                              </dl>
+                            </div>
+                          )
+                        }
+                      </Stream>
+                    </div>
+                  )}
                   <div className="group/product-gallery mb-8 @2xl:hidden">
                     <Stream fallback={<ProductGallerySkeleton />} value={product.images}>
                       {(imagesData) => (

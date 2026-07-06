@@ -8,6 +8,7 @@ import { Stream, Streamable } from '@/vibes/soul/lib/streamable';
 import { FeaturedProductCarousel } from '@/vibes/soul/sections/featured-product-carousel';
 import { ProductDetail } from '@/vibes/soul/sections/product-detail';
 import { auth, getSessionCustomerAccessToken } from '~/auth';
+import { bulkPricingTransformer } from '~/data-transformers/bulk-pricing-transformer';
 import { rewriteWysiwygContentUrls } from '~/data-transformers/html-content-transformer';
 import { pricesTransformer } from '~/data-transformers/prices-transformer';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
@@ -186,6 +187,16 @@ export default async function Product({ params, searchParams }: Props) {
     }
 
     return pricesTransformer(product.prices, format) ?? null;
+  });
+
+  const streamableBulkPricing = Streamable.from(async () => {
+    const product = await streamableProductPricingAndRelatedProducts;
+
+    if (!product) {
+      return [];
+    }
+
+    return bulkPricingTransformer(product.prices, format);
   });
 
   const streamableImages = Streamable.from(async () => {
@@ -564,6 +575,7 @@ export default async function Product({ params, searchParams }: Props) {
             />
           }
           additionalInformationTitle={t('ProductDetails.additionalInformation')}
+          bulkPricingTitle={t('ProductDetails.bulkPricing')}
           ctaDisabled={streameableCtaDisabled}
           ctaLabel={streameableCtaLabel}
           decrementLabel={t('ProductDetails.decreaseQuantity')}
@@ -595,6 +607,7 @@ export default async function Product({ params, searchParams }: Props) {
             maxQuantity: streamableMaxQuantity,
             stockDisplayData: streamableStockDisplayData,
             backorderDisplayData: streamableBackorderDisplayData,
+            bulkPricing: streamableBulkPricing,
           }}
           quantityLabel={t('ProductDetails.quantity')}
           recaptchaSiteKey={recaptchaSiteKey}

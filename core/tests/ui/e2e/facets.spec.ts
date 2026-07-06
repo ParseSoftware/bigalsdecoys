@@ -37,6 +37,21 @@ test('Blue color filter shows expected product on shop-all page', async ({ page 
   await expect(page.getByRole('link', { name: PRODUCT_LE_PARFAIT_JAR })).toBeVisible();
 });
 
+test('Sale header link opens shop-all with On Sale filter active', async ({ page }) => {
+  await page.goto('/');
+
+  await page.getByRole('link', { name: 'Sale' }).click();
+
+  await expect(page).toHaveURL(
+    (url) => url.pathname === '/shop/' && url.searchParams.get('attr_Sale') === 'Yes',
+  );
+  await expect(page.getByRole('heading', { name: /Shop All/ })).toBeVisible();
+  await expandFilterIfNeeded(page, 'On Sale');
+  await expect(
+    page.getByRole('region', { name: 'On Sale' }).getByRole('button', { name: /On Sale/ }),
+  ).toHaveAttribute('data-state', 'on');
+});
+
 test('Brand filter shows correct products', async ({ page }) => {
   await page.goto(SHOP_ALL_URL);
   await expect(page.getByRole('heading', { name: 'Shop All 13' })).toBeVisible();

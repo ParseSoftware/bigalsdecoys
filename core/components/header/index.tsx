@@ -166,7 +166,7 @@ export const Header = async () => {
     <HeaderSection
       banner={{
         id: 'bigals-announcement',
-        children: 'FREE SHIPPING ON ORDERS OVER $150 · MADE IN THE USA',
+        children: <></>,
         hideDismiss: true,
       }}
       navigation={{

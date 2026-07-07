@@ -39,6 +39,7 @@ import { usePathname, useRouter } from '~/i18n/routing';
 import { useSearch } from '~/lib/search';
 
 interface Link {
+  className: ClassValue;
   label: string;
   href: string;
   groups?: Array<{

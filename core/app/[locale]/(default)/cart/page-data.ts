@@ -5,6 +5,8 @@ import { client } from '~/client';
 import { graphql, VariablesOf } from '~/client/graphql';
 import { revalidate } from '~/client/revalidate-target';
 import { TAGS } from '~/client/tags';
+import { FeaturedProductsCarouselFragment } from '~/components/featured-products-carousel/fragment';
+import { CurrencyCode } from '~/components/header/fragment';
 
 export const PhysicalItemFragment = graphql(`
   fragment PhysicalItemFragment on CartPhysicalItem {
@@ -351,4 +353,34 @@ export const getShippingCountries = cache(async () => {
   });
 
   return data.site.settings?.shipping?.supportedShippingDestinations.countries ?? [];
+});
+
+const CartRecommendationsQuery = graphql(
+  `
+    query CartRecommendationsQuery($currencyCode: currencyCode) {
+      site {
+        featuredProducts(first: 8) {
+          edges {
+            node {
+              ...FeaturedProductsCarouselFragment
+            }
+          }
+        }
+      }
+    }
+  `,
+  [FeaturedProductsCarouselFragment],
+);
+
+export const getCartRecommendations = cache(async (currencyCode?: CurrencyCode) => {
+  const customerAccessToken = await getSessionCustomerAccessToken();
+
+  const { data } = await client.fetch({
+    document: CartRecommendationsQuery,
+    variables: { currencyCode },
+    customerAccessToken,
+    fetchOptions: { next: { revalidate } },
+  });
+
+  return data.site.featuredProducts;
 });

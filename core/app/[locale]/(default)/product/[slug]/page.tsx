@@ -8,6 +8,7 @@ import { Stream, Streamable } from '@/vibes/soul/lib/streamable';
 import { FeaturedProductCarousel } from '@/vibes/soul/sections/featured-product-carousel';
 import { ProductDetail } from '@/vibes/soul/sections/product-detail';
 import { auth, getSessionCustomerAccessToken } from '~/auth';
+import { TrustBadges } from '~/components/trust-badges';
 import { bulkPricingTransformer } from '~/data-transformers/bulk-pricing-transformer';
 import { rewriteWysiwygContentUrls } from '~/data-transformers/html-content-transformer';
 import { pricesTransformer } from '~/data-transformers/prices-transformer';
@@ -616,6 +617,8 @@ export default async function Product({ params, searchParams }: Props) {
           user={streamableUser}
         />
       </ProductAnalyticsProvider>
+
+      <TrustBadges variant="inline" />
 
       <FeaturedProductCarousel
         cta={{ label: t('RelatedProducts.cta'), href: '/shop' }}

@@ -1,3 +1,4 @@
+import { Tag } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { Stream, Streamable } from '@/vibes/soul/lib/streamable';
@@ -20,6 +21,7 @@ import {
 } from './product-detail-form';
 import { RatingLink } from './rating-link';
 import { Field } from './schema';
+import { StickyAddToCart } from './sticky-add-to-cart';
 
 interface BulkPricingTier {
   label: string;
@@ -140,110 +142,9 @@ export function ProductDetail<F extends Field>({
         <Stream fallback={<ProductDetailSkeleton />} value={streamableProduct}>
           {(product) =>
             product && (
-              <div className="grid grid-cols-1 items-stretch gap-x-8 gap-y-8 @2xl:grid-cols-2 @5xl:gap-x-12">
-                <div className="group/product-gallery hidden @2xl:block">
-                  <Stream fallback={<ProductGallerySkeleton />} value={product.images}>
-                    {(imagesData) => (
-                      <ProductGallery
-                        images={imagesData.images}
-                        loadMoreAction={loadMoreImagesAction}
-                        pageInfo={imagesData.pageInfo}
-                        productId={Number(product.id)}
-                      />
-                    )}
-                  </Stream>
-                </div>
-                {/* Product Details */}
-                <div className="text-[var(--product-detail-primary-text,hsl(var(--foreground)))]">
-                  {Boolean(product.subtitle) && (
-                    <p className="font-[family-name:var(--product-detail-subtitle-font-family,var(--font-family-mono))] text-sm uppercase">
-                      {product.subtitle}
-                    </p>
-                  )}
-                  <h1 className="mb-3 mt-2 font-[family-name:var(--product-detail-title-font-family,var(--font-family-heading))] text-2xl font-medium uppercase leading-none @xl:mb-4 @xl:text-3xl @4xl:text-4xl">
-                    {product.title}
-                  </h1>
-                  {product.reviewsEnabled && (
-                    <div className="group/product-rating">
-                      <ReviewForm
-                        action={reviewFormAction}
-                        formEmailLabel={reviewFormEmailLabel}
-                        formModalTitle={reviewFormModalTitle}
-                        formNameLabel={reviewFormNameLabel}
-                        formRatingLabel={reviewFormRatingLabel}
-                        formReviewLabel={reviewFormReviewLabel}
-                        formSubmitLabel={reviewFormSubmitLabel}
-                        formTitleLabel={reviewFormTitleLabel}
-                        productId={Number(product.id)}
-                        recaptchaSiteKey={recaptchaSiteKey}
-                        streamableImages={product.images}
-                        streamableProduct={{ name: product.title }}
-                        streamableUser={user}
-                        trigger={
-                          <AnimatedUnderline className="cursor-pointer">
-                            Write a review
-                          </AnimatedUnderline>
-                        }
-                      />
-                    </div>
-                  )}
-                  {product.showRating && (
-                    <div className="group/product-rating">
-                      <Stream
-                        fallback={<RatingSkeleton />}
-                        value={Streamable.all([product.rating, product.numberOfReviews])}
-                      >
-                        {([rating, numberOfReviews]) => (
-                          <RatingLink
-                            numberOfReviews={numberOfReviews ?? 0}
-                            rating={rating ?? 0}
-                            scrollTargetId="reviews"
-                          />
-                        )}
-                      </Stream>
-                    </div>
-                  )}
-                  <div className="group/product-price">
-                    <Stream fallback={<PriceLabelSkeleton />} value={product.price}>
-                      {(price) => (
-                        <PriceLabel className="my-3 text-xl @xl:text-2xl" price={price ?? ''} />
-                      )}
-                    </Stream>
-                  </div>
-                  {product.bulkPricing != null && (
-                    <div className="group/product-bulk-pricing">
-                      <Stream fallback={null} value={product.bulkPricing}>
-                        {(bulkPricing) =>
-                          bulkPricing.length > 0 && (
-                            <div className="my-6 rounded-lg border border-[var(--product-detail-border,hsl(var(--contrast-100)))] p-4">
-                              <h3 className="mb-3 font-[family-name:var(--product-detail-subtitle-font-family,var(--font-family-mono))] text-sm uppercase text-[var(--product-detail-primary-text,hsl(var(--foreground)))]">
-                                {bulkPricingTitle}
-                              </h3>
-                              <dl className="flex flex-col gap-2">
-                                {bulkPricing.map((tier, index) => (
-                                  <div
-                                    className="flex items-baseline justify-between gap-4 text-sm"
-                                    key={index}
-                                  >
-                                    <dt className="text-[var(--product-detail-secondary-text,hsl(var(--contrast-500)))]">
-                                      {tier.label}
-                                      {tier.discount != null && (
-                                        <span className="ml-2">({tier.discount})</span>
-                                      )}
-                                    </dt>
-                                    <dd className="font-medium text-[var(--product-detail-primary-text,hsl(var(--foreground)))]">
-                                      {tier.price}
-                                    </dd>
-                                  </div>
-                                ))}
-                              </dl>
-                            </div>
-                          )
-                        }
-                      </Stream>
-                    </div>
-                  )}
-                  <div className="group/product-gallery mb-8 @2xl:hidden">
+              <>
+                <div className="grid grid-cols-1 items-stretch gap-x-8 gap-y-8 @2xl:grid-cols-2 @5xl:gap-x-12">
+                  <div className="group/product-gallery hidden @2xl:block">
                     <Stream fallback={<ProductGallerySkeleton />} value={product.images}>
                       {(imagesData) => (
                         <ProductGallery
@@ -251,100 +152,228 @@ export function ProductDetail<F extends Field>({
                           loadMoreAction={loadMoreImagesAction}
                           pageInfo={imagesData.pageInfo}
                           productId={Number(product.id)}
-                          thumbnailLabel={thumbnailLabel}
                         />
                       )}
                     </Stream>
                   </div>
-                  <div className="group/product-summary">
-                    <Stream fallback={<ProductSummarySkeleton />} value={product.summary}>
-                      {(summary) =>
-                        Boolean(summary) && (
-                          <p className="text-[var(--product-detail-secondary-text,hsl(var(--contrast-500)))]">
-                            {summary}
-                          </p>
-                        )
-                      }
-                    </Stream>
-                  </div>
-                  <div className="group/product-detail-form">
-                    <Stream
-                      fallback={<ProductDetailFormSkeleton />}
-                      value={Streamable.all([
-                        streamableFields,
-                        streamableCtaLabel,
-                        streamableCtaDisabled,
-                        product.minQuantity,
-                        product.maxQuantity,
-                        product.stockDisplayData,
-                        product.backorderDisplayData,
-                      ])}
-                    >
-                      {([
-                        fields,
-                        ctaLabel,
-                        ctaDisabled,
-                        minQuantity,
-                        maxQuantity,
-                        stockDisplayData,
-                        backorderDisplayData,
-                      ]) => (
-                        <ProductDetailForm
-                          action={action}
-                          additionalActions={additionalActions}
-                          backorderDisplayData={backorderDisplayData ?? undefined}
-                          ctaDisabled={ctaDisabled ?? undefined}
-                          ctaLabel={ctaLabel ?? undefined}
-                          decrementLabel={decrementLabel}
-                          emptySelectPlaceholder={emptySelectPlaceholder}
-                          fields={fields}
-                          incrementLabel={incrementLabel}
-                          maxQuantity={maxQuantity ?? undefined}
-                          minQuantity={minQuantity ?? undefined}
-                          prefetch={prefetch}
-                          productId={product.id}
-                          quantityLabel={quantityLabel}
-                          stockDisplayData={stockDisplayData ?? undefined}
+                  {/* Product Details */}
+                  <div className="text-[var(--product-detail-primary-text,hsl(var(--foreground)))]">
+                    {Boolean(product.subtitle) && (
+                      <p className="font-[family-name:var(--product-detail-subtitle-font-family,var(--font-family-mono))] text-sm uppercase">
+                        {product.subtitle}
+                      </p>
+                    )}
+                    <h1 className="font-display mb-3 mt-2 text-3xl uppercase leading-none @xl:mb-4 @xl:text-4xl @4xl:text-5xl">
+                      {product.title}
+                    </h1>
+                    {product.reviewsEnabled && (
+                      <div className="group/product-rating">
+                        <ReviewForm
+                          action={reviewFormAction}
+                          formEmailLabel={reviewFormEmailLabel}
+                          formModalTitle={reviewFormModalTitle}
+                          formNameLabel={reviewFormNameLabel}
+                          formRatingLabel={reviewFormRatingLabel}
+                          formReviewLabel={reviewFormReviewLabel}
+                          formSubmitLabel={reviewFormSubmitLabel}
+                          formTitleLabel={reviewFormTitleLabel}
+                          productId={Number(product.id)}
+                          recaptchaSiteKey={recaptchaSiteKey}
+                          streamableImages={product.images}
+                          streamableProduct={{ name: product.title }}
+                          streamableUser={user}
+                          trigger={
+                            <AnimatedUnderline className="cursor-pointer">
+                              Write a review
+                            </AnimatedUnderline>
+                          }
                         />
-                      )}
-                    </Stream>
-                  </div>
-                  <div className="group/product-description">
-                    <Stream fallback={<ProductDescriptionSkeleton />} value={product.description}>
-                      {(description) =>
-                        Boolean(description) && (
-                          <div className="prose prose-sm max-w-none border-t border-[var(--product-detail-border,hsl(var(--contrast-100)))] py-8 [&>div>*:first-child]:mt-0 [&>div>*:last-child]:mb-0">
-                            {description}
-                          </div>
-                        )
-                      }
-                    </Stream>
-                  </div>
-                  <h2 className="sr-only">{additionalInformationTitle}</h2>
-                  <div className="group/product-accordion">
-                    <Stream fallback={<ProductAccordionsSkeleton />} value={product.accordions}>
-                      {(accordions) =>
-                        accordions && (
-                          <Accordion
-                            className="border-t border-[var(--product-detail-border,hsl(var(--contrast-100)))] pt-4"
-                            type="multiple"
-                          >
-                            {accordions.map((accordion, index) => (
-                              <AccordionItem
-                                key={index}
-                                title={accordion.title}
-                                value={index.toString()}
-                              >
-                                {accordion.content}
-                              </AccordionItem>
-                            ))}
-                          </Accordion>
-                        )
-                      }
-                    </Stream>
+                      </div>
+                    )}
+                    {product.showRating && (
+                      <div className="group/product-rating">
+                        <Stream
+                          fallback={<RatingSkeleton />}
+                          value={Streamable.all([product.rating, product.numberOfReviews])}
+                        >
+                          {([rating, numberOfReviews]) => (
+                            <RatingLink
+                              numberOfReviews={numberOfReviews ?? 0}
+                              rating={rating ?? 0}
+                              scrollTargetId="reviews"
+                            />
+                          )}
+                        </Stream>
+                      </div>
+                    )}
+                    <div className="group/product-price">
+                      <Stream fallback={<PriceLabelSkeleton />} value={product.price}>
+                        {(price) => (
+                          <PriceLabel
+                            className="font-display my-3 text-3xl @xl:text-4xl"
+                            price={price ?? ''}
+                          />
+                        )}
+                      </Stream>
+                    </div>
+                    {product.bulkPricing != null && (
+                      <div className="group/product-bulk-pricing">
+                        <Stream fallback={null} value={product.bulkPricing}>
+                          {(bulkPricing) =>
+                            bulkPricing.length > 0 && (
+                              <div className="my-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
+                                <h3 className="mb-3 flex items-center gap-2 font-heading text-sm font-bold uppercase tracking-wide text-foreground">
+                                  <Tag className="h-4 w-4 text-primary" strokeWidth={2} />
+                                  {bulkPricingTitle}
+                                </h3>
+                                <dl className="flex flex-col gap-2">
+                                  {bulkPricing.map((tier, index) => (
+                                    <div
+                                      className="flex items-baseline justify-between gap-4 text-sm"
+                                      key={index}
+                                    >
+                                      <dt className="text-contrast-500">
+                                        {tier.label}
+                                        {tier.discount != null && (
+                                          <span className="ml-2 font-semibold text-primary">
+                                            ({tier.discount})
+                                          </span>
+                                        )}
+                                      </dt>
+                                      <dd className="font-display text-base text-foreground">
+                                        {tier.price}
+                                      </dd>
+                                    </div>
+                                  ))}
+                                </dl>
+                              </div>
+                            )
+                          }
+                        </Stream>
+                      </div>
+                    )}
+                    <div className="group/product-gallery mb-8 @2xl:hidden">
+                      <Stream fallback={<ProductGallerySkeleton />} value={product.images}>
+                        {(imagesData) => (
+                          <ProductGallery
+                            images={imagesData.images}
+                            loadMoreAction={loadMoreImagesAction}
+                            pageInfo={imagesData.pageInfo}
+                            productId={Number(product.id)}
+                            thumbnailLabel={thumbnailLabel}
+                          />
+                        )}
+                      </Stream>
+                    </div>
+                    <div className="group/product-summary">
+                      <Stream fallback={<ProductSummarySkeleton />} value={product.summary}>
+                        {(summary) =>
+                          Boolean(summary) && (
+                            <p className="text-[var(--product-detail-secondary-text,hsl(var(--contrast-500)))]">
+                              {summary}
+                            </p>
+                          )
+                        }
+                      </Stream>
+                    </div>
+                    <div className="group/product-detail-form">
+                      <Stream
+                        fallback={<ProductDetailFormSkeleton />}
+                        value={Streamable.all([
+                          streamableFields,
+                          streamableCtaLabel,
+                          streamableCtaDisabled,
+                          product.minQuantity,
+                          product.maxQuantity,
+                          product.stockDisplayData,
+                          product.backorderDisplayData,
+                        ])}
+                      >
+                        {([
+                          fields,
+                          ctaLabel,
+                          ctaDisabled,
+                          minQuantity,
+                          maxQuantity,
+                          stockDisplayData,
+                          backorderDisplayData,
+                        ]) => (
+                          <ProductDetailForm
+                            action={action}
+                            additionalActions={additionalActions}
+                            backorderDisplayData={backorderDisplayData ?? undefined}
+                            ctaDisabled={ctaDisabled ?? undefined}
+                            ctaLabel={ctaLabel ?? undefined}
+                            decrementLabel={decrementLabel}
+                            emptySelectPlaceholder={emptySelectPlaceholder}
+                            fields={fields}
+                            incrementLabel={incrementLabel}
+                            maxQuantity={maxQuantity ?? undefined}
+                            minQuantity={minQuantity ?? undefined}
+                            prefetch={prefetch}
+                            productId={product.id}
+                            quantityLabel={quantityLabel}
+                            stockDisplayData={stockDisplayData ?? undefined}
+                          />
+                        )}
+                      </Stream>
+                    </div>
+                    <div className="group/product-description">
+                      <Stream fallback={<ProductDescriptionSkeleton />} value={product.description}>
+                        {(description) =>
+                          Boolean(description) && (
+                            <div className="prose prose-sm max-w-none border-t border-[var(--product-detail-border,hsl(var(--contrast-100)))] py-8 [&>div>*:first-child]:mt-0 [&>div>*:last-child]:mb-0">
+                              {description}
+                            </div>
+                          )
+                        }
+                      </Stream>
+                    </div>
+                    <h2 className="sr-only">{additionalInformationTitle}</h2>
+                    <div className="group/product-accordion">
+                      <Stream fallback={<ProductAccordionsSkeleton />} value={product.accordions}>
+                        {(accordions) =>
+                          accordions && (
+                            <Accordion
+                              className="border-t border-[var(--product-detail-border,hsl(var(--contrast-100)))] pt-4"
+                              type="multiple"
+                            >
+                              {accordions.map((accordion, index) => (
+                                <AccordionItem
+                                  key={index}
+                                  title={accordion.title}
+                                  value={index.toString()}
+                                >
+                                  {accordion.content}
+                                </AccordionItem>
+                              ))}
+                            </Accordion>
+                          )
+                        }
+                      </Stream>
+                    </div>
                   </div>
                 </div>
-              </div>
+                <Stream
+                  fallback={null}
+                  value={Streamable.all([
+                    product.images,
+                    product.price,
+                    streamableCtaLabel,
+                    streamableCtaDisabled,
+                  ])}
+                >
+                  {([imagesData, price, ctaLabel, ctaDisabled]) => (
+                    <StickyAddToCart
+                      ctaDisabled={ctaDisabled ?? undefined}
+                      ctaLabel={ctaLabel ?? undefined}
+                      image={imagesData.images[0]}
+                      price={price ?? undefined}
+                      title={product.title}
+                    />
+                  )}
+                </Stream>
+              </>
             )
           }
         </Stream>

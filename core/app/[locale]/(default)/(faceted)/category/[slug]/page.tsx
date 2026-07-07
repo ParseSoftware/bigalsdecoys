@@ -10,6 +10,7 @@ import { createCompareLoader } from '@/vibes/soul/primitives/compare-drawer/load
 import { ProductsListSection } from '@/vibes/soul/sections/products-list-section';
 import { getFilterParsers } from '@/vibes/soul/sections/products-list-section/filter-parsers';
 import { getSessionCustomerAccessToken } from '~/auth';
+import { TrustBadges } from '~/components/trust-badges';
 import { facetsTransformer } from '~/data-transformers/facets-transformer';
 import { pageInfoTransformer } from '~/data-transformers/page-info-transformer';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
@@ -283,6 +284,7 @@ export default async function Category(props: Props) {
         title={category.name}
         totalCount={streamableTotalCount}
       />
+      <TrustBadges variant="inline" />
       <Stream value={streamableFacetedSearch}>
         {(search) => <CategoryViewed category={category} products={search.products.items} />}
       </Stream>

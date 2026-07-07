@@ -1,4 +1,4 @@
-import { Inter, Oswald, Roboto_Mono } from 'next/font/google';
+import { Anton, Inter, Oswald, Roboto_Mono } from 'next/font/google';
 
 const inter = Inter({
   display: 'swap',
@@ -13,10 +13,18 @@ const oswald = Oswald({
   variable: '--font-family-heading',
 });
 
+// Big Al's brand display font — used for large hero/price/marquee headlines.
+const anton = Anton({
+  display: 'swap',
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-family-display',
+});
+
 const robotoMono = Roboto_Mono({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-family-mono',
 });
 
-export const fonts = [inter, oswald, robotoMono];
+export const fonts = [inter, oswald, anton, robotoMono];

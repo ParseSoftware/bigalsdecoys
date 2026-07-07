@@ -232,7 +232,7 @@ export function ProductDetailForm<F extends Field>({
   return (
     <FormProvider context={form.context}>
       <FormStateInput />
-      <form {...getFormProps(form)} action={formAction}>
+      <form {...getFormProps(form)} action={formAction} data-product-detail-form>
         <input name="id" type="hidden" value={productId} />
         <div className="space-y-6 pb-8">
           {fields.map((field) => {
@@ -299,7 +299,7 @@ export function ProductDetailForm<F extends Field>({
             )}
           </div>
 
-          <div className="flex gap-x-3">
+          <div className="flex gap-x-3" data-product-detail-cta>
             <NumberInput
               aria-label={quantityLabel}
               decrementLabel={decrementLabel}

@@ -6,14 +6,15 @@ import { Stream, Streamable } from '@/vibes/soul/lib/streamable';
 import { FeaturedProductCarousel } from '@/vibes/soul/sections/featured-product-carousel';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { Subscribe } from '~/components/subscribe';
+import { TrustBadges } from '~/components/trust-badges';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
 
 import { BrandStory } from './_components/brand-story';
 import { CategoryGrid } from './_components/category-grid';
-import { ImageSlideshow } from './_components/image-slideshow';
-import { TrustBadges } from './_components/trust-badges';
+import { Hero } from './_components/hero';
+import { Reviews } from './_components/reviews';
 import { getPageData } from './page-data';
 import BrandStoryImage from './_images/Canada Lifestyle/instagram_DM7rh5pORvi.jpg';
 
@@ -70,7 +71,7 @@ export default async function Home({ params }: Props) {
 
   return (
     <>
-      <ImageSlideshow />
+      <Hero />
 
       <CategoryGrid />
 
@@ -94,6 +95,8 @@ export default async function Home({ params }: Props) {
           blurDataUrl: BrandStoryImage.blurDataURL,
         }}
       />
+
+      <Reviews />
 
       <Stream fallback={null} value={streamableShowNewsletterSignup}>
         {(showNewsletterSignup) => showNewsletterSignup && <Subscribe />}

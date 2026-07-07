@@ -138,6 +138,7 @@ const config = {
             fontVariationSettings: 'var(--font-variation-settings-heading)',
           },
         ],
+        display: ['var(--font-family-display)', 'var(--font-family-heading)', 'sans-serif'],
         body: [
           'var(--font-family-body)',
           {
@@ -227,6 +228,10 @@ const config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0%)' },
         },
+        ticker: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         collapse: 'collapse 400ms cubic-bezier(1, 0, 0.25, 1)',
@@ -237,6 +242,7 @@ const config = {
         scrollLeft: 'scrollLeft var(--marquee-duration) linear infinite',
         shake: 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
         slideIn: 'slideIn 800ms cubic-bezier(0.25, 1, 0, 1)',
+        ticker: 'ticker var(--ticker-duration, 32s) linear infinite',
       },
     },
   },

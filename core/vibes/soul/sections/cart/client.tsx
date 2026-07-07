@@ -7,6 +7,7 @@ import { ArrowRight, GiftIcon, Minus, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
   ComponentPropsWithoutRef,
+  ReactNode,
   startTransition,
   useActionState,
   useEffect,
@@ -170,6 +171,7 @@ export interface CartProps<LineItem extends CartLineItem> {
   giftCertificate?: GiftCertificate;
   shipping?: Shipping;
   lineItemActionPendingLabel?: string;
+  freeShippingBanner?: ReactNode;
 }
 
 const defaultEmptyState = {
@@ -218,6 +220,7 @@ export function CartClient<LineItem extends CartLineItem>({
   emptyState = defaultEmptyState,
   summaryTitle,
   shipping,
+  freeShippingBanner,
 }: CartProps<LineItem>) {
   const events = useEvents();
   const [state, formAction, isLineItemActionPending] = useActionState(lineItemAction, {
@@ -434,6 +437,7 @@ export function CartClient<LineItem extends CartLineItem>({
             {optimisticQuantity}
           </span>
         </h1>
+        {freeShippingBanner}
         {/* Cart Items */}
         <ul className="flex flex-col gap-5">
           {optimisticLineItems.map((lineItem) => (

@@ -26,6 +26,43 @@
       }
     },
 
+    "Hero": {
+      "eyebrow": "American Made · Est. 2018 · Kalispell, MT",
+      "headlineLine1": "Decoys That",
+      "headlineLine2": "Pull Birds.",
+      "subtitle": "Realistic silhouette decoys with an ultra-matte finish printed on heavy-duty, ultra-durable material. Made in USA.",
+      "primaryCta": "Shop Decoys",
+      "secondaryCta": "View Sale",
+      "imageAlt": "Hunter setting up goose decoys in a field at sunset",
+      "stats": {
+        "freeShipping": "Free Shipping $150+",
+        "fastShipping": "Ships in 2 Days",
+        "returns": "30-Day Returns",
+        "madeInUSA": "Made in USA"
+      }
+    },
+
+    "Testimonials": {
+      "title": "Hunters Trust Big Al's",
+      "items": {
+        "jake": {
+          "name": "Jake M.",
+          "location": "Great Falls, MT",
+          "quote": "Best silhouette decoys I've ever put in a field. The Greaters pulled three flocks in one morning. Won't hunt without them."
+        },
+        "chris": {
+          "name": "Chris W.",
+          "location": "Bismarck, ND",
+          "quote": "Ordered X14 Greaters Tuesday, hunting with them by Friday. Quality is unreal for the price. Absolute no-brainer."
+        },
+        "dave": {
+          "name": "Dave T.",
+          "location": "Sacramento, CA",
+          "quote": "The Ken White Super Specks are the real deal. Limited out three days in a row last fall. These decoys flat-out work."
+        }
+      }
+    },
+
     "FeaturedProducts": {
       "title": "Featured collection",
       "description": "Explore our top picks in this featured collection. Find the perfect gift or treat yourself!",
@@ -47,24 +84,6 @@
       "title": "Collections",
       "cta": "View all",
       "viewAll": "View All"
-    },
-    "TrustBadges": {
-      "madeInUSA": {
-        "title": "Made in USA",
-        "subtitle": "Printed & assembled stateside"
-      },
-      "freeShipping": {
-        "title": "Free Shipping $150+",
-        "subtitle": "Ships in 2 business days"
-      },
-      "returns": {
-        "title": "30-Day Returns",
-        "subtitle": "No-hassle exchanges"
-      },
-      "secureCheckout": {
-        "title": "Secure Checkout",
-        "subtitle": "All major cards accepted"
-      }
     },
     "BrandStory": {
       "eyebrow": "Family-owned",
@@ -416,6 +435,17 @@
     "increment": "Increase quantity",
     "decrement": "Decrease quantity",
     "removeItem": "Remove item",
+    "FreeShipping": {
+      "remaining": "Add {amount} more for free shipping",
+      "qualified": "Your order qualifies for free shipping!"
+    },
+    "Recommendations": {
+      "title": "Complete Your Spread",
+      "cta": "Shop all",
+      "scrollbar": "Product recommendations scrollbar",
+      "previousProducts": "Previous products",
+      "nextProducts": "Next products"
+    },
     "cartCombined": "We noticed you had items saved in a previous cart, so we've added them to your current cart for you.",
     "cartRestored": "You started a cart on another device, and we've restored it here so you can pick up where you left off.",
     "cartUpdateInProgress": "You have a cart update in progress. Are you sure you want to leave this page? Your changes may be lost.",
@@ -615,6 +645,8 @@
     "Header": {
       "home": "Home",
       "sale": "Sale",
+      "about": "About",
+      "contact": "Contact",
       "toggleNavigation": "Toggle navigation",
       "Icons": {
         "account": "Profile",
@@ -636,6 +668,32 @@
         "somethingWentWrong": "Something went wrong. Please try again.",
         "inputPlaceholder": "Search products, categories, brands...",
         "submitLabel": "Search"
+      }
+    },
+    "TrustBadges": {
+      "madeInUSA": {
+        "title": "Made in USA",
+        "subtitle": "Printed & assembled stateside"
+      },
+      "freeShipping": {
+        "title": "Free Shipping $150+",
+        "subtitle": "Ships in 2 business days"
+      },
+      "builtToLast": {
+        "title": "Built to Last",
+        "subtitle": "Heavy-duty, ultra-durable material"
+      },
+      "returns": {
+        "title": "30-Day Returns",
+        "subtitle": "No-hassle exchanges"
+      },
+      "secureCheckout": {
+        "title": "Secure Checkout",
+        "subtitle": "All major cards accepted"
+      },
+      "bulkPricing": {
+        "title": "Bulk Pricing Available",
+        "subtitle": "Contact us for custom quotes"
       }
     },
     "Footer": {

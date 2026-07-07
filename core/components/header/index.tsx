@@ -17,6 +17,7 @@ import { getPreferredCurrencyCode } from '~/lib/currency';
 import { search } from './_actions/search';
 import { switchCurrency } from './_actions/switch-currency';
 import { CurrencyCode, HeaderFragment, HeaderLinksFragment } from './fragment';
+import { TickerTape } from './ticker-tape';
 
 const SALE_FILTER_HREF = '/shop?attr_Sale=Yes';
 
@@ -113,6 +114,7 @@ export const Header = async () => {
 
     return [
       ...slicedTree.map(({ name, path, children }) => ({
+        className: undefined,
         label: name,
         href: path,
         groups: children.map((firstChild) => ({
@@ -128,6 +130,16 @@ export const Header = async () => {
         label: t('sale'),
         href: SALE_FILTER_HREF,
         className: 'text-primary',
+      },
+      {
+        label: t('about'),
+        href: '/about',
+        className: undefined,
+      },
+      {
+        label: t('contact'),
+        href: '/contact',
+        className: undefined,
       },
     ];
   });
@@ -166,7 +178,7 @@ export const Header = async () => {
     <HeaderSection
       banner={{
         id: 'bigals-announcement',
-        children: <></>,
+        children: <TickerTape />,
         hideDismiss: true,
       }}
       navigation={{

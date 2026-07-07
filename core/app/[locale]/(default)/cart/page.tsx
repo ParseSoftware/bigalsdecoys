@@ -1,9 +1,14 @@
+import { removeEdgesAndNodes } from '@bigcommerce/catalyst-client';
 import { Metadata } from 'next';
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Streamable } from '@/vibes/soul/lib/streamable';
 import { Cart as CartComponent, CartEmptyState } from '@/vibes/soul/sections/cart';
+import { FeaturedProductCarousel } from '@/vibes/soul/sections/featured-product-carousel';
 import { CartAnalyticsProvider } from '~/app/[locale]/(default)/cart/_components/cart-analytics-provider';
+import { FreeShippingProgress } from '~/components/free-shipping-progress';
+import { productCardTransformer } from '~/data-transformers/product-card-transformer';
+import { FREE_SHIPPING_THRESHOLD } from '~/lib/brand';
 import { getCartId } from '~/lib/cart';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { exists } from '~/lib/utils';
@@ -14,7 +19,7 @@ import { updateLineItem } from './_actions/update-line-item';
 import { updateShippingInfo } from './_actions/update-shipping-info';
 import { CartViewed } from './_components/cart-viewed';
 import { CheckoutPreconnect } from './_components/checkout-preconnect';
-import { getCart, getShippingCountries } from './page-data';
+import { getCart, getCartRecommendations, getShippingCountries } from './page-data';
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -265,6 +270,23 @@ export default async function Cart({ params }: Props) {
 
   const checkoutUrl = data.site.settings?.url.checkoutUrl;
 
+  const subtotalValue = checkout?.subtotal?.value ?? 0;
+  const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotalValue);
+  const freeShippingQualified = freeShippingRemaining <= 0;
+  const freeShippingProgress =
+    FREE_SHIPPING_THRESHOLD > 0 ? (subtotalValue / FREE_SHIPPING_THRESHOLD) * 100 : 100;
+  const freeShippingMessage = freeShippingQualified
+    ? t('FreeShipping.qualified')
+    : t('FreeShipping.remaining', {
+        amount: format.number(freeShippingRemaining, {
+          style: 'currency',
+          currency: cart.currencyCode,
+        }),
+      });
+
+  const recommendations = removeEdgesAndNodes(await getCartRecommendations(currencyCode));
+  const recommendationProducts = productCardTransformer(recommendations, format);
+
   return (
     <>
       <CartAnalyticsProvider data={Streamable.from(() => getAnalyticsData(cartId))}>
@@ -411,8 +433,25 @@ export default async function Cart({ params }: Props) {
           }}
           summaryTitle={t('CheckoutSummary.title')}
           title={t('title')}
+          freeShippingBanner={
+            <FreeShippingProgress
+              message={freeShippingMessage}
+              progress={freeShippingProgress}
+              qualified={freeShippingQualified}
+            />
+          }
         />
       </CartAnalyticsProvider>
+      {recommendationProducts.length > 0 && (
+        <FeaturedProductCarousel
+          cta={{ label: t('Recommendations.cta'), href: '/shop' }}
+          nextLabel={t('Recommendations.nextProducts')}
+          previousLabel={t('Recommendations.previousProducts')}
+          products={recommendationProducts}
+          scrollbarLabel={t('Recommendations.scrollbar')}
+          title={t('Recommendations.title')}
+        />
+      )}
       <CartViewed
         currencyCode={cart.currencyCode}
         lineItems={lineItems}

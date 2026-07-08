@@ -96,7 +96,7 @@ export default async function Home({ params }: Props) {
         }}
       />
 
-      <Reviews />
+      {/* <Reviews /> */}
 
       <Stream fallback={null} value={streamableShowNewsletterSignup}>
         {(showNewsletterSignup) => showNewsletterSignup && <Subscribe />}

@@ -32,7 +32,7 @@ const promises = [
   {
     Icon: Truck,
     title: 'Trusted Carriers',
-    copy: 'Orders ship via UPS or FedEx for dependable, trackable delivery to your door.',
+    copy: 'Orders ship via UPS for dependable, trackable delivery to your door.',
   },
   {
     Icon: PackageCheck,
@@ -214,7 +214,7 @@ export default function ShippingAndReturns() {
               <h3 className="mt-5 font-heading text-lg font-bold uppercase">Delivery estimates</h3>
               <p className="mt-3 text-base leading-relaxed text-contrast-500">
                 At checkout we’ll estimate shipping and delivery dates based on item availability
-                and the shipping option you choose. We ship via UPS or FedEx.
+                and the shipping option you choose. We ship via UPS.
               </p>
             </div>
 

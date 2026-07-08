@@ -73,8 +73,6 @@ export default async function Home({ params }: Props) {
     <>
       <Hero />
 
-      <CategoryGrid />
-
       <FeaturedProductCarousel
         cta={{ label: t('NewestProducts.cta'), href: '/shop/?sort=newest' }}
         description={t('NewestProducts.description')}
@@ -85,6 +83,8 @@ export default async function Home({ params }: Props) {
         products={streamableNewestProducts}
         title={t('NewestProducts.title')}
       />
+
+      <CategoryGrid />
 
       <TrustBadges />
 

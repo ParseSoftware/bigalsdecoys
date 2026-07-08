@@ -19,7 +19,7 @@ export async function CategoryGrid() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-primary">
             {t('eyebrow')}
           </p>
-          <h2 className="font-heading text-3xl font-bold uppercase leading-none @2xl:text-4xl">
+          <h2 className="font-display text-3xl font-bold uppercase leading-none @2xl:text-4xl">
             {t('title')}
           </h2>
         </div>

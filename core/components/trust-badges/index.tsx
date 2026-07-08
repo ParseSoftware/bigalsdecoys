@@ -28,11 +28,6 @@ const VARIANT_KEYS: Record<TrustBadgeVariant, BadgeKey[]> = {
   marquee: ['madeInUSA', 'freeShipping', 'builtToLast', 'returns', 'secureCheckout', 'bulkPricing'],
 };
 
-/**
- * Shared trust indicators used across the homepage, product, and listing pages.
- * Copy lives under the `Components.TrustBadges` i18n namespace; icons are mapped
- * locally so the badge set stays consistent everywhere it renders.
- */
 export async function TrustBadges({ variant = 'grid', className }: Props) {
   const t = await getTranslations('Components.TrustBadges');
 

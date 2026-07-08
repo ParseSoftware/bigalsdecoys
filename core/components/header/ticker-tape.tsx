@@ -1,27 +1,36 @@
-import { TICKER_ITEMS } from '~/lib/brand';
+import {
+  AwardIcon,
+  LockIcon,
+  RotateCcwIcon,
+  ShieldIcon,
+  StarIcon,
+  TagIcon,
+  TruckIcon,
+} from 'lucide-react';
 
-/**
- * Scrolling "ticker tape" marquee rendered inside the header banner slot.
- *
- * Pure CSS marquee (see the `ticker` keyframes / `animate-ticker` utility in
- * tailwind.config.js). The item list is duplicated so the -50% translate loops
- * seamlessly, and the negative margins cancel the Banner primitive's inner
- * padding so the bar runs edge to edge. Animation pauses on hover.
- */
+export const TICKER_ITEMS = [
+  { title: 'MADE IN THE USA', icon: ShieldIcon },
+  { title: 'SUPER FAST SHIPPING', icon: TruckIcon },
+  { title: '30-DAY RETURNS', icon: RotateCcwIcon },
+  { title: '30-DAY RISK-FREE GUARANTEE', icon: AwardIcon },
+  { title: 'ULTRA-MATTE FINISH', icon: AwardIcon },
+  { title: 'BULK PRICING AVAILABLE', icon: TagIcon },
+  { title: 'SECURE CHECKOUT', icon: LockIcon },
+  { title: 'FIELD-PROVEN PERFORMANCE', icon: StarIcon },
+] as const;
+
 export function TickerTape() {
   const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
 
   return (
     <div className="-my-3 -ml-3 -mr-12 flex overflow-hidden @xl:-mx-12">
       <ul className="animate-ticker flex shrink-0 items-center whitespace-nowrap hover:[animation-play-state:paused]">
-        {items.map((item, index) => (
-          <li className="flex items-center" key={`${item}-${index}`}>
+        {items.map(({ title, icon: Icon }, index) => (
+          <li className="flex items-center" key={`${title}-${index}`}>
             <span className="px-6 py-2.5 font-heading text-xs font-medium uppercase tracking-widest">
-              {item}
+              {title}
             </span>
-            <span aria-hidden className="text-primary">
-              &#9670;
-            </span>
+            <Icon className="size-4 h-4 w-4 text-primary" />
           </li>
         ))}
       </ul>

@@ -1,42 +1,41 @@
-import { Award, Factory, HeartHandshake, ShieldCheck, Target, Users } from 'lucide-react';
+import { Award, MapPin, Phone, Shield, Smile, Star } from 'lucide-react';
 import { type Metadata } from 'next';
 
-import { ButtonLink } from '@/vibes/soul/primitives/button-link';
+import { Image } from '~/components/image';
+import { Link } from '~/components/link';
+import { BRAND_PHONE, BRAND_PHONE_HREF } from '~/lib/brand';
+
+import StoryImage from '../_images/Canada Lifestyle/instagram_C4frZ_ZOCFg.jpg';
+import HeroImage from '../_images/Canada Lifestyle/instagram_DS2e6LSDWqb.jpg';
+import CraftsmanshipImage from '../_images/Duck Lifestyle/instagram_CvucfnKOrOj.jpg';
 
 export const metadata: Metadata = {
   title: 'About Big Al’s',
   description:
-    'For more than fifty years, Big Al’s has handcrafted premium waterfowl silhouette decoys in the USA. Learn the story behind the brand and the team carrying it forward.',
+    'Big Al’s has handcrafted premium waterfowl silhouette decoys in the USA since the early 1970s. Learn the story behind the brand and the team carrying it forward.',
 };
 
 const values = [
   {
-    Icon: Factory,
+    Icon: Shield,
     title: 'Made in the USA',
-    copy: 'Every decoy is designed, printed, and packaged at our American facility — so we control quality at every step and pass the savings on to you.',
+    copy: 'Every decoy designed, printed, and assembled on American soil — no exceptions.',
   },
   {
-    Icon: ShieldCheck,
+    Icon: Award,
     title: 'Built to Last',
-    copy: 'Accurate color, true-to-life detail, and an ultra-matte coating engineered to hold up season after season in the harshest conditions.',
+    copy: 'Heavy-duty, ultra-durable material engineered for multi-season performance in any condition.',
   },
   {
-    Icon: Target,
+    Icon: Star,
     title: 'Field-Proven Performance',
-    copy: 'Designed by hunters, for hunters. When the season is short, your gear has to work the first time, every time.',
+    copy: 'Ultra-matte finish calibrated for the way birds actually see your spread at dawn.',
   },
   {
-    Icon: HeartHandshake,
+    Icon: Smile,
     title: 'People-First Service',
-    copy: 'A real team stands behind every order. Have a question before or after you buy? We’re here, and we answer.',
+    copy: 'Real hunters answer the phone — before and after every purchase.',
   },
-];
-
-const stats = [
-  { value: '50+', label: 'Years in the blind' },
-  { value: '100%', label: 'American made' },
-  { value: '1', label: 'Facility, total control' },
-  { value: '5★', label: 'Hunter-trusted quality' },
 ];
 
 export default function AboutPage() {
@@ -44,163 +43,174 @@ export default function AboutPage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-ink text-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink to-primary-shadow opacity-90" />
-        <div className="relative mx-auto max-w-screen-xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-primary-highlight">
-            Our Story
-          </p>
-          <h1 className="max-w-3xl font-heading text-4xl font-bold uppercase leading-[0.95] sm:text-5xl lg:text-6xl">
-            A heritage of the hunt, built for the next generation
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-contrast-200 sm:text-lg">
-            Big Al’s began with a boy in a duck blind in the early 1970s and a passion that never
-            faded. Today, that same craftsmanship powers one of the most trusted names in waterfowl
-            silhouette decoys — proudly made in the USA.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <ButtonLink href="/" size="large" variant="primary">
-              Shop the Collection
-            </ButtonLink>
-            <ButtonLink href="/contact" size="large" variant="tertiary">
-              Talk to Our Team
-            </ButtonLink>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats bar */}
-      <section className="border-b bg-background">
-        <div className="mx-auto grid max-w-screen-xl grid-cols-2 gap-px px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {stats.map(({ value, label }) => (
-            <div className="py-8 text-center" key={label}>
-              <p className="font-heading text-4xl font-bold text-primary lg:text-5xl">{value}</p>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-widest text-contrast-400">
-                {label}
+        <div className="relative min-h-[500px] w-full" style={{ height: '70vh' }}>
+          <Image
+            alt="Hunter setting up goose decoys in snowfall"
+            className="object-cover opacity-70"
+            fill
+            placeholder="blur"
+            priority
+            sizes="100vw"
+            src={HeroImage}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="mx-auto max-w-screen-xl px-4 pb-14 sm:px-6 lg:px-8">
+              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.3em] text-primary">
+                From the Blind to the Bench
               </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Founder story */}
-      <section className="bg-white">
-        <div className="mx-auto grid max-w-screen-xl items-start gap-12 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:gap-16 lg:px-8 lg:py-24">
-          <div className="lg:col-span-5">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-              Where We Started
-            </p>
-            <h2 className="font-heading text-3xl font-bold uppercase leading-tight lg:text-4xl">
-              From the blind to the bench
-            </h2>
-            <div className="mt-8 space-y-4">
-              <div className="flex items-center gap-3 rounded-lg border bg-background p-4">
-                <Award className="h-6 w-6 shrink-0 text-primary" strokeWidth={1.5} />
-                <p className="text-sm font-medium text-foreground">
-                  An artist’s eye and a family printing legacy behind every silhouette
-                </p>
-              </div>
-              <div className="flex items-center gap-3 rounded-lg border bg-background p-4">
-                <Users className="h-6 w-6 shrink-0 text-primary" strokeWidth={1.5} />
-                <p className="text-sm font-medium text-foreground">
-                  A team that hunts the same flyways you do
-                </p>
-              </div>
+              <h1 className="font-display uppercase leading-[0.87] text-white [font-size:clamp(2.8rem,8vw,7rem)]">
+                A Heritage
+                <br />
+                of the Hunt.
+              </h1>
             </div>
           </div>
-
-          <div className="space-y-6 text-base leading-relaxed text-contrast-500 lg:col-span-7 lg:text-lg">
-            <p>
-              Big Al’s was born from a lifetime spent in the outdoors — waterfowl hunting with
-              friends and family across decades of early mornings and hard-earned sunrises. What
-              started as a personal passion became a craft, and that craft became a company built on
-              one promise: give hunters a premium silhouette decoy that actually performs.
-            </p>
-            <p>
-              We combined an artist’s background with a family printing heritage to manufacture
-              waterfowl silhouette decoys with uncommon accuracy. Color, detail, and an ultra-matte
-              finish are dialed in by people who care how the product looks to a bird circling at
-              first light — because that’s the only opinion that matters in the field.
-            </p>
-            <p>
-              By keeping design, production, and packaging under one roof in the USA, we control
-              quality and cost from start to finish. That discipline lets us deliver a decoy that’s
-              both affordable and built to last many seasons — no compromises.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* New ownership / forward-looking */}
-      <section className="bg-background">
-        <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-          <div className="rounded-2xl border bg-white p-8 shadow-lg lg:p-12">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-              The Next Chapter
-            </p>
-            <h2 className="max-w-2xl font-heading text-3xl font-bold uppercase leading-tight lg:text-4xl">
-              Same craftsmanship, sharper than ever
-            </h2>
-            <p className="mt-6 max-w-3xl text-base leading-relaxed text-contrast-500 lg:text-lg">
-              Big Al’s is now part of a new ownership group dedicated to investing in the brand for
-              the long haul. Our mission is simple: modernize the experience — faster fulfillment,
-              an easier online store, and broader availability — while protecting the heritage,
-              hands-on quality, and personal service that made Big Al’s a name hunters trust. The
-              decoys you count on aren’t changing. We’re just making them easier to get and even
-              better to own.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Values grid */}
+      {/* Origin story */}
       <section className="bg-white">
+        <div className="mx-auto grid max-w-screen-xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-24">
+          <div>
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.3em] text-primary">
+              Est. Early 1970s
+            </p>
+            <h2 className="font-display uppercase leading-[0.9] text-foreground [font-size:clamp(2rem,4vw,3.5rem)]">
+              Built for the
+              <br />
+              Next Generation.
+            </h2>
+            <p className="mt-7 text-base leading-relaxed text-contrast-500">
+              Big Al’s started in the early 1970s, rooted in waterfowl hunting. The brand combined
+              an artist’s background with a family printing legacy to produce silhouette decoys with
+              precise color, detail, and an ultra-matte finish.
+            </p>
+            <p className="mt-6 text-base leading-relaxed text-contrast-500">
+              One goal drove every decision: give hunters a premium silhouette decoy that actually
+              performs. New ownership carries that same standard forward — modernizing fulfillment
+              and availability while preserving the brand’s hands-on quality and personal service.
+            </p>
+          </div>
+          <div className="relative overflow-hidden rounded-2xl" style={{ height: '480px' }}>
+            <Image
+              alt="Canada goose coming into a decoy spread"
+              className="object-cover"
+              fill
+              placeholder="blur"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              src={StoryImage}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Full-width quote */}
+      <section className="bg-ink text-background">
+        <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
+          <div className="mb-6 text-6xl leading-none text-primary">“</div>
+          <blockquote className="font-display uppercase leading-[0.9] text-white [font-size:clamp(1.8rem,4vw,3.5rem)]">
+            Quality and affordability — you can have both. And don’t forget: take a youth along on
+            your next hunt.
+          </blockquote>
+          <cite className="mt-8 block text-[11px] font-bold uppercase not-italic tracking-widest text-primary">
+            — Big Al &amp; Family
+          </cite>
+          <div className="mt-10 border-t border-white/10 pt-10">
+            <p className="text-sm italic text-contrast-300">
+              “The only opinion that matters in the field.”
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Four pillars */}
+      <section className="border-b bg-white">
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 max-w-2xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-              What We Stand For
-            </p>
-            <h2 className="font-heading text-3xl font-bold uppercase leading-tight lg:text-4xl">
-              Why hunters choose Big Al’s
-            </h2>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2">
+          <h2 className="font-display mb-14 text-center uppercase text-foreground [font-size:clamp(2rem,4vw,3rem)]">
+            What We Stand For.
+          </h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {values.map(({ Icon, title, copy }) => (
               <div
-                className="group rounded-2xl border bg-background p-8 transition hover:border-primary hover:shadow-lg"
+                className="border border-contrast-100 p-7 transition hover:shadow-lg"
                 key={title}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-background">
-                  <Icon className="h-6 w-6" strokeWidth={1.5} />
+                <div className="mb-5 flex h-10 w-10 items-center justify-center bg-ink">
+                  <Icon className="h-[18px] w-[18px] text-primary" strokeWidth={1.5} />
                 </div>
-                <h3 className="mt-5 font-heading text-xl font-bold uppercase">{title}</h3>
-                <p className="mt-3 text-base leading-relaxed text-contrast-500">{copy}</p>
+                <h3 className="font-display mb-3 text-lg uppercase leading-tight text-foreground">
+                  {title}
+                </h3>
+                <p className="text-sm leading-relaxed text-contrast-500">{copy}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Closing CTA */}
-      <section className="bg-ink text-background">
-        <div className="mx-auto max-w-screen-xl px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-24">
-          <h2 className="mx-auto max-w-2xl font-heading text-3xl font-bold uppercase leading-tight lg:text-4xl">
-            Make the most of every hunt
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-contrast-200 lg:text-lg">
-            Quality and affordability — you can have both. And don’t forget: take a youth along on
-            your next hunt. The tradition is worth passing on.
-          </p>
-          <p className="mt-6 font-heading text-lg uppercase tracking-wide text-primary-highlight">
-            — Big Al &amp; Family
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <ButtonLink href="/" size="large" variant="primary">
-              Shop Decoys
-            </ButtonLink>
-            <ButtonLink href="/contact" size="large" variant="tertiary">
-              Contact Us
-            </ButtonLink>
+      {/* Same craftsmanship */}
+      <section className="border-b bg-background">
+        <div className="grid md:grid-cols-2">
+          <div className="relative min-h-[400px] overflow-hidden">
+            <Image
+              alt="Duck hunter setting up a decoy spread"
+              className="object-cover"
+              fill
+              placeholder="blur"
+              sizes="(min-width: 768px) 50vw, 100vw"
+              src={CraftsmanshipImage}
+            />
           </div>
+          <div className="flex flex-col justify-center px-4 py-16 sm:px-6 lg:px-12">
+            <h2 className="font-display uppercase leading-[0.9] text-foreground [font-size:clamp(2rem,4vw,3rem)]">
+              Same Craftsmanship,
+              <br />
+              Sharper Than Ever.
+            </h2>
+            <p className="mt-6 text-base leading-relaxed text-contrast-500">
+              The decoys are the same. The commitment is the same. New ownership is focused on
+              modernizing fulfillment and availability while preserving the hands-on quality and
+              personal service Big Al’s has always been known for.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link
+                className="flex items-center gap-2 bg-primary px-7 py-3.5 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-primary/90"
+                href="/shop"
+              >
+                Shop Decoys
+              </Link>
+              <Link
+                className="border-2 border-foreground px-7 py-3.5 text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:bg-foreground hover:text-background"
+                href="/contact"
+              >
+                Contact Us
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact strip */}
+      <section className="bg-white">
+        <div className="mx-auto flex max-w-screen-xl flex-col items-center justify-between gap-4 px-4 py-12 sm:px-6 md:flex-row lg:px-8">
+          <div className="flex flex-wrap gap-8 text-sm text-contrast-500">
+            <span className="flex items-center gap-2">
+              <MapPin className="h-[13px] w-[13px] text-primary" />
+              1043 Roosevelt Trail, Kalispell, MT 59901
+            </span>
+            <a className="flex items-center gap-2 hover:text-primary" href={BRAND_PHONE_HREF}>
+              <Phone className="h-[13px] w-[13px] text-primary" />
+              {BRAND_PHONE}
+            </a>
+          </div>
+          <Link
+            className="whitespace-nowrap text-xs font-bold uppercase tracking-widest text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+            href="/contact"
+          >
+            Send Us a Message
+          </Link>
         </div>
       </section>
     </>

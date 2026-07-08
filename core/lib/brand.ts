@@ -14,18 +14,6 @@ export const FREE_SHIPPING_THRESHOLD = 150;
 export const BRAND_PHONE = '605-956-4818';
 export const BRAND_PHONE_HREF = 'tel:6059564818';
 
-/** Rotating phrases shown in the top-of-page ticker tape marquee. */
-export const TICKER_ITEMS = [
-  'MADE IN THE USA',
-  'SUPER FAST SHIPPING',
-  '30-DAY RETURNS',
-  '30-DAY RISK-FREE GUARANTEE',
-  'ULTRA-MATTE FINISH',
-  'BULK PRICING AVAILABLE',
-  'SECURE CHECKOUT',
-  'FIELD-PROVEN PERFORMANCE',
-] as const;
-
 /**
  * Trust badge definitions reused by the shared TrustBadges component across the
  * homepage, PDP, and collection pages. `icon` maps to a lucide-react icon name

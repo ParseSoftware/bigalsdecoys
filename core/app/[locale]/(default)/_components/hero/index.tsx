@@ -20,13 +20,13 @@ export async function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-ink">
-      <div className="relative max-h-[800px] min-h-[500px] w-full" style={{ height: '72vh' }}>
+      <div className="relative max-h-[800px] min-h-[540px] w-full" style={{ height: '72vh' }}>
         <Image
           alt={t('imageAlt')}
           className="object-cover object-center"
           fill
           placeholder="blur"
-          priority
+          preload
           sizes="100vw"
           src={HeroImage}
         />
@@ -37,10 +37,10 @@ export async function Hero() {
 
         <div className="absolute inset-0 z-10 flex flex-col justify-end">
           <div className="mx-auto w-full max-w-screen-2xl px-5 pb-8 pt-20 sm:px-8 sm:pb-16 sm:pt-0 lg:px-12">
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50 sm:mb-6 sm:text-[11px]">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-white/50 sm:mb-6 sm:text-[11px]">
               {t('eyebrow')}
             </p>
-            <h1 className="font-display mb-4 uppercase leading-[0.87] text-white [font-size:clamp(2.4rem,9vw,9rem)] sm:mb-6">
+            <h1 className="font-display mb-4 uppercase leading-[0.87] text-white [font-size:clamp(3.5rem,7vw,6rem)] sm:mb-6">
               {t('headlineLine1')}
               <br />
               {t('headlineLine2')}

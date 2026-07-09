@@ -35,7 +35,7 @@ export async function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
 
-        <div className="absolute inset-0 z-10 flex flex-col justify-end">
+        <div className="absolute inset-0 z-[8] flex flex-col justify-end">
           <div className="mx-auto w-full max-w-screen-2xl px-5 pb-8 pt-20 sm:px-8 sm:pb-16 sm:pt-0 lg:px-12">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-white/50 sm:mb-6 sm:text-[11px]">
               {t('eyebrow')}

@@ -14,7 +14,6 @@ import { getMetadataAlternates } from '~/lib/seo/canonical';
 import { BrandStory } from './_components/brand-story';
 import { CategoryGrid } from './_components/category-grid';
 import { Hero } from './_components/hero';
-import { Reviews } from './_components/reviews';
 import { getPageData } from './page-data';
 import BrandStoryImage from './_images/Canada Lifestyle/instagram_DM7rh5pORvi.jpg';
 

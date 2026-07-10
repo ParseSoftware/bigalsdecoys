@@ -11,11 +11,13 @@ import { productCardTransformer } from '~/data-transformers/product-card-transfo
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
 
+import { fetchFacetedSearch } from './(faceted)/fetch-faceted-search';
 import { BrandStory } from './_components/brand-story';
 import { CategoryGrid } from './_components/category-grid';
 import { Hero } from './_components/hero';
-import { getPageData } from './page-data';
+import { SaleSection } from './_components/sale-section';
 import BrandStoryImage from './_images/Canada Lifestyle/instagram_DM7rh5pORvi.jpg';
+import { getPageData } from './page-data';
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -68,6 +70,29 @@ export default async function Home({ params }: Props) {
     return showNewsletterSignup;
   });
 
+  const streamableSaleProducts = Streamable.from(async () => {
+    const [customerAccessToken, currencyCode] = await Promise.all([
+      getSessionCustomerAccessToken(),
+      getPreferredCurrencyCode(),
+    ]);
+
+    const search = await fetchFacetedSearch(
+      { attr_Sale: 'Yes', limit: 6 },
+      currencyCode,
+      customerAccessToken,
+    );
+
+    const { defaultOutOfStockMessage, showOutOfStockMessage, showBackorderMessage } =
+      (await streamablePageData).site.settings?.inventory ?? {};
+
+    return productCardTransformer(
+      search.products.items,
+      format,
+      showOutOfStockMessage ? defaultOutOfStockMessage : undefined,
+      showBackorderMessage,
+    );
+  });
+
   return (
     <>
       <Hero />
@@ -84,6 +109,8 @@ export default async function Home({ params }: Props) {
       />
 
       <CategoryGrid />
+
+      <SaleSection products={streamableSaleProducts} />
 
       <TrustBadges />
 

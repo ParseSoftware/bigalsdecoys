@@ -85,12 +85,23 @@
       "cta": "View all",
       "viewAll": "View All"
     },
+    "Sale": {
+      "badge": "Sale · While Supplies Last",
+      "title": "Limited-Time Deals",
+      "description": "Same American-made quality, marked down while supplies last. When they're gone, they're gone.",
+      "cta": "Shop the Sale"
+    },
     "BrandStory": {
-      "eyebrow": "Family-owned",
-      "title": "The Big Al's Story",
-      "paragraph1": "Born out of a passion for waterfowl hunting and a family background in high-quality printing, Big Al's brings decades of field experience together with cutting-edge print technology.",
-      "paragraph2": "Every decoy is designed, printed, and assembled in the United States — built to fool the wariest birds and stand up to season after season in the blind.",
-      "cta": "Learn More",
+      "eyebrow": "Why Big Al's",
+      "title": "The Big Al's Difference",
+      "paragraph1": "Born out of a passion for waterfowl hunting and a family background in high-quality printing, Big Al's pairs decades of field experience with modern print technology. Every decoy is designed, printed, and assembled in the USA.",
+      "points": {
+        "finish": "Ultra-matte finish printed on heavy-duty, ultra-durable material",
+        "madeInUSA": "Designed, printed & assembled in the United States of America",
+        "fieldTested": "Field-tested in real hunting conditions every season",
+        "value": "More realistic. More durable. Half the price."
+      },
+      "cta": "Our Story",
       "badge": "Est. 2018 · USA"
     }
   },

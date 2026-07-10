@@ -46,7 +46,12 @@ export async function SaleSection({ products }: Props) {
                 </div>
                 <div className="grid grid-cols-2 gap-5 sm:grid-cols-3">
                   {saleProducts.slice(0, 3).map((product) => (
-                    <ProductCard colorScheme="dark" key={product.id} product={product} />
+                    <ProductCard
+                      colorScheme="dark"
+                      key={product.id}
+                      product={product}
+                      showButtons
+                    />
                   ))}
                 </div>
               </div>

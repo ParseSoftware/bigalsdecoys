@@ -5,11 +5,12 @@ import { Price, PriceLabel } from '@/vibes/soul/primitives/price-label';
 import * as Skeleton from '@/vibes/soul/primitives/skeleton';
 import { Image } from '~/components/image';
 import { Link } from '~/components/link';
+import { ProductCardActions } from '~/components/product-card/actions';
+import { AspectRatio } from '~/lib/types';
 
 import { Rating } from '../rating';
 
 import { Compare } from './compare';
-import { AspectRatio } from '~/lib/types';
 
 export interface Product {
   id: string;
@@ -35,6 +36,9 @@ export interface ProductCardProps {
   compareParamName?: string;
   product: Product;
   showRating?: boolean;
+  showButtons?: boolean;
+  addToCartLabel?: string;
+  viewDetailsLabel?: string;
 }
 
 // eslint-disable-next-line valid-jsdoc
@@ -76,6 +80,9 @@ export function ProductCard({
   colorScheme = 'light',
   className,
   showCompare = false,
+  showButtons = true,
+  addToCartLabel,
+  viewDetailsLabel,
   aspectRatio = 'aspect-[5/6]',
   compareLabel,
   compareParamName,
@@ -85,7 +92,7 @@ export function ProductCard({
   return (
     <article
       className={clsx(
-        'group flex min-w-0 max-w-md flex-col gap-3 font-[family-name:var(--card-font-family,var(--font-family-body))] @container',
+        'group flex min-h-full min-w-0 max-w-md flex-col gap-3 font-[family-name:var(--card-font-family,var(--font-family-body))] @container',
         className,
       )}
     >
@@ -139,7 +146,7 @@ export function ProductCard({
           <div className="flex-1 text-sm @[16rem]:text-base">
             <span
               className={clsx(
-                'line-clamp-2 font-semibold',
+                'line-clamp-2 text-balance font-semibold',
                 {
                   light: 'text-[var(--product-card-light-title,hsl(var(--foreground)))]',
                   dark: 'text-[var(--product-card-dark-title,hsl(var(--background)))]',
@@ -195,6 +202,15 @@ export function ProductCard({
           </Link>
         )}
       </div>
+      {showButtons && (
+        <ProductCardActions
+          addToCartLabel={addToCartLabel}
+          colorScheme={colorScheme}
+          href={href}
+          productId={id}
+          viewDetailsLabel={viewDetailsLabel}
+        />
+      )}
       {showCompare && (
         <div className="ml-1 mt-auto shrink-0">
           <Compare

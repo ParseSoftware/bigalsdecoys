@@ -707,6 +707,12 @@
         "subtitle": "Contact us for custom quotes"
       }
     },
+    "ProductCard": {
+      "addToCart": "Add to Cart",
+      "viewDetails": "View Details",
+      "added": "Added!",
+      "addToCartError": "Something went wrong. Please try again."
+    },
     "Footer": {
       "home": "Home",
       "contactUs": "Contact Us",

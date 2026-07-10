@@ -23,6 +23,8 @@ export interface Product {
   rating?: number;
   inventoryMessage?: string;
   numberOfReviews?: number;
+  purchasable?: boolean;
+  requiresOptions?: boolean;
 }
 
 export interface ProductCardProps {
@@ -36,7 +38,7 @@ export interface ProductCardProps {
   compareParamName?: string;
   product: Product;
   showRating?: boolean;
-  showButtons?: boolean;
+  hideButtons?: boolean;
   addToCartLabel?: string;
   viewDetailsLabel?: string;
 }
@@ -75,12 +77,14 @@ export function ProductCard({
     inventoryMessage,
     rating,
     numberOfReviews,
+    purchasable,
+    requiresOptions,
   },
   showRating = false,
   colorScheme = 'light',
   className,
   showCompare = false,
-  showButtons = true,
+  hideButtons = false,
   addToCartLabel,
   viewDetailsLabel,
   aspectRatio = 'aspect-[5/6]',
@@ -202,12 +206,14 @@ export function ProductCard({
           </Link>
         )}
       </div>
-      {showButtons && (
+      {!hideButtons && (
         <ProductCardActions
           addToCartLabel={addToCartLabel}
           colorScheme={colorScheme}
           href={href}
           productId={id}
+          purchasable={purchasable}
+          requiresOptions={requiresOptions}
           viewDetailsLabel={viewDetailsLabel}
         />
       )}

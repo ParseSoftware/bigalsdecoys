@@ -63,6 +63,9 @@ export const singleProductCardTransformer = (
     subtitle: product.brand?.name ?? undefined,
     rating: product.reviewSummary.averageRating,
     numberOfReviews: product.reviewSummary.numberOfReviews,
+    purchasable: 'showCartAction' in product ? product.showCartAction : true,
+    requiresOptions:
+      'productOptions' in product ? removeEdgesAndNodes(product.productOptions).length > 0 : false,
     inventoryMessage:
       'variants' in product
         ? getInventoryMessage(product, outOfStockMessage, showBackorderMessage)

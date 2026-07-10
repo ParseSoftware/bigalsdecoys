@@ -710,7 +710,9 @@
     "ProductCard": {
       "addToCart": "Add to Cart",
       "viewDetails": "View Details",
+      "chooseOptions": "Choose Options",
       "added": "Added!",
+      "unavailable": "Unavailable",
       "addToCartError": "Something went wrong. Please try again."
     },
     "Footer": {

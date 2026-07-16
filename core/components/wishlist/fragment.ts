@@ -16,6 +16,13 @@ export const WishlistItemProductFragment = graphql(
         name
         path
       }
+      categories(first: 10) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
       reviewSummary {
         numberOfReviews
         averageRating

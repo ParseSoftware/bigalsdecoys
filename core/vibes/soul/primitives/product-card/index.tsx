@@ -25,6 +25,11 @@ export interface Product {
   numberOfReviews?: number;
   purchasable?: boolean;
   requiresOptions?: boolean;
+  klaviyoData?: {
+    categories: string[];
+    price: string;
+    compareAtPrice: string;
+  };
 }
 
 export interface ProductCardProps {
@@ -79,6 +84,7 @@ export function ProductCard({
     numberOfReviews,
     purchasable,
     requiresOptions,
+    klaviyoData,
   },
   showRating = false,
   colorScheme = 'light',
@@ -211,6 +217,18 @@ export function ProductCard({
           addToCartLabel={addToCartLabel}
           colorScheme={colorScheme}
           href={href}
+          klaviyoData={
+            klaviyoData
+              ? {
+                  title,
+                  imageURL: image?.src ?? '',
+                  brand: subtitle ?? '',
+                  categories: klaviyoData.categories,
+                  price: klaviyoData.price,
+                  compareAtPrice: klaviyoData.compareAtPrice,
+                }
+              : undefined
+          }
           productId={id}
           purchasable={purchasable}
           requiresOptions={requiresOptions}

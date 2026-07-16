@@ -6,9 +6,19 @@ import { useTranslations } from 'next-intl';
 import { type ReactNode, useState, useTransition } from 'react';
 
 import { toast } from '@/vibes/soul/primitives/toaster';
+import { useKlaviyoTracker } from '~/components/klaviyo/use-klaviyo-tracker';
 import { Link } from '~/components/link';
 
 import { quickAddToCart } from './add-to-cart-action';
+
+interface KlaviyoData {
+  title: string;
+  imageURL: string;
+  brand: string;
+  categories: string[];
+  price: string;
+  compareAtPrice: string;
+}
 
 interface Props {
   productId: string;
@@ -18,6 +28,7 @@ interface Props {
   requiresOptions?: boolean;
   addToCartLabel?: string;
   viewDetailsLabel?: string;
+  klaviyoData?: KlaviyoData;
 }
 
 /*
@@ -34,10 +45,12 @@ export function ProductCardActions({
   requiresOptions = false,
   addToCartLabel,
   viewDetailsLabel,
+  klaviyoData,
 }: Props) {
   const t = useTranslations('Components.ProductCard');
   const [isPending, startTransition] = useTransition();
   const [added, setAdded] = useState(false);
+  const track = useKlaviyoTracker();
 
   const handleAddToCart = () => {
     startTransition(async () => {
@@ -47,6 +60,26 @@ export function ProductCardActions({
         toast.error(result.error);
 
         return;
+      }
+
+      if (klaviyoData) {
+        const url = href.startsWith('http') ? href : `${window.location.origin}${href}`;
+
+        track([
+          'track',
+          'Added to Cart',
+          {
+            $value: Number(klaviyoData.price) || undefined,
+            AddedItemProductName: klaviyoData.title,
+            AddedItemProductID: productId,
+            AddedItemImageURL: klaviyoData.imageURL,
+            AddedItemURL: url,
+            AddedItemBrand: klaviyoData.brand,
+            AddedItemCategories: klaviyoData.categories,
+            AddedItemPrice: klaviyoData.price,
+            Quantity: 1,
+          },
+        ]);
       }
 
       toast.success(t('added'));

@@ -52,6 +52,8 @@ export const singleProductCardTransformer = (
   outOfStockMessage?: string,
   showBackorderMessage?: boolean,
 ): Product => {
+  const categories = removeEdgesAndNodes(product.categories).map((c) => c.name);
+
   return {
     id: product.entityId.toString(),
     title: product.name,
@@ -70,6 +72,11 @@ export const singleProductCardTransformer = (
       'variants' in product
         ? getInventoryMessage(product, outOfStockMessage, showBackorderMessage)
         : undefined,
+    klaviyoData: {
+      categories,
+      price: product.prices?.price.value.toString() ?? '',
+      compareAtPrice: product.prices?.retailPrice?.value.toString() ?? '',
+    },
   };
 };
 

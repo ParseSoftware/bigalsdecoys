@@ -22,6 +22,7 @@ import { getMetadataAlternates } from '~/lib/seo/canonical';
 import { addToCart } from './_actions/add-to-cart';
 import { getMoreProductImages } from './_actions/get-more-images';
 import { submitReview } from './_actions/submit-review';
+import { KlaviyoProductViewed } from './_components/klaviyo-product-viewed';
 import { ProductAnalyticsProvider } from './_components/product-analytics-provider';
 import { ProductSchema } from './_components/product-schema';
 import { ProductViewed } from './_components/product-viewed';
@@ -698,6 +699,9 @@ export default async function Product({ params, searchParams }: Props) {
               product={{ ...extendedProduct, prices: pricingProduct?.prices ?? null }}
             />
             <ProductViewed
+              product={{ ...extendedProduct, prices: pricingProduct?.prices ?? null }}
+            />
+            <KlaviyoProductViewed
               product={{ ...extendedProduct, prices: pricingProduct?.prices ?? null }}
             />
           </>

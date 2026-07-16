@@ -11,6 +11,16 @@ export const ProductViewedFragment = graphql(`
     description
     plainTextDescription(characterLimit: 1200)
     path
+    defaultImage {
+      url: urlTemplate(lossy: true)
+    }
+    categories(first: 10) {
+      edges {
+        node {
+          name
+        }
+      }
+    }
     variants {
       edges {
         node {

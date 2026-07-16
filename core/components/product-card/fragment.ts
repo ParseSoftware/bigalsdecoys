@@ -23,6 +23,13 @@ export const ProductCardFragment = graphql(
         name
         path
       }
+      categories(first: 10) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
       inventory {
         hasVariantInventory
         isInStock

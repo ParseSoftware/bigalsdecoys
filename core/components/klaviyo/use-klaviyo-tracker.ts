@@ -1,3 +1,5 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable no-underscore-dangle */
 'use client';
 
 import { useConsentManager } from '@c15t/nextjs/client';
@@ -20,6 +22,7 @@ export function useKlaviyoTracker() {
         return;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (typeof window === 'undefined' || !window._learnq) {
         return;
       }

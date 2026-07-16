@@ -270,7 +270,7 @@ export function ProductDetail<F extends Field>({
                                   {promotion.buy} —{' '}
                                   <span className="text-primary">{promotion.each}</span>
                                   <span className="ml-1 font-normal text-contrast-400">
-                                    ({promotion.save})
+                                    ({promotion.save} per pack)
                                   </span>
                                 </p>
                               </div>

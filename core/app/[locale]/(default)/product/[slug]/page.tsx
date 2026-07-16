@@ -15,6 +15,7 @@ import { pricesTransformer } from '~/data-transformers/prices-transformer';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { productOptionsTransformer } from '~/data-transformers/product-options-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
+import { getProductPromotions } from '~/lib/promotions';
 import { getRecaptchaSiteKey } from '~/lib/recaptcha';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
 
@@ -198,6 +199,47 @@ export default async function Product({ params, searchParams }: Props) {
     }
 
     return bulkPricingTransformer(product.prices, format);
+  });
+
+  const streamableBulkPricingPromotion = Streamable.from(async () => {
+    const product = await streamableProductPricingAndRelatedProducts;
+
+    if (!product?.prices) {
+      return null;
+    }
+
+    const promotions = await getProductPromotions();
+    const promotion = promotions.get(productId);
+
+    if (!promotion) {
+      return null;
+    }
+
+    const basePrice = product.prices.price.value;
+    const { currencyCode } = product.prices.price;
+
+    let eachPrice: number | null = null;
+
+    if (promotion.percentageAmount != null) {
+      eachPrice = basePrice * (1 - promotion.percentageAmount / 100);
+    } else if (promotion.fixedAmount != null) {
+      eachPrice = basePrice - promotion.fixedAmount;
+    }
+
+    if (eachPrice == null || eachPrice >= basePrice) {
+      return null;
+    }
+
+    const formatCurrency = (value: number) =>
+      format.number(value, { style: 'currency', currency: currencyCode });
+
+    return {
+      buy: t('ProductDetails.BulkPromotion.buy', { quantity: promotion.minimumQuantity }),
+      each: t('ProductDetails.BulkPromotion.each', { price: formatCurrency(eachPrice) }),
+      save: t('ProductDetails.BulkPromotion.save', {
+        savings: formatCurrency(basePrice - eachPrice),
+      }),
+    };
   });
 
   const streamableImages = Streamable.from(async () => {
@@ -609,6 +651,7 @@ export default async function Product({ params, searchParams }: Props) {
             stockDisplayData: streamableStockDisplayData,
             backorderDisplayData: streamableBackorderDisplayData,
             bulkPricing: streamableBulkPricing,
+            bulkPricingPromotion: streamableBulkPricingPromotion,
           }}
           quantityLabel={t('ProductDetails.quantity')}
           recaptchaSiteKey={recaptchaSiteKey}

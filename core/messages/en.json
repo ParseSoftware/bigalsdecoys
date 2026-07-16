@@ -556,6 +556,11 @@
       "thumbnail": "View image number",
       "additionalInformation": "Additional information",
       "bulkPricing": "Volume pricing",
+      "BulkPromotion": {
+        "buy": "Buy {quantity, number}+",
+        "each": "{price} each",
+        "save": "save {savings}"
+      },
       "currentStock": "{quantity, number} in stock",
       "backorderQuantity": "{quantity, number} will be on backorder",
       "loadingMoreImages": "Loading more images",

@@ -29,6 +29,12 @@ interface BulkPricingTier {
   discount?: string;
 }
 
+interface BulkPricingPromotion {
+  buy: string;
+  each: string;
+  save: string;
+}
+
 interface ProductDetailProduct {
   id: string;
   title: string;
@@ -57,6 +63,7 @@ interface ProductDetailProduct {
   stockDisplayData?: Streamable<StockDisplayData | null>;
   backorderDisplayData?: Streamable<BackorderDisplayData | null>;
   bulkPricing?: Streamable<BulkPricingTier[]>;
+  bulkPricingPromotion?: Streamable<BulkPricingPromotion | null>;
 }
 
 export interface ProductDetailProps<F extends Field> {
@@ -163,7 +170,7 @@ export function ProductDetail<F extends Field>({
                         {product.subtitle}
                       </p>
                     )}
-                    <h1 className="font-display mb-3 mt-2 text-3xl uppercase leading-none @xl:mb-4 @xl:text-4xl @4xl:text-5xl">
+                    <h1 className="mb-3 mt-2 font-display text-3xl uppercase leading-none @xl:mb-4 @xl:text-4xl @4xl:text-5xl">
                       {product.title}
                     </h1>
                     {product.reviewsEnabled && (
@@ -210,7 +217,7 @@ export function ProductDetail<F extends Field>({
                       <Stream fallback={<PriceLabelSkeleton />} value={product.price}>
                         {(price) => (
                           <PriceLabel
-                            className="font-display my-3 text-3xl @xl:text-4xl"
+                            className="my-3 font-display text-3xl @xl:text-4xl"
                             price={price ?? ''}
                           />
                         )}
@@ -246,6 +253,26 @@ export function ProductDetail<F extends Field>({
                                     </div>
                                   ))}
                                 </dl>
+                              </div>
+                            )
+                          }
+                        </Stream>
+                      </div>
+                    )}
+                    {product.bulkPricingPromotion != null && (
+                      <div className="group/product-bulk-promotion">
+                        <Stream fallback={null} value={product.bulkPricingPromotion}>
+                          {(promotion) =>
+                            promotion && (
+                              <div className="my-6 flex items-center gap-2 border-t border-[var(--product-detail-border,hsl(var(--contrast-100)))] pt-4">
+                                <Tag className="h-4 w-4 shrink-0 text-primary" strokeWidth={2} />
+                                <p className="text-sm font-semibold text-foreground">
+                                  {promotion.buy} —{' '}
+                                  <span className="text-primary">{promotion.each}</span>
+                                  <span className="ml-1 font-normal text-contrast-400">
+                                    ({promotion.save})
+                                  </span>
+                                </p>
                               </div>
                             )
                           }

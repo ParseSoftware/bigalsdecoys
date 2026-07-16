@@ -282,6 +282,7 @@ export default async function Category(props: Props) {
         ]}
         sortParamName="sort"
         title={category.name}
+        description={category.description}
         totalCount={streamableTotalCount}
       />
       <TrustBadges variant="inline" />

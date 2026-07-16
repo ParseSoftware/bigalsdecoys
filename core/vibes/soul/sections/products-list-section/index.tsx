@@ -43,6 +43,7 @@ interface Props {
   removeLabel?: Streamable<string>;
   maxItems?: number;
   maxCompareLimitMessage?: Streamable<string>;
+  description?: Streamable<string>;
 }
 
 export function ProductsListSection({
@@ -73,6 +74,7 @@ export function ProductsListSection({
   removeLabel,
   maxItems,
   maxCompareLimitMessage,
+  description,
 }: Props) {
   return (
     <div className="group/products-list-section @container">
@@ -83,23 +85,29 @@ export function ProductsListSection({
               breadcrumbs && breadcrumbs.length > 1 && <Breadcrumbs breadcrumbs={breadcrumbs} />
             }
           </Stream>
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-8 pt-6 text-foreground">
-            <h1 className="font-display flex items-center gap-2 text-3xl uppercase leading-none @lg:text-4xl @2xl:text-5xl">
-              <Suspense
-                fallback={
-                  <span className="inline-flex h-[1lh] w-[6ch] animate-pulse rounded-lg bg-contrast-100" />
-                }
-              >
-                {title}
-              </Suspense>
-              <Suspense
-                fallback={
-                  <span className="inline-flex h-[1lh] w-[2ch] animate-pulse rounded-lg bg-contrast-100" />
-                }
-              >
-                <span className="text-contrast-300">{totalCount}</span>
-              </Suspense>
-            </h1>
+          <div className="flex flex-wrap items-stretch gap-4 border-b pb-8 pt-6 text-foreground">
+            <div>
+              <h1 className="flex items-center gap-2 font-display text-3xl uppercase leading-none @lg:text-4xl @2xl:text-5xl">
+                <Suspense
+                  fallback={
+                    <span className="inline-flex h-[1lh] w-[6ch] animate-pulse rounded-lg bg-contrast-100" />
+                  }
+                >
+                  {title}
+                </Suspense>
+                <Suspense
+                  fallback={
+                    <span className="inline-flex h-[1lh] w-[2ch] animate-pulse rounded-lg bg-contrast-100" />
+                  }
+                >
+                  <span className="text-contrast-300">{totalCount}</span>
+                </Suspense>
+              </h1>
+              {/* <Suspense>
+                <p>{description}</p>
+              </Suspense> */}
+            </div>
+            <div className="min-w-40 shrink-0 grow" />
             <div className="flex gap-2">
               <Stream
                 fallback={<SortingSkeleton />}

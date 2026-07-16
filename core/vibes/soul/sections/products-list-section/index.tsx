@@ -85,7 +85,7 @@ export function ProductsListSection({
               breadcrumbs && breadcrumbs.length > 1 && <Breadcrumbs breadcrumbs={breadcrumbs} />
             }
           </Stream>
-          <div className="flex flex-wrap items-stretch gap-4 border-b pb-8 pt-6 text-foreground">
+          <div className="flex flex-wrap items-stretch gap-4 pb-8 pt-6 text-foreground">
             <div>
               <h1 className="flex items-center gap-2 font-display text-3xl uppercase leading-none @lg:text-4xl @2xl:text-5xl">
                 <Suspense

@@ -25,23 +25,23 @@ const distributors = [
   {
     region: 'Canada — East',
     name: 'Canadian Waterfowl Supplies',
-    location: 'Paris, ON',
+    location: 'Scotland, ON',
     contact: 'Pat Heinrichs',
     phone: '855-209-9116',
     phoneHref: 'tel:+18552099116',
     website: 'www.canadianwaterfowlsupplies.com',
     websiteHref: 'https://www.canadianwaterfowlsupplies.com',
   },
-  {
-    region: 'Europe',
-    name: 'DANgate',
-    location: 'Serving customers across Europe',
-    contact: 'Authorized European distributor',
-    phone: null,
-    phoneHref: null,
-    website: 'www.dangate.dk',
-    websiteHref: 'https://www.dangate.dk',
-  },
+  // {
+  //   region: 'Europe',
+  //   name: 'DANgate',
+  //   location: 'Serving customers across Europe',
+  //   contact: 'Authorized European distributor',
+  //   phone: null,
+  //   phoneHref: null,
+  //   website: 'www.dangate.dk',
+  //   websiteHref: 'https://www.dangate.dk',
+  // },
 ];
 
 const steps = [

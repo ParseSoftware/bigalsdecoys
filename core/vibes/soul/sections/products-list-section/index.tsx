@@ -74,7 +74,7 @@ export function ProductsListSection({
   removeLabel,
   maxItems,
   maxCompareLimitMessage,
-  description,
+  // description,
 }: Props) {
   return (
     <div className="group/products-list-section @container">

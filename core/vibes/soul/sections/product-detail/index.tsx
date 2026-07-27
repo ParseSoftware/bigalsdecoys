@@ -170,7 +170,7 @@ export function ProductDetail<F extends Field>({
                         {product.subtitle}
                       </p>
                     )}
-                    <h1 className="mb-3 mt-2 font-display text-3xl uppercase leading-none @xl:mb-4 @xl:text-4xl @4xl:text-5xl">
+                    <h1 className="mb-3 mt-2 text-balance font-display text-3xl uppercase leading-none @xl:mb-4 @xl:text-4xl @4xl:text-5xl">
                       {product.title}
                     </h1>
                     {product.reviewsEnabled && (

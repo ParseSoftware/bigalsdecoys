@@ -1,6 +1,7 @@
 import { cache } from 'react';
 
 import { revalidate } from '~/client/revalidate-target';
+import { TAGS } from '~/client/tags';
 
 /**
  * Discount derived from an automatic cart promotion that targets a single
@@ -41,6 +42,53 @@ interface PromotionsResponse {
   meta?: { pagination?: { current_page: number; total_pages: number } };
 }
 
+const parseRuleDiscount = (rule: RawPromotionRule): ProductPromotionDiscount | null => {
+  const cartItems = rule.action?.cart_items;
+  const percentageAmount =
+    cartItems?.discount?.percentage_amount != null
+      ? Number(cartItems.discount.percentage_amount)
+      : undefined;
+  const fixedAmount =
+    cartItems?.discount?.fixed_amount != null ? Number(cartItems.discount.fixed_amount) : undefined;
+
+  if (percentageAmount == null && fixedAmount == null) {
+    return null;
+  }
+
+  return {
+    minimumQuantity: rule.condition?.cart?.minimum_quantity ?? 1,
+    percentageAmount,
+    fixedAmount,
+  };
+};
+
+const collectPromotionDiscounts = (promotion: RawPromotion, promotions: PromotionMap): void => {
+  if (promotion.status !== 'ENABLED' || promotion.redemption_type !== 'AUTOMATIC') {
+    return;
+  }
+
+  for (const rule of promotion.rules ?? []) {
+    const products = rule.action?.cart_items?.items?.products;
+
+    if (!Array.isArray(products) || products.length === 0) {
+      continue;
+    }
+
+    const discount = parseRuleDiscount(rule);
+
+    if (!discount) {
+      continue;
+    }
+
+    for (const productId of products) {
+      // First promotion wins — we expect a single bulk promotion per product.
+      if (!promotions.has(productId)) {
+        promotions.set(productId, discount);
+      }
+    }
+  }
+};
+
 /**
  * Fetch all ENABLED, AUTOMATIC promotions from the BigCommerce management API
  * and build a map of product entity id → per-product promotion discount.
@@ -71,7 +119,7 @@ export const getProductPromotions = cache(async (): Promise<PromotionMap> => {
           'X-Auth-Token': accessToken,
           Accept: 'application/json',
         },
-        next: { revalidate },
+        next: { revalidate, tags: [TAGS.promotions] },
       },
     );
 
@@ -83,39 +131,7 @@ export const getProductPromotions = cache(async (): Promise<PromotionMap> => {
     const json = (await response.json()) as PromotionsResponse;
 
     for (const promotion of json.data ?? []) {
-      if (promotion.status !== 'ENABLED' || promotion.redemption_type !== 'AUTOMATIC') {
-        continue;
-      }
-
-      for (const rule of promotion.rules ?? []) {
-        const cartItems = rule.action?.cart_items;
-        const products = cartItems?.items?.products;
-
-        if (!cartItems || !Array.isArray(products) || products.length === 0) {
-          continue;
-        }
-
-        const minimumQuantity = rule.condition?.cart?.minimum_quantity ?? 1;
-        const percentageAmount =
-          cartItems.discount?.percentage_amount != null
-            ? Number(cartItems.discount.percentage_amount)
-            : undefined;
-        const fixedAmount =
-          cartItems.discount?.fixed_amount != null
-            ? Number(cartItems.discount.fixed_amount)
-            : undefined;
-
-        if (percentageAmount == null && fixedAmount == null) {
-          continue;
-        }
-
-        for (const productId of products) {
-          // First promotion wins — we expect a single bulk promotion per product.
-          if (!promotions.has(productId)) {
-            promotions.set(productId, { minimumQuantity, percentageAmount, fixedAmount });
-          }
-        }
-      }
+      collectPromotionDiscounts(promotion, promotions);
     }
 
     const pagination = json.meta?.pagination;

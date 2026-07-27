@@ -95,7 +95,7 @@ export const Footer = ({
             {/* Logo Information */}
             <div className="flex items-center justify-start self-stretch">
               <Logo
-                className="flex"
+                className="flex invert"
                 height={logoHeight}
                 href={logoHref}
                 label={logoLabel}

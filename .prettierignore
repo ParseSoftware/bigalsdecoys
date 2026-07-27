@@ -1,0 +1,6 @@
+# BigCommerce transactional email templates.
+# These are Handlebars-in-HTML files with hand-tuned inline CSS. Prettier
+# escapes quotes in inline styles (e.g. 'Anton' -> &quot;Anton&quot;) and
+# wraps style attributes, which corrupts the email markup. Keep them as-authored.
+documentation/transactional-email-inputs/
+documentation/transactional-email-outputs/

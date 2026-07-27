@@ -43,9 +43,12 @@ export const HeaderSection = forwardRef<React.ComponentRef<'div'>, Props>(
           pinStart={bannerHeight}
           style={{ zIndex: 20 }}
         >
-          {/* <div className="p-2"> */}
-          <Navigation {...navigation} isFloating={isFloating} />
-          {/* </div> */}
+          <Navigation
+            {...navigation}
+            isFloating={isFloating}
+            // override logo height
+            logoHeight={60}
+          />
         </Headroom>
       </div>
     );

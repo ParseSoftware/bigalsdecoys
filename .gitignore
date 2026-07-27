@@ -24,3 +24,5 @@ coverage/
 .mcp.json
 .env*
 scripts
+static
+documenentation

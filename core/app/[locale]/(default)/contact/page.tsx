@@ -37,8 +37,8 @@ const fieldMapping = {
 type ContactField = keyof typeof fieldMapping;
 
 const hours = [
-  { day: 'Monday – Friday', time: '8:00am – 5:00pm CST' },
-  { day: 'Lunch break', time: 'Closed 12:00pm – 1:00pm' },
+  { day: 'Monday – Friday', time: '8:00am – 5:00pm MST' },
+  // { day: 'Lunch break', time: 'Closed 12:00pm – 1:00pm' },
   { day: 'Saturday – Sunday', time: 'Closed' },
 ];
 
@@ -284,7 +284,7 @@ export default async function ContactPage({ params, searchParams }: Props) {
                     </dl>
                     <div className="mt-4 flex items-start gap-2 rounded-lg bg-background p-3 text-xs text-contrast-500">
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={1.5} />
-                      <span>All times listed are Central Standard Time (CST).</span>
+                      <span>All times listed are Mountain Standard Time (MST).</span>
                     </div>
                   </div>
 

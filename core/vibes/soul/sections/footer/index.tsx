@@ -5,6 +5,7 @@ import { Stream, Streamable } from '@/vibes/soul/lib/streamable';
 import { Logo } from '@/vibes/soul/primitives/logo';
 import * as Skeleton from '@/vibes/soul/primitives/skeleton';
 import { Link } from '~/components/link';
+import { PhoneIcon } from 'lucide-react';
 
 interface Image {
   src: string;
@@ -115,10 +116,14 @@ export const Footer = ({
                       </h3>
                       <div className="text-[var(--footer-contact-text,hsl(var(--foreground)))]">
                         {contactInformation.address != null &&
-                          contactInformation.address !== '' && <p>{contactInformation.address}</p>}
-                        {contactInformation.phone != null && contactInformation.phone !== '' && (
+                          contactInformation.address !== '' && (
+                            <address className="whitespace-pre not-italic">
+                              {contactInformation.address}
+                            </address>
+                          )}
+                        {/* {contactInformation.phone != null && contactInformation.phone !== '' && (
                           <p>{contactInformation.phone}</p>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   );
@@ -143,6 +148,33 @@ export const Footer = ({
                           </Link>
                         );
                       })}
+                      <a
+                        href={`mailto:info@bigalsdecoys.com`}
+                        className="flex items-center justify-center rounded-lg fill-[var(--footer-social-icon,hsl(var(--contrast-400)))] p-1 ring-[var(--footer-focus,hsl(var(--primary)))] transition-colors duration-300 ease-out hover:fill-[var(--footer-social-icon-hover,hsl(var(--foreground)))] focus-visible:outline-0 focus-visible:ring-2"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 12.713l11.985-9.713h-23.97l11.985 9.713zm0 2.574l-12-9.287v13h24v-13l-12 9.287z" />
+                        </svg>
+                      </a>
+                      <Link
+                        className="flex items-center justify-center rounded-lg fill-[var(--footer-social-icon,hsl(var(--contrast-400)))] p-1 ring-[var(--footer-focus,hsl(var(--primary)))] transition-colors duration-300 ease-out hover:fill-[var(--footer-social-icon-hover,hsl(var(--foreground)))] focus-visible:outline-0 focus-visible:ring-2"
+                        href={`/contact`}
+                      >
+                        {/* Phone icon */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.48 2.53.74 3.88.74a1 1 0 011 1v3.5a1 1 0 01-1 1C10.07 22 2 13.93 2 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.35.26 2.67.74 3.88a1 1 0 01-.21 1.11l-2.2 2.2z" />
+                        </svg>
+                      </Link>
                     </div>
                   );
                 }

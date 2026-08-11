@@ -26,6 +26,11 @@ const CUSTOM_ROUTES = new Set([
   '/shipping-and-returns',
 ]);
 
+// Catalyst-native routes that must never be handed to BigCommerce route resolution.
+// `/change-password?c=&t=` uses BigCommerce's legacy reset-param style, and letting
+// the middleware resolve it can return a redirect that drops the server action POST.
+const NATIVE_ROUTES = new Set(['/change-password']);
+
 const GetRouteQuery = graphql(`
   query GetRouteQuery($path: String!) {
     site {
@@ -324,6 +329,18 @@ export const withRoutes: ProxyFactory = () => {
     auth(async (req) => {
       const locale = req.headers.get('x-bc-locale') ?? '';
       const customerAccessToken = req.auth?.user?.customerAccessToken;
+
+      // Serve Catalyst-native routes directly, skipping BigCommerce route
+      // resolution so its redirects can't drop the server action POST.
+      const cleanNativePath = clearLocaleFromPath(new URL(req.url).pathname, locale);
+
+      if (NATIVE_ROUTES.has(cleanNativePath)) {
+        const nativeRewriteUrl = new URL(`/${locale}${cleanNativePath}`, req.url);
+
+        nativeRewriteUrl.search = req.nextUrl.search;
+
+        return NextResponse.rewrite(nativeRewriteUrl);
+      }
 
       const { route, status } = await getRouteInfo(req, event, customerAccessToken);
 

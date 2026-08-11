@@ -43,9 +43,7 @@ export const resetPassword = async (
       variables: {
         input: {
           email: submission.value.email,
-          // Trailing slash required: with `trailingSlash: true`, a non-canonical
-          // URL 308-redirects the server action POST and the browser drops it.
-          path: '/change-password/',
+          path: '/change-password',
         },
       },
       fetchOptions: {

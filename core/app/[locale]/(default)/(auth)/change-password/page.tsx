@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
@@ -49,14 +48,13 @@ export default async function ChangePassword({ params, searchParams }: Props) {
 
   return (
     <ResetPasswordSection
-      action={changePassword.bind(null, {
-        customerEntityId: parsedCustomerEntityId,
-        token: normalizedToken,
-      })}
+      action={changePassword}
       confirmPasswordLabel={t('confirmPassword')}
+      customerEntityId={parsedCustomerEntityId}
       newPasswordLabel={t('newPassword')}
       passwordComplexitySettings={passwordComplexitySettings}
       title={t('title')}
+      token={normalizedToken}
     />
   );
 }

@@ -22,6 +22,8 @@ export type ResetPasswordAction = Action<
 
 interface Props {
   action: ResetPasswordAction;
+  customerEntityId: number;
+  token: string;
   submitLabel?: string;
   newPasswordLabel?: string;
   confirmPasswordLabel?: string;
@@ -30,6 +32,8 @@ interface Props {
 
 export function ResetPasswordForm({
   action,
+  customerEntityId,
+  token,
   newPasswordLabel = 'New password',
   confirmPasswordLabel = 'Confirm Password',
   submitLabel = 'Update',
@@ -53,6 +57,8 @@ export function ResetPasswordForm({
 
   return (
     <form {...getFormProps(form)} action={formAction} className="space-y-5">
+      <input name="customerEntityId" type="hidden" value={customerEntityId} />
+      <input name="token" type="hidden" value={token} />
       <Input
         {...getInputProps(fields.password, { type: 'password' })}
         errors={fields.password.errors}

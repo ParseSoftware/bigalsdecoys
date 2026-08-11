@@ -3,7 +3,7 @@
 import { getFormProps, getInputProps, SubmissionResult, useForm } from '@conform-to/react';
 import { getZodConstraint } from '@conform-to/zod';
 import { useTranslations } from 'next-intl';
-import { ReactNode, startTransition, useActionState } from 'react';
+import { ReactNode, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 import { PasswordComplexitySettings } from '@/vibes/soul/form/dynamic-form/schema';
@@ -51,41 +51,28 @@ export function ResetPasswordForm({
     constraint: getZodConstraint(schema),
     shouldValidate: 'onBlur',
     shouldRevalidate: 'onInput',
-    onSubmit(event, { formData }) {
-      event.preventDefault();
-      startTransition(() => {
-        formAction(formData);
-      });
-    },
     onValidate({ formData }) {
       return parseWithZodTranslatedErrors(formData, { schema, errorTranslations });
     },
   });
 
-  const passwordField = fields.password;
-  const confirmPasswordField = fields.confirmPassword;
-
-  if (!passwordField || !confirmPasswordField) {
-    return null;
-  }
-
   return (
-    <form {...getFormProps(form)} className="space-y-5">
+    <form {...getFormProps(form)} action={formAction} className="space-y-5">
       <input name="customerEntityId" type="hidden" value={customerEntityId} />
       <input name="token" type="hidden" value={token} />
       <Input
-        {...getInputProps(passwordField, { type: 'password' })}
+        {...getInputProps(fields.password, { type: 'password' })}
         autoComplete="new-password"
-        errors={passwordField.errors}
-        key={passwordField.id}
+        errors={fields.password.errors}
+        key={fields.password.id}
         label={newPasswordLabel}
       />
       <Input
-        {...getInputProps(confirmPasswordField, { type: 'password' })}
+        {...getInputProps(fields.confirmPassword, { type: 'password' })}
         autoComplete="new-password"
         className="mb-6"
-        errors={confirmPasswordField.errors}
-        key={confirmPasswordField.id}
+        errors={fields.confirmPassword.errors}
+        key={fields.confirmPassword.id}
         label={confirmPasswordLabel}
       />
       <SubmitButton>{submitLabel}</SubmitButton>

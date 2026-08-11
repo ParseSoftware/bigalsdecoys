@@ -3,7 +3,8 @@
 import { getFormProps, getInputProps, SubmissionResult, useForm } from '@conform-to/react';
 import { getZodConstraint } from '@conform-to/zod';
 import { useTranslations } from 'next-intl';
-import { useActionState } from 'react';
+import { ReactNode, startTransition, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 
 import { PasswordComplexitySettings } from '@/vibes/soul/form/dynamic-form/schema';
 import { FormStatus } from '@/vibes/soul/form/form-status';
@@ -42,7 +43,7 @@ export function ResetPasswordForm({
   const t = useTranslations('Auth.ChangePassword');
   const errorTranslations = resetPasswordErrorTranslations(t, passwordComplexitySettings);
   const schema = resetPasswordSchema(passwordComplexitySettings, errorTranslations);
-  const [{ lastResult, successMessage }, formAction, isPending] = useActionState(action, {
+  const [{ lastResult, successMessage }, formAction] = useActionState(action, {
     lastResult: null,
   });
   const [form, fields] = useForm({
@@ -50,31 +51,42 @@ export function ResetPasswordForm({
     constraint: getZodConstraint(schema),
     shouldValidate: 'onBlur',
     shouldRevalidate: 'onInput',
+    onSubmit(event, { formData }) {
+      event.preventDefault();
+      startTransition(() => {
+        formAction(formData);
+      });
+    },
     onValidate({ formData }) {
       return parseWithZodTranslatedErrors(formData, { schema, errorTranslations });
     },
   });
 
+  const passwordField = fields.password;
+  const confirmPasswordField = fields.confirmPassword;
+
+  if (!passwordField || !confirmPasswordField) {
+    return null;
+  }
+
   return (
-    <form {...getFormProps(form)} action={formAction} className="space-y-5">
+    <form {...getFormProps(form)} className="space-y-5">
       <input name="customerEntityId" type="hidden" value={customerEntityId} />
       <input name="token" type="hidden" value={token} />
       <Input
-        {...getInputProps(fields.password, { type: 'password' })}
-        errors={fields.password.errors}
-        key={fields.password.id}
+        {...getInputProps(passwordField, { type: 'password' })}
+        errors={passwordField.errors}
+        key={passwordField.id}
         label={newPasswordLabel}
       />
       <Input
-        {...getInputProps(fields.confirmPassword, { type: 'password' })}
+        {...getInputProps(confirmPasswordField, { type: 'password' })}
         className="mb-6"
-        errors={fields.confirmPassword.errors}
-        key={fields.confirmPassword.id}
+        errors={confirmPasswordField.errors}
+        key={confirmPasswordField.id}
         label={confirmPasswordLabel}
       />
-      <Button loading={isPending} size="small" type="submit" variant="secondary">
-        {submitLabel}
-      </Button>
+      <SubmitButton>{submitLabel}</SubmitButton>
       {form.errors?.map((error, index) => (
         <FormStatus key={index} type="error">
           {error}
@@ -84,5 +96,15 @@ export function ResetPasswordForm({
         <FormStatus>{successMessage}</FormStatus>
       )}
     </form>
+  );
+}
+
+function SubmitButton({ children }: { children: ReactNode }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button loading={pending} size="small" type="submit" variant="secondary">
+      {children}
+    </Button>
   );
 }

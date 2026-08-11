@@ -38,11 +38,21 @@ export default async function ChangePassword({ params, searchParams }: Props) {
     return redirect({ href: '/login', locale });
   }
 
+  const parsedCustomerEntityId = Number.parseInt(customerEntityId, 10);
+  const normalizedToken = token.trim().replace(/ /g, '+');
+
+  if (!Number.isSafeInteger(parsedCustomerEntityId) || parsedCustomerEntityId <= 0) {
+    return redirect({ href: '/login', locale });
+  }
+
   const { passwordComplexitySettings } = await getChangePasswordQuery();
 
   return (
     <ResetPasswordSection
-      action={changePassword.bind(null, { customerEntityId, token })}
+      action={changePassword.bind(null, {
+        customerEntityId: parsedCustomerEntityId,
+        token: normalizedToken,
+      })}
       confirmPasswordLabel={t('confirmPassword')}
       newPasswordLabel={t('newPassword')}
       passwordComplexitySettings={passwordComplexitySettings}

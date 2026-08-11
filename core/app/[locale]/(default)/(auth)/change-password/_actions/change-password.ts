@@ -30,7 +30,7 @@ const schema = z.object({
 });
 
 export async function changePassword(
-  { token, customerEntityId }: { token: string; customerEntityId: string },
+  { token, customerEntityId }: { token: string; customerEntityId: number },
   _prevState: { lastResult: SubmissionResult | null; successMessage?: string },
   formData: FormData,
 ) {
@@ -42,12 +42,14 @@ export async function changePassword(
   }
 
   try {
+    const normalizedToken = token.trim().replace(/ /g, '+');
+
     const response = await client.fetch({
       document: ChangePasswordMutation,
       variables: {
         input: {
-          token,
-          customerEntityId: Number(customerEntityId),
+          token: normalizedToken,
+          customerEntityId,
           newPassword: submission.value.password,
         },
       },

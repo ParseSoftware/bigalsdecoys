@@ -75,12 +75,14 @@ export function ResetPasswordForm({
       <input name="token" type="hidden" value={token} />
       <Input
         {...getInputProps(passwordField, { type: 'password' })}
+        autoComplete="new-password"
         errors={passwordField.errors}
         key={passwordField.id}
         label={newPasswordLabel}
       />
       <Input
         {...getInputProps(confirmPasswordField, { type: 'password' })}
+        autoComplete="new-password"
         className="mb-6"
         errors={confirmPasswordField.errors}
         key={confirmPasswordField.id}

@@ -57,7 +57,7 @@ export function ResetPasswordForm({
   });
 
   return (
-    <form {...getFormProps(form)} action={formAction} className="space-y-5">
+    <form {...getFormProps(form)} action={formAction} className="klaviyo_ignore space-y-5">
       <input name="customerEntityId" type="hidden" value={customerEntityId} />
       <input name="token" type="hidden" value={token} />
       <Input

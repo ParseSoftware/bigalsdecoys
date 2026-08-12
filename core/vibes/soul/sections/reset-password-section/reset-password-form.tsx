@@ -3,8 +3,7 @@
 import { getFormProps, getInputProps, SubmissionResult, useForm } from '@conform-to/react';
 import { getZodConstraint } from '@conform-to/zod';
 import { useTranslations } from 'next-intl';
-import { ReactNode, useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 
 import { PasswordComplexitySettings } from '@/vibes/soul/form/dynamic-form/schema';
 import { FormStatus } from '@/vibes/soul/form/form-status';
@@ -23,8 +22,6 @@ export type ResetPasswordAction = Action<
 
 interface Props {
   action: ResetPasswordAction;
-  customerEntityId: number;
-  token: string;
   submitLabel?: string;
   newPasswordLabel?: string;
   confirmPasswordLabel?: string;
@@ -33,8 +30,6 @@ interface Props {
 
 export function ResetPasswordForm({
   action,
-  customerEntityId,
-  token,
   newPasswordLabel = 'New password',
   confirmPasswordLabel = 'Confirm Password',
   submitLabel = 'Update',
@@ -43,7 +38,7 @@ export function ResetPasswordForm({
   const t = useTranslations('Auth.ChangePassword');
   const errorTranslations = resetPasswordErrorTranslations(t, passwordComplexitySettings);
   const schema = resetPasswordSchema(passwordComplexitySettings, errorTranslations);
-  const [{ lastResult, successMessage }, formAction] = useActionState(action, {
+  const [{ lastResult, successMessage }, formAction, isPending] = useActionState(action, {
     lastResult: null,
   });
   const [form, fields] = useForm({
@@ -57,25 +52,23 @@ export function ResetPasswordForm({
   });
 
   return (
-    <form {...getFormProps(form)} action={formAction} className="klaviyo_ignore space-y-5">
-      <input name="customerEntityId" type="hidden" value={customerEntityId} />
-      <input name="token" type="hidden" value={token} />
+    <form {...getFormProps(form)} action={formAction} className="space-y-5">
       <Input
         {...getInputProps(fields.password, { type: 'password' })}
-        autoComplete="new-password"
         errors={fields.password.errors}
         key={fields.password.id}
         label={newPasswordLabel}
       />
       <Input
         {...getInputProps(fields.confirmPassword, { type: 'password' })}
-        autoComplete="new-password"
         className="mb-6"
         errors={fields.confirmPassword.errors}
         key={fields.confirmPassword.id}
         label={confirmPasswordLabel}
       />
-      <SubmitButton>{submitLabel}</SubmitButton>
+      <Button loading={isPending} size="small" type="submit" variant="secondary">
+        {submitLabel}
+      </Button>
       {form.errors?.map((error, index) => (
         <FormStatus key={index} type="error">
           {error}
@@ -85,15 +78,5 @@ export function ResetPasswordForm({
         <FormStatus>{successMessage}</FormStatus>
       )}
     </form>
-  );
-}
-
-function SubmitButton({ children }: { children: ReactNode }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button loading={pending} size="small" type="submit" variant="secondary">
-      {children}
-    </Button>
   );
 }

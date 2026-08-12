@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
@@ -37,24 +38,15 @@ export default async function ChangePassword({ params, searchParams }: Props) {
     return redirect({ href: '/login', locale });
   }
 
-  const parsedCustomerEntityId = Number.parseInt(customerEntityId, 10);
-  const normalizedToken = token.trim().replace(/ /g, '+');
-
-  if (!Number.isSafeInteger(parsedCustomerEntityId) || parsedCustomerEntityId <= 0) {
-    return redirect({ href: '/login', locale });
-  }
-
   const { passwordComplexitySettings } = await getChangePasswordQuery();
 
   return (
     <ResetPasswordSection
-      action={changePassword}
+      action={changePassword.bind(null, { customerEntityId, token })}
       confirmPasswordLabel={t('confirmPassword')}
-      customerEntityId={parsedCustomerEntityId}
       newPasswordLabel={t('newPassword')}
       passwordComplexitySettings={passwordComplexitySettings}
       title={t('title')}
-      token={normalizedToken}
     />
   );
 }

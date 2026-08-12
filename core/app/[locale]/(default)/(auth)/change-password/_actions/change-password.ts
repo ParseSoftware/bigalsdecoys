@@ -27,11 +27,10 @@ const ChangePasswordMutation = graphql(`
 
 const schema = z.object({
   password: z.string(),
-  customerEntityId: z.coerce.number().int().positive(),
-  token: z.string().trim().min(1),
 });
 
 export async function changePassword(
+  { token, customerEntityId }: { token: string; customerEntityId: string },
   _prevState: { lastResult: SubmissionResult | null; successMessage?: string },
   formData: FormData,
 ) {
@@ -43,14 +42,12 @@ export async function changePassword(
   }
 
   try {
-    const normalizedToken = submission.value.token.replace(/ /g, '+');
-
     const response = await client.fetch({
       document: ChangePasswordMutation,
       variables: {
         input: {
-          token: normalizedToken,
-          customerEntityId: submission.value.customerEntityId,
+          token,
+          customerEntityId: Number(customerEntityId),
           newPassword: submission.value.password,
         },
       },

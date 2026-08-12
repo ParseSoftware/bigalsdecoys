@@ -6,8 +6,6 @@ interface Props {
   title?: string;
   subtitle?: string;
   action: ResetPasswordAction;
-  customerEntityId: number;
-  token: string;
   submitLabel?: string;
   newPasswordLabel?: string;
   confirmPasswordLabel?: string;
@@ -17,8 +15,6 @@ interface Props {
 export function ResetPasswordSection({
   title = 'Reset password',
   subtitle = 'Enter a new password below to reset your account password.',
-  customerEntityId,
-  token,
   submitLabel,
   newPasswordLabel,
   confirmPasswordLabel,
@@ -34,11 +30,9 @@ export function ResetPasswordSection({
           <ResetPasswordForm
             action={action}
             confirmPasswordLabel={confirmPasswordLabel}
-            customerEntityId={customerEntityId}
             newPasswordLabel={newPasswordLabel}
             passwordComplexitySettings={passwordComplexitySettings}
             submitLabel={submitLabel}
-            token={token}
           />
         </div>
       </div>

@@ -11,8 +11,8 @@
 export const FREE_SHIPPING_THRESHOLD = 150;
 
 /** Primary contact phone number, used in bulk-pricing CTAs and the footer. */
-export const BRAND_PHONE = '605-956-4818';
-export const BRAND_PHONE_HREF = 'tel:6059564818';
+export const BRAND_PHONE = '406-609-2452';
+export const BRAND_PHONE_HREF = 'tel:+14066092452';
 
 /**
  * Trust badge definitions reused by the shared TrustBadges component across the

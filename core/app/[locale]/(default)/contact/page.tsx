@@ -21,8 +21,8 @@ export const metadata: Metadata = {
 };
 
 const SUPPORT_EMAIL = 'info@bigalsdecoys.com';
-const SUPPORT_PHONE_DISPLAY = '605-956-4818';
-const SUPPORT_PHONE_HREF = 'tel:+16059564818';
+const SUPPORT_PHONE_DISPLAY = '406-609-2452';
+const SUPPORT_PHONE_HREF = 'tel:+14066092452';
 
 const CONTACT_PATH = '/contact';
 

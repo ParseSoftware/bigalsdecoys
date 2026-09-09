@@ -22,6 +22,7 @@ const CUSTOM_ROUTES = new Set([
   '/about',
   '/canada-and-overseas',
   '/contact',
+  '/prostaff-program',
   '/shipping-and-returns',
 ]);
 

@@ -25,9 +25,8 @@
         "cta": "Our Story"
       }
     },
-
     "Hero": {
-      "eyebrow": "American Made · Est. 2018 · Kalispell, MT",
+      "eyebrow": "Built for the Field",
       "headlineLine1": "Decoys That",
       "headlineLine2": "Pull Birds.",
       "subtitle": "Realistic silhouette decoys with an ultra-matte finish printed on heavy-duty, ultra-durable material. Made in USA.",
@@ -123,6 +122,7 @@
         "confirmPasswordRequired": "Please confirm your password"
       }
     },
+    "moreOffers": "+{count, plural, =1 {# more offer} other {# more offers}}",
     "Login": {
       "title": "Login",
       "heading": "Log in",
@@ -223,7 +223,8 @@
       "Empty": {
         "title": "Sorry, no results for \"{term}\".",
         "subtitle": "Please try another search."
-      }
+      },
+      "semanticSearchPlaceholder": "Describe what you're looking for"
     },
     "FacetedSearch": {
       "filters": "Filters",
@@ -470,6 +471,7 @@
       "subTotal": "Subtotal",
       "discounts": "Discounts",
       "tax": "Tax",
+      "totalIncludesTax": "Includes {tax} tax",
       "total": "Total",
       "CouponCode": {
         "apply": "Apply",
@@ -480,6 +482,7 @@
       },
       "Shipping": {
         "shipping": "Shipping",
+        "shippingExcludingTax": "Shipping (Ex. Tax)",
         "add": "Add",
         "change": "Change",
         "cancel": "Cancel",
@@ -563,8 +566,14 @@
       },
       "currentStock": "{quantity, number} in stock",
       "backorderQuantity": "{quantity, number} will be on backorder",
+      "maxPurchasableQuantity": "The maximum purchasable quantity is {quantity, number}. Please adjust and try again.",
       "loadingMoreImages": "Loading more images",
       "imagesLoaded": "{count, plural, =1 {1 more image loaded} other {# more images loaded}}",
+      "playVideo": "Play video",
+      "viewVideo": "View video",
+      "videosTitle": "Videos",
+      "hideVideos": "Hide videos",
+      "showVideos": "Show videos",
       "Submit": {
         "addToCart": "Add to cart",
         "outOfStock": "Out of stock",
@@ -658,6 +667,15 @@
     "search": "Search"
   },
   "Components": {
+    "ProductCard": {
+      "moreOffers": "+{count, plural, =1 {# more offer} other {# more offers}}",
+      "addToCart": "Add to Cart",
+      "viewDetails": "View Details",
+      "chooseOptions": "Choose Options",
+      "added": "Added!",
+      "unavailable": "Unavailable",
+      "addToCartError": "Something went wrong. Please try again."
+    },
     "Header": {
       "home": "Home",
       "sale": "Sale",
@@ -711,14 +729,6 @@
         "title": "Bulk Pricing Available",
         "subtitle": "Contact us for custom quotes"
       }
-    },
-    "ProductCard": {
-      "addToCart": "Add to Cart",
-      "viewDetails": "View Details",
-      "chooseOptions": "Choose Options",
-      "added": "Added!",
-      "unavailable": "Unavailable",
-      "addToCartError": "Something went wrong. Please try again."
     },
     "Footer": {
       "home": "Home",
@@ -782,7 +792,11 @@
     "Price": {
       "originalPrice": "Original price was {price}.",
       "currentPrice": "Current price is {price}.",
-      "range": "Price from {minValue} to {maxValue}."
+      "range": "Price from {minValue} to {maxValue}.",
+      "includingTax": "(Inc. Tax)",
+      "excludingTax": "(Ex. Tax)",
+      "includingTaxFull": "Including Tax",
+      "excludingTaxFull": "Excluding Tax"
     }
   },
   "GiftCertificates": {

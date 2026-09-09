@@ -3,12 +3,15 @@ import { Metadata } from 'next';
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Streamable } from '@/vibes/soul/lib/streamable';
+import { Price } from '@/vibes/soul/primitives/price-label';
 import { Cart as CartComponent, CartEmptyState } from '@/vibes/soul/sections/cart';
 import { FeaturedProductCarousel } from '@/vibes/soul/sections/featured-product-carousel';
 import { CartAnalyticsProvider } from '~/app/[locale]/(default)/cart/_components/cart-analytics-provider';
 import { FreeShippingProgress } from '~/components/free-shipping-progress';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { FREE_SHIPPING_THRESHOLD } from '~/lib/brand';
+import { ClientWalletButtons } from '~/components/wallet-buttons';
+import { pricesTransformer } from '~/data-transformers/prices-transformer';
 import { getCartId } from '~/lib/cart';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { exists } from '~/lib/utils';
@@ -19,7 +22,14 @@ import { updateLineItem } from './_actions/update-line-item';
 import { updateShippingInfo } from './_actions/update-shipping-info';
 import { CartViewed } from './_components/cart-viewed';
 import { CheckoutPreconnect } from './_components/checkout-preconnect';
-import { getCart, getCartRecommendations, getShippingCountries } from './page-data';
+import {
+  getCart,
+  getCurrencyData,
+  getPaymentWallets,
+  getPaymentWalletWithInitializationData,
+  getCartRecommendations,
+  getShippingCountries,
+} from './page-data';
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -36,6 +46,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: t('title'),
   };
 }
+
+const createWalletButtonsInitOptions = async (
+  walletButtons: string[],
+  cart: {
+    entityId: string;
+    currencyCode: string;
+    amount: {
+      value: number;
+    };
+  },
+) => {
+  const currencyData = await getCurrencyData(cart.currencyCode);
+
+  return Promise.all(
+    walletButtons.map(async (entityId) => {
+      const initData = await getPaymentWalletWithInitializationData(entityId, cart.entityId);
+      const methodId = entityId.split('.').join('');
+
+      return {
+        methodId,
+        containerId: `${methodId}-button`,
+        [methodId]: {
+          cartId: cart.entityId,
+          currency: {
+            code: currencyData?.code,
+            decimalPlaces: currencyData?.display.decimalPlaces,
+          },
+          amount: cart.amount.value,
+          ...initData,
+        },
+      };
+    }),
+  );
+};
 
 const getAnalyticsData = async (cartId: string) => {
   const data = await getCart({ cartId });
@@ -102,6 +146,25 @@ export default async function Cart({ params }: Props) {
     );
   }
 
+  const taxIncluded = cart.isTaxIncluded;
+
+  const walletButtonsInitOptions = Streamable.from(async () => {
+    try {
+      const walletButtons = await getPaymentWallets({
+        filters: {
+          cartEntityId: cartId,
+        },
+      });
+
+      return await createWalletButtonsInitOptions(walletButtons, cart);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+
+      return [];
+    }
+  });
+
   const lineItems = [
     ...cart.lineItems.giftCertificates,
     ...cart.lineItems.physicalItems,
@@ -143,7 +206,8 @@ export default async function Cart({ params }: Props) {
         inventoryMessages = {
           quantityReadyToShipMessage:
             data.site.settings?.inventory?.showQuantityOnHand &&
-            !!item.stockPosition?.quantityOnHand
+            !!item.stockPosition?.quantityOnHand &&
+            !!item.stockPosition.quantityBackordered
               ? t('quantityReadyToShip', {
                   quantity: Number(item.stockPosition.quantityOnHand),
                 })
@@ -171,18 +235,19 @@ export default async function Cart({ params }: Props) {
       }
     }
 
+    const catalogProduct = item.catalogProductWithOptionSelections;
+    const price: Price =
+      (catalogProduct && pricesTransformer(catalogProduct, format, taxIncluded ? 'INC' : 'EX')) ??
+      format.number(item.listPrice.value, {
+        style: 'currency',
+        currency: item.listPrice.currencyCode,
+      });
+
     return {
       typename: item.__typename,
       id: item.entityId,
       quantity: item.quantity,
-      price: format.number(item.listPrice.value, {
-        style: 'currency',
-        currency: item.listPrice.currencyCode,
-      }),
-      salePrice: format.number(item.salePrice.value, {
-        style: 'currency',
-        currency: item.salePrice.currencyCode,
-      }),
+      price,
       subtitle: item.selectedOptions
         .map((option) => {
           switch (option.__typename) {
@@ -299,6 +364,15 @@ export default async function Cart({ params }: Props) {
               currency: cart.currencyCode,
             }),
             totalLabel: t('CheckoutSummary.total'),
+            totalSubtitle:
+              taxIncluded && checkout?.taxTotal
+                ? t('CheckoutSummary.totalIncludesTax', {
+                    tax: format.number(checkout.taxTotal.value, {
+                      style: 'currency',
+                      currency: cart.currencyCode,
+                    }),
+                  })
+                : undefined,
             summaryItems: [
               {
                 label: t('CheckoutSummary.subTotal'),
@@ -332,13 +406,15 @@ export default async function Cart({ params }: Props) {
                   currency: cart.currencyCode,
                 })}`,
               })),
-              checkout?.taxTotal && {
-                label: t('CheckoutSummary.tax'),
-                value: format.number(checkout.taxTotal.value, {
-                  style: 'currency',
-                  currency: cart.currencyCode,
-                }),
-              },
+              !taxIncluded && checkout?.taxTotal
+                ? {
+                    label: t('CheckoutSummary.tax'),
+                    value: format.number(checkout.taxTotal.value, {
+                      style: 'currency',
+                      currency: cart.currencyCode,
+                    }),
+                  }
+                : null,
             ].filter(exists),
           }}
           checkoutAction={CHECKOUT_URL}
@@ -370,7 +446,9 @@ export default async function Cart({ params }: Props) {
               : undefined
           }
           incrementLineItemLabel={t('increment')}
-          key={`${cart.entityId}-${cart.version}`}
+          // Keyed by entityId only; keying by version too would remount the section on
+          // every mutation (see the pending-intent dispatcher notes in the Cart section).
+          key={cart.entityId}
           lineItemAction={updateLineItem}
           lineItemActionPendingLabel={t('cartUpdateInProgress')}
           shipping={{
@@ -415,7 +493,9 @@ export default async function Cart({ params }: Props) {
                 }
               : undefined,
             showShippingForm,
-            shippingLabel: t('CheckoutSummary.Shipping.shipping'),
+            shippingLabel: taxIncluded
+              ? t('CheckoutSummary.Shipping.shippingExcludingTax')
+              : t('CheckoutSummary.Shipping.shipping'),
             addLabel: t('CheckoutSummary.Shipping.add'),
             changeLabel: t('CheckoutSummary.Shipping.change'),
             countryLabel: t('CheckoutSummary.Shipping.country'),
@@ -438,6 +518,12 @@ export default async function Cart({ params }: Props) {
               message={freeShippingMessage}
               progress={freeShippingProgress}
               qualified={freeShippingQualified}
+            />
+          }
+          walletButtons={
+            <ClientWalletButtons
+              graphQLEndpoint={process.env.TRAILING_SLASH !== 'false' ? 'graphql/' : 'graphql'}
+              walletButtonsInitOptions={walletButtonsInitOptions}
             />
           }
         />

@@ -1,5 +1,194 @@
 # Changelog
 
+## 1.11.0
+
+### Minor Changes
+
+- [#3173](https://github.com/bigcommerce/catalyst/pull/3173) [`06775b2`](https://github.com/bigcommerce/catalyst/commit/06775b2709e203af6bc14719c3e3aa9ad18290f5) Thanks [@jordanarldt](https://github.com/jordanarldt)! - Resolve merchant-configured locale subfolders at runtime instead of baking them in at build time, so custom locale paths such as `/fr-fr` and `/es-es` resolve consistently.
+
+  Previously the subfolder table was captured during `next build` into `build-config.json` and statically imported by `i18n/locales.ts`. If the control panel returned incomplete locale data at build time, every localized URL 404'd until the next deploy — and because next-intl treats a custom subfolder as a _replacement_ for the bare locale code rather than an alias, there was no fallback: `/es-es` simply did not match any route.
+
+  ## What changed
+  - Added `i18n/locale-config.ts`, which reads locale configuration from BigCommerce at runtime and caches it in KV with the same stale-while-revalidate pattern as `proxies/with-routes.ts`. An empty locale list is never cached.
+  - **Locales are no longer written to `build-config.json` at all.** A build-time snapshot of merchant-configurable data is either redundant or wrong, and using it as a fallback risked silently serving the stale URL space this change exists to fix. Runtime is now the only source. A warm cache rides out a BigCommerce outage; only a cold cache combined with an unreachable API cannot resolve, and that returns `503` with `retry-after` rather than a 404 that would tell crawlers these pages are gone.
+  - `proxies/with-intl.ts` now builds its next-intl middleware per request from that configuration. It resolves the configuration once per request and forwards it to the render as `x-bc-locale-routing`, so rendering and redirects reuse exactly what resolved the inbound URL rather than fetching it again — the two can't disagree, and there is no extra round trip. It also passes the matched subfolder as `x-bc-locale-prefix`, which `proxies/with-routes.ts` strips instead of recomputing from build-time data.
+  - `Link`, `useRouter` and `usePathname` now read the runtime configuration through a new provider in `app/[locale]/layout.tsx`, so generated URLs agree with what the proxy resolves. Canonical and hreflang URLs in `lib/seo/canonical.ts` and the header locale switcher do the same.
+  - `redirect` and `permanentRedirect` moved from `~/i18n/routing` to `~/i18n/navigation-server` and are now `async` — `await` them. This keeps the GraphQL client and KV out of the client bundle.
+  - Removed `generateStaticParams` from `app/[locale]/layout.tsx`, which only added a build-time dependency on the locale list — every route under `[locale]` already renders on demand because the tree reads cookies. The build's route rendering modes are unchanged.
+  - `i18n/locales.ts` is removed. The locale gates in `i18n/request.ts` and `app/[locale]/layout.tsx` now use the runtime list, and the sitemap/robots/favicon routes resolve the default channel directly instead of routing through a locale.
+
+  Behaviour change for channel-per-locale stores: `robots.txt`, the sitemap index and the favicon now resolve the default channel directly rather than via the default locale, because they run outside the proxy and have no request locale. Stores that map their default locale to a non-default channel in `channels.config.ts` will see those three served from `BIGCOMMERCE_CHANNEL_ID`.
+
+  Locale detection is unchanged: a shopper is still redirected to their language's subfolder, and an explicit choice in the locale switcher still wins on later requests.
+
+  Fixed along the way:
+  - `/xmlsitemap.php` and `/admin` redirected through the locale-aware helper, resolving to `/<locale>/sitemap.xml` and `/<locale>/` whenever every locale carries a prefix. The sitemap target was a 404, since `/sitemap.xml` is excluded from the proxy. Both now use plain redirects; `/admin` also no longer performs an uncached GraphQL request on every hit to a route that is disabled by default.
+  - Losing the KV cache no longer takes the storefront down. A read failure now degrades to a fetch instead of being treated as unresolvable.
+  - Locale configuration is validated where it is fetched, so an unusable value can no longer be cached and then rejected on every read, which would have silently turned the cache into a per-request refetch. Subfolders are normalized (surrounding slashes and whitespace trimmed), and locale codes and prefixes are constrained to safe URL shapes.
+  - An unrecognised locale returns 404 rather than 500 when no message file exists for it.
+  - A locale whose configured subfolder cannot be expressed in a URL is now skipped individually, with an error logged, instead of making the whole configuration unusable.
+  - The Playwright URL fixtures asserted `/<locale-code>/...` instead of the configured subfolder, so alternate-locale assertions were wrong for any store whose subfolder differs from its locale code (for example `de` served at `/de-de`). They now resolve the subfolder from the store.
+
+- [#3062](https://github.com/bigcommerce/catalyst/pull/3062) [`98b618f`](https://github.com/bigcommerce/catalyst/commit/98b618fb8ab76de86e598ead56032263bd2217bc) Thanks [@bc-yaroslav-zhmutskyi](https://github.com/bc-yaroslav-zhmutskyi)! - Add Wallet Payment buttons integration for cart page
+
+  ## What changed
+  - Render wallet payment buttons (e.g. PayPal) on the cart page when payment wallets are configured for the cart.
+  - Added `getPaymentWallets`, `getPaymentWalletWithInitializationData`, and `getCurrencyData` GraphQL queries in the cart's `page-data.ts` to fetch configured wallets and their initialization data.
+  - Added a `ClientWalletButtons` client component (`core/components/wallet-buttons`) that streams wallet init options and renders a container per wallet button.
+  - Added a `WalletButtonsInitializer` (`core/lib/wallet-buttons`) that lazily injects the BigCommerce Checkout SDK loader script and initializes each wallet button against the `/graphql` endpoint, with an `InitializationError` for missing loader.
+  - Wired `walletButtonsInitOptions` and `cartId` through the cart section component, and exposed `getCurrencyData` currency formatting details.
+  - Extended the GraphQL proxy (`with-graphql-proxy.ts` / `proxy.ts`) to support Checkout SDK wallet-button requests.
+  - Added `NEXT_PUBLIC_CHECKOUT_SDK_DEV_URL` to `.env.example` to optionally override the Checkout SDK loader URL in development.
+  - Added e2e coverage (`wallet-buttons.spec.ts`) verifying the loader script and wallet button containers render only when wallets are configured.
+
+### Patch Changes
+
+- [#3181](https://github.com/bigcommerce/catalyst/pull/3181) [`20b55e0`](https://github.com/bigcommerce/catalyst/commit/20b55e050d33beca85c163eef7fa517a8334b47e) Thanks [@animesh1987](https://github.com/animesh1987)! - Display an error message and disable Add to Cart when the requested quantity exceeds available-to-sell (on-hand + backorder allowance) on the PDP.
+
+- [#3181](https://github.com/bigcommerce/catalyst/pull/3181) [`20b55e0`](https://github.com/bigcommerce/catalyst/commit/20b55e050d33beca85c163eef7fa517a8334b47e) Thanks [@animesh1987](https://github.com/animesh1987)! - Only show the "ready to ship" quantity message in the cart when part of the line item is also backordered. Previously it appeared any time `showQuantityOnHand` was enabled and any quantity was on hand, even for fully in-stock items where the message added no useful information.
+
+- [#3182](https://github.com/bigcommerce/catalyst/pull/3182) [`eb38614`](https://github.com/bigcommerce/catalyst/commit/eb38614915058d751bb834ec74274ac679a766c7) Thanks [@parthshahp](https://github.com/parthshahp)! - Fix consent-gated cookies being withheld on stores that have cookie consent disabled. c15t grants every consent category client-side when consent is disabled, but only in its in-memory store, so no consent cookie is ever written and server-side checks treated the shopper as having declined — silently dropping the selected currency and preventing the `catalyst.visitorId` / `catalyst.visitId` cookies from being set. Server-side consent checks now fall back to the store's cookie-consent setting when no consent cookie is present: on stores with consent disabled, consent is implicitly granted, so the analytics proxy starts visits on the first request and the currency preference persists.
+
+- [#3176](https://github.com/bigcommerce/catalyst/pull/3176) [`332aa76`](https://github.com/bigcommerce/catalyst/commit/332aa76e41bf988d734acecaafeb40dc9f674dc1) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Expire entries in the in-memory KV layer after 60 seconds. `lib/kv` keeps a per-process `MemoryKvAdapter` in front of whichever shared adapter is selected (Cloudflare KV, Upstash, Vercel Runtime Cache) and skips the shared store whenever memory holds every requested key. Those entries never expired, so once a process had seen a key it stopped consulting the shared store for it entirely. Refreshes were then driven solely by the `expiryTime` each caller embeds in the cached value — and that path refetches from the **origin**, not from the shared store. So every process independently refetched on a clock starting from whenever it first cached the key, rather than picking up a value another process had already fetched and shared. Cached data was never wrong, but origin requests and cache writes scaled with process count. Capacity is also raised from 500 to 4096 entries, since cache keys include the query string and so accumulate faster than the number of real paths suggests.
+
+- [#3171](https://github.com/bigcommerce/catalyst/pull/3171) [`0c49112`](https://github.com/bigcommerce/catalyst/commit/0c49112e9363468b517122c620891ac5666ecc76) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Fix session cookie deletion being silently broken after logout. `stripSessionCookieExpiry` was stripping `Expires` from all session token `Set-Cookie` headers, including deletion directives (empty value + `Expires=past`). This turned cookie deletions into permanent empty-value session cookies, so the browser never removed them and stale cookies accumulated across login/logout cycles.
+
+- [#3174](https://github.com/bigcommerce/catalyst/pull/3174) [`f647d91`](https://github.com/bigcommerce/catalyst/commit/f647d91cc0284d64d768aaebb5531cc1bec3c803) Thanks [@jordanarldt](https://github.com/jordanarldt)! - Fix the product page `og:image` tag pointing at an unfetchable URL. `ProductPageMetadataQuery` requested `urlTemplate`, which returns a URL containing a literal `{:size}` placeholder that the `<Image>` CDN loader substitutes at render time. `generateMetadata` has no such loader, so the placeholder was emitted verbatim into the Open Graph tag.
+
+  ## Migration
+
+  In `core/app/[locale]/(default)/product/[slug]/page-data.ts`, update the `defaultImage` selection in `ProductPageMetadataQuery` to request a concrete URL:
+
+  ```diff
+    defaultImage {
+      altText
+  -   url: urlTemplate(lossy: true)
+  +   url(width: 1200, lossy: true)
+    }
+  ```
+
+  `width: 1200` matches the Open Graph and `summary_large_image` recommendation. Height is omitted intentionally — the stencil resizer fits the image inside the given box rather than cropping, so requesting `1200x630` would return a smaller square image for a square product photo.
+
+- [#3081](https://github.com/bigcommerce/catalyst/pull/3081) [`50a7263`](https://github.com/bigcommerce/catalyst/commit/50a7263d00e82720146877ea97073d821f3418b5) Thanks [@mfaris9](https://github.com/mfaris9)! - Fix Account Registration validating State/Province as required for countries without any states (e.g., Algeria). The register page now queries per-country state data from BigCommerce and hides the State/Province field entirely when the selected country has no states.
+
+- [#3188](https://github.com/bigcommerce/catalyst/pull/3188) [`96bb3c3`](https://github.com/bigcommerce/catalyst/commit/96bb3c3101d23b7a3e5396e612c94c2f9ff64416) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- Updated dependencies [[`be1967c`](https://github.com/bigcommerce/catalyst/commit/be1967ce85e2e71bf2cf8e0c0837aad66e423ceb)]:
+  - @bigcommerce/catalyst-client@1.0.3
+
+## 1.10.1
+
+### Patch Changes
+
+- [#3112](https://github.com/bigcommerce/catalyst/pull/3112) [`b80584d`](https://github.com/bigcommerce/catalyst/commit/b80584d040c74a943f46f9f294cf1dcccfc8f1ad) Thanks [@jairo-bc](https://github.com/jairo-bc)! - Fix product, category, and brand content falling back to the default language after ISR revalidation. `generateMetadata` fetched page data through `cache()`-memoized loaders before calling `setRequestLocale`, so during background regeneration (no request) next-intl could not resolve the locale, the storefront client omitted `Accept-Language`, and the default-locale response poisoned the memoized cache for the whole render. `setRequestLocale(locale)` is now called before the fetch in each `generateMetadata`.
+
+- [#3128](https://github.com/bigcommerce/catalyst/pull/3128) [`a14b9fd`](https://github.com/bigcommerce/catalyst/commit/a14b9fdc70609b33f69c6b040ecd2a71a0bf3bac) Thanks [@bc-vivekaggarwal](https://github.com/bc-vivekaggarwal)! - Style the promotion callouts with Storefront Kit's built-in `warning` variant instead of custom Tailwind classes. Bumps `storefront-kit` to `^0.32.3` (whose `styles` stylesheet is now plain CSS, so it imports cleanly under Turbopack) and wires up `storefront-kit/styles` plus the Storefront Kit `dist` content path so the Callout's design-system tokens resolve out of the box.
+
+- [#3129](https://github.com/bigcommerce/catalyst/pull/3129) [`9264ad8`](https://github.com/bigcommerce/catalyst/commit/9264ad808a84434f095de9a1ed13fbea25a2025c) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Upgrade Next.js from 16.2.6 to 16.2.11 to pick up the July 2026 security release (https://nextjs.org/blog/july-2026-security-release).
+
+## 1.10.0
+
+### Minor Changes
+
+- [#3108](https://github.com/bigcommerce/catalyst/pull/3108) [`84c0d5c`](https://github.com/bigcommerce/catalyst/commit/84c0d5c2aa6ce1f0b70138d8cfd46c7d88fc2adf) Thanks [@bc-vivekaggarwal](https://github.com/bc-vivekaggarwal)! - Show featured promotion callouts on the homepage product cards (featured and newest carousels), consistent with the existing PDP and PLP callouts.
+
+## 1.9.0
+
+### Minor Changes
+
+- [#3104](https://github.com/bigcommerce/catalyst/pull/3104) [`25d6471`](https://github.com/bigcommerce/catalyst/commit/25d6471123219902fd3e8d9eb71330cd86849f84) Thanks [@parthshahp](https://github.com/parthshahp)! - Respect default product search sort and product category sort settings from the control panel.
+
+- [#3083](https://github.com/bigcommerce/catalyst/pull/3083) [`2b7f2cc`](https://github.com/bigcommerce/catalyst/commit/2b7f2cc662bdffca50a6be4c87b5863eac2d2351) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Display product videos (YouTube) on the PDP in a dedicated section below the primary product content, mirroring the Stencil/Cornerstone layout. The Storefront GraphQL API exposes product videos as a `{ title, url }` pair (`Product.videos`); Catalyst now fetches them and renders a featured player with a thumbnail strip (clicking a thumbnail swaps the featured video) using [`lite-youtube-embed`](https://github.com/paulirish/lite-youtube-embed) — a lightweight facade that loads the YouTube player only when a shopper clicks. A small `getYouTubeId()` helper extracts the video id from the watch URL the API returns.
+
+  ## Migration
+
+  Additive — no breaking changes; existing PDP markup, the image gallery, and image pagination are unchanged. Forks adopting this manually need to:
+  - add the `lite-youtube-embed` dependency;
+  - request `videos(first: 25) { edges { node { title url } } }` on the PDP product query (`product/[slug]/page-data.ts`);
+  - stream those videos and render the new `ProductVideos` section below `ProductDetail` (`product/[slug]/page.tsx`);
+  - allow `i.ytimg.com/vi/**` in `next.config.ts` `images.remotePatterns` for poster thumbnails.
+
+- [#3057](https://github.com/bigcommerce/catalyst/pull/3057) [`a763acc`](https://github.com/bigcommerce/catalyst/commit/a763acced11a4c1b6f068b390bdc2a6b0145a405) Thanks [@bc-vivekaggarwal](https://github.com/bc-vivekaggarwal)! - Wire promotion callouts into PDP and PLP pages using live data from the Storefront GraphQL API (`featuredPromotions` on the `Product` type).
+  - **PDP**: stacked callout boxes render inline below the price, one per active promotion.
+  - **PLP (category, brand, search)**: each product card shows its first promotion inline below the price; if there are multiple, a "+N more" label appears within the same callout.
+
+### Patch Changes
+
+- [#3076](https://github.com/bigcommerce/catalyst/pull/3076) [`c6b3b07`](https://github.com/bigcommerce/catalyst/commit/c6b3b07133cbc7d438e4b9bd2c71d43d89ca2df4) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Fix Account Settings failing to save for customers when a merchant-defined required custom customer field exists. BigCommerce revalidates required custom fields on every `updateCustomer` call, so Account Settings now renders and resubmits those fields (mirroring the existing Register/Address form-field support) instead of only supporting first name, last name, email, and company.
+
+- [#3106](https://github.com/bigcommerce/catalyst/pull/3106) [`4975333`](https://github.com/bigcommerce/catalyst/commit/49753331777acb81b378b9969986d6487b00e934) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Disable caching for the webpage sidebar navigation and route/raw-page resolution when a customer access token is present, so customer-only navigation links and pages aren't leaked to (or hidden from) other visitors via a shared cache.
+
+- [#3109](https://github.com/bigcommerce/catalyst/pull/3109) [`8256b46`](https://github.com/bigcommerce/catalyst/commit/8256b4681c06cd20a8ac1f316cd23f56b6724848) Thanks [@jordanarldt](https://github.com/jordanarldt)! - Keep the cart's locale in sync when a shopper switches their storefront locale. Previously, changing the locale only updated the storefront URL and left the cart on its original locale. The locale switcher now calls the new `updateCartLocale` Storefront GraphQL mutation to update the active cart in place before navigating, mirroring the existing currency-switch behavior. This mutation is currently gated behind a store-side feature flag; until it's enabled, `updateCartLocale` returns `null` and the switch is a no-op.
+
+- [#3103](https://github.com/bigcommerce/catalyst/pull/3103) [`d09f8dc`](https://github.com/bigcommerce/catalyst/commit/d09f8dc06a200d4ebb8dd8ef32cd41baa02e3fd5) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Coalesce rapid cart line item quantity and delete clicks into at most one in-flight server action. Quantity buttons now update an optimistic pending intent that flushes a single absolute-quantity `update` intent after a short debounce (replacing the per-click `increment`/`decrement` intents), and deletes are serialized instead of queueing unboundedly. This prevents the serial server-action queue buildup that could lock up navigation on the cart page, and unifies cart revalidation on `revalidateTag`.
+
+  The cart section is now keyed by cart `entityId` only (previously `entityId`-`version`) and renders line items from the revalidation-refreshed `cart` prop. Remounting on every mutation swallowed clicks landing during the DOM swap and could drop queued actions, leaving the summary skeletons and checkout button stuck in a pending state until hard refresh.
+
+  Each quantity/delete control is now its own progressive-enhancement form that posts a real absolute quantity or delete request to the server action; JS intercepts the submit to route through the coalescing dispatcher, but the buttons keep working (as full page round-trips) before hydration or if the app bundle fails to load.
+
+  Also fixes the checkout button getting stuck spinning forever if its navigation is cancelled (Esc, "Stay" on the leave-page prompt, a flaky connection). The URL-string checkout action previously awaited a promise that never resolved, leaving retry clicks queued behind a dead action; it now settles after a short timeout and on bfcache restore, re-enabling the button as a retry.
+
+- [#3087](https://github.com/bigcommerce/catalyst/pull/3087) [`cb7d025`](https://github.com/bigcommerce/catalyst/commit/cb7d025eb7c70295c7e1e7c739d38788d852997f) Thanks [@jairo-bc](https://github.com/jairo-bc)! - Respect the Blog visibility setting (Control Panel > Storefront > Blogs) in the footer navigation. The Blog link no longer appears in the footer's "Navigate" section when Blog visibility is turned off.
+
+- [#3101](https://github.com/bigcommerce/catalyst/pull/3101) [`f60aea6`](https://github.com/bigcommerce/catalyst/commit/f60aea669b3dc1d2b01da996ad1570e7e70b514c) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+## 1.8.0
+
+### Minor Changes
+
+- [#3024](https://github.com/bigcommerce/catalyst/pull/3024) [`3cec674`](https://github.com/bigcommerce/catalyst/commit/3cec674f8fcbcf563e9c2d8015c35d96f4cd56e0) Thanks [@mfaris9](https://github.com/mfaris9)! - Honor the merchant's Tax Display setting (`Inc.`, `Ex.`, or `Both`) from the BigCommerce control panel across PDP, PLP, search, compare, and home. When set to `Both`, prices render stacked with `(Inc. Tax)` and `(Ex. Tax)` labels, including sale strike-throughs per line.
+
+  ## Migration
+
+  For forks that can't rebase cleanly: pricing was refactored end-to-end to support inc/ex tax variants and a `Both` mode (`PricingFragment`, `pricesTransformer`, `Price` types, page-data settings queries, analytics helpers). See PR #3024 for the full diff.
+
+- [#3015](https://github.com/bigcommerce/catalyst/pull/3015) [`15e365a`](https://github.com/bigcommerce/catalyst/commit/15e365aeeb36a44901769b7831e635e9e0e7bcc1) Thanks [@mfaris9](https://github.com/mfaris9)! - Consume merchant-configured per-locale URL subfolders from the BigCommerce Storefront GraphQL API (`Locale.path`). The locale that sits at the bare root URL (`/`) is derived from the CP configuration: if the default locale has no path, it sits at root; otherwise, if exactly one non-default locale has no path, that one sits at root; otherwise every locale gets a prefix. Locales with a path use it; locales without a path fall back to their locale code.
+
+### Patch Changes
+
+- [#3031](https://github.com/bigcommerce/catalyst/pull/3031) [`874e332`](https://github.com/bigcommerce/catalyst/commit/874e332b73b8a36c2d93ae4ec99d5dc00d7fb3e1) Thanks [@Tharaae](https://github.com/Tharaae)! - Display backorder information for variants on PDP.
+
+- [#3033](https://github.com/bigcommerce/catalyst/pull/3033) [`8bc379d`](https://github.com/bigcommerce/catalyst/commit/8bc379df6fe0c843ba82e901e31e245f506d0cf3) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Fix broken images in WYSIWYG content (web pages, blog posts, product description and warranty). Images uploaded through the Control Panel editor are stored as store-root-relative WebDAV paths (`/content/...` and `/product_images/...`) that 404 on the headless storefront domain; they are now rewritten to absolute BigCommerce CDN URLs.
+
+- [#3056](https://github.com/bigcommerce/catalyst/pull/3056) [`2c99731`](https://github.com/bigcommerce/catalyst/commit/2c997312623af93f67a1d202aed3a9467bb125a0) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Add a `catalyst` field to `core/package.json` (`catalyst.version` and `catalyst.ref`) that tracks the true Catalyst version independently of the top-level `version`, which merchants may repurpose for their own deploy tagging. The backend user-agent now reports `catalyst.version` (falling back to `version` for projects created before the field existed), and the release pipeline keeps the field in sync on each version bump.
+
+- [#3035](https://github.com/bigcommerce/catalyst/pull/3035) [`b4215f0`](https://github.com/bigcommerce/catalyst/commit/b4215f06cc4fbda8694835c589c84b362fb1a8fc) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Scope the consent manager cookie (`c15t-consent`) to the current host instead of the top-level domain. Previously `crossSubdomain: true` caused the cookie to be set on the root domain (e.g. `.example.com`) for stores running on a sub-domain, so it appeared on both the root domain and the sub-domain. Removing it makes the cookie host-only, so it now exists only on the sub-domain the store runs on.
+
+- [#3046](https://github.com/bigcommerce/catalyst/pull/3046) [`5034ea3`](https://github.com/bigcommerce/catalyst/commit/5034ea32b684acf2a074c2e2d8876b35aeef0a15) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Gate `catalyst.visitorId`, `catalyst.visitId`, and `currencyCode` cookies behind shopper consent. The visitor and visit cookies now require measurement consent and the currency preference cookie requires functionality consent. When consent is absent, existing analytics cookies are deleted on the next request. When measurement consent is granted mid-session, a new `startVisit` server action sets the cookies and fires the server-side `visitStartedEvent` immediately rather than waiting for the next full-page navigation.
+
+- [#3047](https://github.com/bigcommerce/catalyst/pull/3047) [`1ab2c82`](https://github.com/bigcommerce/catalyst/commit/1ab2c821b72ab8c2ad5db67f72bd139195945abb) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Make `authjs.session-token` and `authjs.anonymous-session-token` browser-session cookies (no `Expires` attribute) to satisfy Essential cookie classification requirements.
+
+  ## What changed
+
+  **Anonymous session token:** `anonymousSignIn` no longer sets `maxAge` on the cookie. Without it, Next.js omits `Max-Age`/`Expires` and the cookie becomes a session cookie that the browser drops when it closes.
+
+  **Auth session token:** Auth.js v5 unconditionally writes `Expires` on the session token cookie and provides no config option to suppress it. Two post-processing steps strip the attribute:
+  - `proxies/with-auth.ts` — strips `Expires` from `Set-Cookie` response headers on every page request.
+  - `auth/index.ts` — wraps `signIn` and `updateSession` to re-set the cookie via `cookies().set()` without `Expires` immediately after Auth.js writes it, covering the sign-in and session-update paths that middleware cannot reach.
+
+  `Max-Age=0` (used by Auth.js for cookie deletion on sign-out) is intentionally left intact.
+
+  ## Migration
+
+  **If you have a custom `maxAge` on `anonymousSignIn`:** The default 7-day `maxAge` has been removed. If your app relies on anonymous sessions persisting across browser restarts, add it back in your own `anonymousSignIn` call:
+
+  ```ts
+  cookieJar.set(anonymousCookieName, jwt, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: useSecureCookies,
+    maxAge: 60 * 60 * 24 * 7, // restore 7-day persistence if needed
+  });
+  ```
+
+  **If you already have your own `Expires`-stripping workaround:** Remove it. The middleware regex in `with-auth.ts` and the `patchSessionTokenCookies` wrapper in `auth/index.ts` now handle this centrally. Leaving both in place will cause redundant cookie writes.
+
+  **If you import `signIn` or `updateSession` directly from `auth/index.ts`:** No change needed — the signatures are identical. The exports are now thin async wrappers that call the Auth.js originals and then patch any session token cookies written during the call.
+
+- [#3058](https://github.com/bigcommerce/catalyst/pull/3058) [`94c503e`](https://github.com/bigcommerce/catalyst/commit/94c503e1f5a2d51ed81c741f5d92556116dac4c9) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- [#3048](https://github.com/bigcommerce/catalyst/pull/3048) [`226f2f3`](https://github.com/bigcommerce/catalyst/commit/226f2f3b49de4d6988105b40253b46a3a083ad4a) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
 ## 1.7.0
 
 ### Minor Changes

@@ -43,7 +43,7 @@ export const WishlistItemCard = ({
       className="relative flex max-w-md basis-[calc(100%-1rem)] flex-col justify-between gap-3 @md:basis-[calc(50%-0.75rem)] @lg:basis-[calc(33%-0.5rem)] @2xl:basis-[calc(25%-0.25rem)]"
       key={product.id}
     >
-      <ProductCard aspectRatio="3:4" product={product} showCompare={false} {...props} />
+      <ProductCard aspectRatio="aspect-[3/4]" product={product} showCompare={false} {...props} />
       {callToAction && (
         <WishlistItemAddToCart
           action={action}
@@ -74,7 +74,7 @@ export function WishlistItemSkeleton({ className = '' }: { className?: string })
         className,
       )}
     >
-      <ProductCardSkeleton aspectRatio="3:4" />
+      <ProductCardSkeleton aspectRatio="aspect-[3/4]" />
       <Skeleton.Box className="min-h-10 rounded-full" />
     </div>
   );

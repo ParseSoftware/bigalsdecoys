@@ -141,7 +141,7 @@ const ProductPageMetadataQuery = graphql(`
         path
         defaultImage {
           altText
-          url: urlTemplate(lossy: true)
+          url(width: 1200, lossy: true)
         }
         seo {
           pageTitle
@@ -178,6 +178,9 @@ const ProductQuery = graphql(
           display {
             showProductRating
           }
+          tax {
+            pdp
+          }
         }
         product(entityId: $entityId) {
           entityId
@@ -192,6 +195,14 @@ const ProductQuery = graphql(
             numberOfReviews
           }
           description
+          featuredPromotions {
+            edges {
+              node {
+                entityId
+                text
+              }
+            }
+          }
           ...ProductOptionsFragment
         }
       }
@@ -293,6 +304,18 @@ const StreamableProductQuery = graphql(
             altText
             url: urlTemplate(lossy: true)
           }
+          # Product videos. The Storefront GraphQL API only returns the video
+          # title and url (a YouTube watch URL); the dedicated PDP Videos section
+          # renders them via lite-youtube-embed. 25 covers realistic product
+          # video counts without needing pagination.
+          videos(first: 25) {
+            edges {
+              node {
+                title
+                url
+              }
+            }
+          }
           sku
           weight {
             value
@@ -337,9 +360,17 @@ export const getStreamableProduct = cache(
 
 const StreamableProductInventoryQuery = graphql(
   `
-    query StreamableProductInventoryQuery($entityId: Int!) {
+    query StreamableProductInventoryQuery(
+      $entityId: Int!
+      $optionValueIds: [OptionValueId!]
+      $useDefaultOptionSelections: Boolean
+    ) {
       site {
-        product(entityId: $entityId) {
+        product(
+          entityId: $entityId
+          optionValueIds: $optionValueIds
+          useDefaultOptionSelections: $useDefaultOptionSelections
+        ) {
           sku
           inventory {
             hasVariantInventory
@@ -363,7 +394,7 @@ const StreamableProductInventoryQuery = graphql(
   [ProductVariantsInventoryFragment],
 );
 
-type ProductInventoryVariables = VariablesOf<typeof StreamableProductQuery>;
+type ProductInventoryVariables = VariablesOf<typeof StreamableProductInventoryQuery>;
 
 export const getStreamableProductInventory = cache(
   async (variables: ProductInventoryVariables, customerAccessToken?: string) => {

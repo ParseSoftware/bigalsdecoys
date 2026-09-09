@@ -6,14 +6,17 @@ import { useEffect, useRef } from 'react';
 import { PricingFragment } from '~/client/fragments/pricing';
 import { FragmentOf } from '~/client/graphql';
 import { useKlaviyoTracker } from '~/components/klaviyo/use-klaviyo-tracker';
+import { TaxDisplay } from '~/data-transformers/prices-transformer';
+import { pickPricesForTaxDisplay } from '~/lib/tax-pricing';
 
 import { ProductViewedFragment } from './product-viewed/fragment';
 
 interface Props {
   product: FragmentOf<typeof ProductViewedFragment> & FragmentOf<typeof PricingFragment>;
+  taxDisplay?: TaxDisplay | null;
 }
 
-export function KlaviyoProductViewed({ product }: Props) {
+export function KlaviyoProductViewed({ product, taxDisplay }: Props) {
   const fired = useRef(false);
   const track = useKlaviyoTracker();
 
@@ -22,6 +25,7 @@ export function KlaviyoProductViewed({ product }: Props) {
     fired.current = true;
 
     const categories = removeEdgesAndNodes(product.categories).map((c) => c.name);
+    const prices = pickPricesForTaxDisplay(product, taxDisplay);
 
     const item = {
       Name: product.name,
@@ -30,8 +34,8 @@ export function KlaviyoProductViewed({ product }: Props) {
       URL: window.location.href,
       Brand: product.brand?.name ?? '',
       Categories: categories,
-      Price: product.prices?.price.value.toString() ?? '',
-      CompareAtPrice: product.prices?.retailPrice?.value.toString() ?? '',
+      Price: prices?.price.value.toString() ?? '',
+      CompareAtPrice: prices?.retailPrice?.value.toString() ?? '',
     };
 
     track(

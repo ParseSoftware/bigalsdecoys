@@ -53,12 +53,14 @@ export default async function Home({ params }: Props) {
 
     const { defaultOutOfStockMessage, showOutOfStockMessage, showBackorderMessage } =
       data.site.settings?.inventory ?? {};
+    const taxDisplay = data.site.settings?.tax?.plp;
 
     return productCardTransformer(
       newestProducts,
       format,
       showOutOfStockMessage ? defaultOutOfStockMessage : undefined,
       showBackorderMessage,
+      taxDisplay,
     );
   });
 
@@ -77,7 +79,10 @@ export default async function Home({ params }: Props) {
     ]);
 
     const search = await fetchFacetedSearch(
-      { attr_Sale: 'Yes', limit: 6 },
+      {
+        limit: 6,
+        attr_Sale: 'Yes',
+      },
       currencyCode,
       customerAccessToken,
     );

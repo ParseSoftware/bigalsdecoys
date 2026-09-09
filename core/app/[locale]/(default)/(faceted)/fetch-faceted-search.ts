@@ -189,7 +189,11 @@ const getProductSearchResults = cache(
 
     const response = await client.fetch({
       document: GetProductSearchResultsQuery,
-      variables: { ...filterArgs, ...paginationArgs, currencyCode },
+      variables: {
+        ...filterArgs,
+        ...paginationArgs,
+        currencyCode,
+      },
       customerAccessToken,
       fetchOptions: customerAccessToken ? { cache: 'no-store' } : { next: { revalidate: 300 } },
     });
@@ -339,6 +343,9 @@ const AttributeKey = z.custom<`attr_${string}`>((val) => {
   return typeof val === 'string' ? /^attr_.+$/.test(val) : false;
 });
 
+type PublicSearchParamsWithAttributes = z.input<typeof PublicSearchParamsSchema> &
+  Partial<Record<`attr_${string}`, string | string[] | null | undefined>>;
+
 export const PublicToPrivateParams = PublicSearchParamsSchema.catchall(SearchParamToArray.nullish())
   .transform((publicParams) => {
     const { after, before, limit, sort, ...filters } = publicParams;
@@ -406,7 +413,7 @@ export const PublicToPrivateParams = PublicSearchParamsSchema.catchall(SearchPar
 export const fetchFacetedSearch = cache(
   // We need to make sure the reference passed into this function is the same if we want it to be memoized.
   async (
-    params: z.input<typeof PublicSearchParamsSchema>,
+    params: PublicSearchParamsWithAttributes,
     currencyCode?: CurrencyCode,
     customerAccessToken?: string,
   ) => {

@@ -34,7 +34,7 @@ export function POST(request: NextRequest) {
     return NextResponse.json({ revalidated: false, message: 'Unauthorized.' }, { status: 401 });
   }
 
-  revalidateTag(TAGS.promotions);
+  revalidateTag(TAGS.promotions, { expire: 0 });
 
   return NextResponse.json({ revalidated: true, now: Date.now() });
 }

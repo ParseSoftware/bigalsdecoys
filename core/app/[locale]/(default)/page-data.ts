@@ -7,6 +7,7 @@ import { FeaturedProductsCarouselFragment } from '~/components/featured-products
 import { FeaturedProductsListFragment } from '~/components/featured-products-list/fragment';
 import { FooterFragment, FooterSectionsFragment } from '~/components/footer/fragment';
 import { CurrencyCode, HeaderFragment, HeaderLinksFragment } from '~/components/header/fragment';
+import { isByosCategory, shouldShowByosNavigation } from '~/lib/byos';
 
 export const LayoutQuery = graphql(
   `
@@ -107,8 +108,11 @@ export const getCategoryTree = cache(async (): Promise<CategoryTreeItem[]> => {
     fetchOptions: { next: { revalidate } },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return data.site.categoryTree as CategoryTreeItem[];
+  const categoryTree: CategoryTreeItem[] = data.site.categoryTree;
+
+  return shouldShowByosNavigation()
+    ? categoryTree
+    : categoryTree.filter((category) => !isByosCategory(category.path));
 });
 
 export const getPageData = cache(

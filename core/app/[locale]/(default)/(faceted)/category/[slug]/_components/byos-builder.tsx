@@ -1,6 +1,6 @@
 'use client';
 
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, ShoppingCart } from 'lucide-react';
 import { useState, useTransition } from 'react';
 
 import { Price, PriceLabel } from '@/vibes/soul/primitives/price-label';
@@ -25,8 +25,12 @@ export interface ByosProduct {
 
 interface Props {
   description?: string;
+  heroImage?: { src: string; alt: string };
   products: ByosProduct[];
 }
+
+const DISCOUNT_ITEM_THRESHOLD = 12;
+const DISCOUNT_PERCENTAGE = 10;
 
 const formatCurrency = (value: number, currencyCode?: string) =>
   new Intl.NumberFormat(undefined, {
@@ -34,7 +38,7 @@ const formatCurrency = (value: number, currencyCode?: string) =>
     style: 'currency',
   }).format(value);
 
-export function ByosBuilder({ description, products }: Props) {
+export function ByosBuilder({ description, heroImage, products }: Props) {
   const router = useRouter();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [isPending, startTransition] = useTransition();
@@ -48,6 +52,12 @@ export function ByosBuilder({ description, products }: Props) {
     0,
   );
   const currencyCode = selectedProducts.find((product) => product.currencyCode)?.currencyCode;
+  const itemsUntilDiscount = Math.max(DISCOUNT_ITEM_THRESHOLD - itemCount, 0);
+  const hasDiscount = itemCount >= DISCOUNT_ITEM_THRESHOLD;
+  const estimatedDiscount = hasDiscount ? subtotal * (DISCOUNT_PERCENTAGE / 100) : 0;
+  const estimatedTotal = subtotal - estimatedDiscount;
+  const progress = Math.min((itemCount / DISCOUNT_ITEM_THRESHOLD) * 100, 100);
+  const backgroundImage = heroImage ?? products.find((product) => product.image)?.image;
 
   const updateQuantity = (productId: string, nextQuantity: number) => {
     setQuantities((currentQuantities) => ({
@@ -77,125 +87,157 @@ export function ByosBuilder({ description, products }: Props) {
   };
 
   return (
-    <section className="mx-auto max-w-screen-2xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-      <header className="border-b-2 border-primary pb-7">
-        <p className="font-heading text-sm font-semibold uppercase tracking-wider text-primary">
-          Build Your Spread
-        </p>
-        <h1 className="mt-2 font-display text-4xl font-bold uppercase leading-none sm:text-5xl">
-          Choose your decoys
-        </h1>
-        {description ? (
-          <p className="mt-4 max-w-2xl text-base leading-7 text-contrast-500">{description}</p>
+    <section className="pb-28 lg:pb-10">
+      <header className="relative isolate overflow-hidden bg-foreground text-white">
+        {backgroundImage ? (
+          <Image
+            alt=""
+            className="-z-20 object-cover opacity-45"
+            fill
+            priority
+            sizes="100vw"
+            src={backgroundImage.src}
+          />
         ) : null}
+        <div className="absolute inset-0 -z-10 bg-foreground/70" />
+        <div className="mx-auto grid max-w-screen-2xl gap-8 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-end lg:px-8 lg:py-11">
+          <div>
+            <p className="font-heading text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              Spread builder / Your hunt, your way
+            </p>
+            <h1 className="mt-2 font-display text-4xl uppercase leading-none sm:text-5xl lg:text-6xl">
+              Build your own spread.
+            </h1>
+            {description ? (
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/80 sm:text-base">{description}</p>
+            ) : null}
+          </div>
+
+          <div className="border-l-2 border-primary pl-4">
+            <div className="flex items-baseline justify-between gap-4 font-heading text-sm font-semibold uppercase tracking-[0.08em]">
+              <span>{itemCount} of {DISCOUNT_ITEM_THRESHOLD} selected</span>
+              <span className={hasDiscount ? 'text-green-300' : 'text-white'}>
+                {hasDiscount ? `${DISCOUNT_PERCENTAGE}% unlocked` : `${itemsUntilDiscount} to go`}
+              </span>
+            </div>
+            <div
+              aria-label={`${itemCount} of ${DISCOUNT_ITEM_THRESHOLD} items selected for the ${DISCOUNT_PERCENTAGE}% spread discount`}
+              aria-valuemax={DISCOUNT_ITEM_THRESHOLD}
+              aria-valuemin={0}
+              aria-valuenow={Math.min(itemCount, DISCOUNT_ITEM_THRESHOLD)}
+              className="mt-3 h-1.5 overflow-hidden bg-white/30"
+              role="progressbar"
+            >
+              <div className="h-full bg-primary transition-[width] duration-300" style={{ width: `${progress}%` }} />
+            </div>
+            <p className="mt-3 text-sm text-white/80">
+              {hasDiscount
+                ? `${DISCOUNT_PERCENTAGE}% automatic spread discount applied at checkout.`
+                : `Add ${itemsUntilDiscount} more item${itemsUntilDiscount === 1 ? '' : 's'} to unlock ${DISCOUNT_PERCENTAGE}% off.`}
+            </p>
+          </div>
+        </div>
       </header>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
-        <div className="block space-y-3">
+      <div className="mx-auto grid max-w-screen-2xl gap-8 px-4 py-7 sm:px-6 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start lg:px-8">
+        <div>
+          <header className="flex items-end justify-between gap-4 border-b-2 border-foreground pb-4">
+            <div>
+              <p className="font-heading text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                Choose your decoys
+              </p>
+              <h2 className="mt-1 font-display text-2xl uppercase leading-none sm:text-3xl">Available for your spread</h2>
+            </div>
+            <p className="shrink-0 text-sm text-contrast-500">{products.length} options</p>
+          </header>
+
+          <div className="divide-y divide-contrast-200">
           {products.map((product) => {
             const quantity = quantities[product.id] ?? 0;
             const canSelect = product.purchasable && !product.requiresOptions;
 
             return (
               <article
-                className="flex min-w-0 gap-x-6 border-b border-contrast-200 pb-6 last:border-b-0"
+                className="grid min-w-0 grid-cols-[5rem_minmax(0,1fr)] gap-x-4 py-4 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:gap-x-5"
                 key={product.id}
               >
-                <div
-                  className="group block shrink-0 rounded-lg bg-contrast-100"
-                  // href={product.href}
-                >
+                <div className="group row-span-2 aspect-square overflow-hidden bg-contrast-100">
                   {product.image ? (
                     <Image
                       alt={product.image.alt}
-                      className="block h-20 w-auto transition duration-500 group-hover:scale-105"
-                      // fill
-                      // sizes="(min-height: 1280px) 24vw, (min-width: 640px) 45vw, 100vw"
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       src={product.image.src}
-                      height={120}
-                      width={120}
+                      height={104}
+                      width={104}
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center p-6 font-display text-2xl font-bold uppercase text-contrast-400">
-                      {product.title}
-                    </div>
+                    <div className="h-full w-full bg-contrast-100" />
                   )}
                 </div>
 
-                <div className="flex flex-1 flex-col pt-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <Link
-                      className="font-heading text-lg font-semibold leading-tight hover:text-primary"
-                      href={product.href}
-                    >
-                      {product.title}
-                    </Link>
-                    {product.price ? (
-                      <PriceLabel className="shrink-0" price={product.price} />
-                    ) : null}
-                  </div>
+                <div className="min-w-0 pt-1">
+                  <Link className="font-heading text-base font-semibold leading-tight hover:text-primary sm:text-lg" href={product.href}>
+                    {product.title}
+                  </Link>
+                  <p className="mt-1 text-sm text-contrast-500">{product.purchasable ? 'Ready for your spread' : 'Unavailable'}</p>
+                </div>
+                {product.price ? <PriceLabel className="hidden shrink-0 pt-1 sm:block" price={product.price} /> : null}
 
-                  {product.requiresOptions ? (
+                {product.requiresOptions ? (
+                  <div className="col-span-2 mt-3 flex items-center justify-between gap-4 sm:col-span-1 sm:col-start-2">
                     <Link
-                      className="mt-4 text-sm font-semibold text-primary underline underline-offset-4"
+                      className="text-sm font-semibold text-primary underline underline-offset-4"
                       href={product.href}
                     >
                       Choose options
                     </Link>
-                  ) : (
-                    <div className="mt-4 flex items-center justify-between gap-4">
-                      <span className="text-sm text-contrast-500">
-                        {product.purchasable ? 'Add to your spread' : 'Unavailable'}
-                      </span>
-                      <div
-                        className="inline-flex h-10 items-center border border-contrast-300"
-                        role="group"
+                  </div>
+                ) : (
+                  <div className="col-span-2 mt-3 flex items-center justify-between gap-4 sm:col-span-1 sm:col-start-2">
+                    {product.price ? <PriceLabel className="sm:hidden" price={product.price} /> : <span />}
+                    <div className="inline-flex h-9 items-center border border-contrast-300" role="group">
+                      <button
+                        aria-label={`Remove one ${product.title}`}
+                        className="grid h-full w-9 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
+                        disabled={!canSelect || quantity === 0}
+                        onClick={() => updateQuantity(product.id, quantity - 1)}
+                        type="button"
                       >
-                        <button
-                          aria-label={`Remove one ${product.title}`}
-                          className="grid h-full w-10 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
-                          disabled={!canSelect || quantity === 0}
-                          onClick={() => updateQuantity(product.id, quantity - 1)}
-                          type="button"
-                        >
-                          <Minus aria-hidden="true" size={16} />
-                        </button>
-                        <output
-                          aria-label={`${product.title} quantity`}
-                          className="grid h-full w-9 place-items-center border-x border-contrast-300 text-sm font-semibold"
-                        >
-                          {quantity}
-                        </output>
-                        <button
-                          aria-label={`Add one ${product.title}`}
-                          className="grid h-full w-10 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
-                          disabled={!canSelect || quantity === 99}
-                          onClick={() => updateQuantity(product.id, quantity + 1)}
-                          type="button"
-                        >
-                          <Plus aria-hidden="true" size={16} />
-                        </button>
-                      </div>
+                        <Minus aria-hidden="true" size={16} />
+                      </button>
+                      <output aria-label={`${product.title} quantity`} className="grid h-full w-8 place-items-center border-x border-contrast-300 text-sm font-semibold">
+                        {quantity}
+                      </output>
+                      <button
+                        aria-label={`Add one ${product.title}`}
+                        className="grid h-full w-9 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
+                        disabled={!canSelect || quantity === 99}
+                        onClick={() => updateQuantity(product.id, quantity + 1)}
+                        type="button"
+                      >
+                        <Plus aria-hidden="true" size={16} />
+                      </button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </article>
             );
           })}
+          </div>
         </div>
 
-        <aside className="border border-contrast-200 bg-white p-5 lg:sticky lg:top-6">
-          <div className="flex items-baseline justify-between border-b border-contrast-200 pb-4">
-            <h2 className="font-display text-2xl font-bold uppercase">Your spread</h2>
+        <aside className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-white p-4 shadow-[0_-8px_24px_rgb(0_0_0_/_0.12)] lg:sticky lg:top-6 lg:order-none lg:border lg:border-contrast-200 lg:p-5 lg:shadow-none">
+          <div className="hidden lg:flex lg:items-baseline lg:justify-between lg:border-b lg:border-contrast-200 lg:pb-4">
+            <h2 className="font-display text-2xl uppercase">Your spread</h2>
             <span className="text-sm text-contrast-500">{itemCount} items</span>
           </div>
 
           {selectedProducts.length === 0 ? (
-            <p className="py-6 text-sm leading-6 text-contrast-500">
+            <p className="hidden py-6 text-sm leading-6 text-contrast-500 lg:block">
               Select decoys to start building your spread.
             </p>
           ) : (
-            <ul className="divide-y divide-contrast-200">
+            <ul className="hidden divide-y divide-contrast-200 lg:block">
               {selectedProducts.map((product) => (
                 <li
                   className="flex items-center justify-between gap-4 py-4 text-sm"
@@ -208,17 +250,28 @@ export function ByosBuilder({ description, products }: Props) {
             </ul>
           )}
 
-          <div className="border-t-2 border-foreground pt-4">
-            <div className="flex items-center justify-between font-heading text-lg font-semibold">
-              <span>Subtotal</span>
+          <div className="lg:border-t-2 lg:border-foreground lg:pt-4">
+            <div className="hidden items-center justify-between text-sm text-contrast-500 lg:flex">
+              <span>Spread subtotal</span>
               <span>{formatCurrency(subtotal, currencyCode)}</span>
             </div>
+            {hasDiscount ? (
+              <div className="hidden items-center justify-between pt-2 text-sm text-green-700 lg:flex">
+                <span>{DISCOUNT_PERCENTAGE}% spread discount</span>
+                <span>-{formatCurrency(estimatedDiscount, currencyCode)}</span>
+              </div>
+            ) : null}
+            <div className="flex items-center justify-between font-heading text-lg font-semibold lg:mt-4">
+              <span className="uppercase">{hasDiscount ? 'Your total' : 'Your spread'}</span>
+              <span>{formatCurrency(hasDiscount ? estimatedTotal : subtotal, currencyCode)}</span>
+            </div>
             <button
-              className="mt-5 w-full bg-primary px-4 py-3 font-heading text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-contrast-300"
+              className="mt-3 flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 font-heading text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-contrast-300 lg:mt-5"
               disabled={itemCount === 0 || isPending}
               onClick={addSelectionToCart}
               type="button"
             >
+              <ShoppingCart aria-hidden="true" size={17} />
               {isPending ? 'Adding to cart...' : 'Add spread to cart'}
             </button>
           </div>

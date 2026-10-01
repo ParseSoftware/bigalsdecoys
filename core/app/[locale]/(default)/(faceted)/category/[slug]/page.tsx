@@ -33,6 +33,81 @@ const getCachedCategory = cache((categoryId: number) => {
   };
 });
 
+const BYOS_PAGE_SIZE = 50;
+
+const getByosProductPage = (
+  categoryId: number,
+  sort: string,
+  currencyCode: Awaited<ReturnType<typeof getPreferredCurrencyCode>>,
+  customerAccessToken?: string,
+  after?: string,
+) =>
+  fetchFacetedSearch(
+    { after, category: categoryId, limit: BYOS_PAGE_SIZE, sort },
+    currencyCode,
+    customerAccessToken,
+    { allowByosCategory: true },
+  );
+
+const getRemainingByosProducts = async (
+  categoryId: number,
+  sort: string,
+  currencyCode: Awaited<ReturnType<typeof getPreferredCurrencyCode>>,
+  customerAccessToken: string | undefined,
+  after: string,
+): Promise<Awaited<ReturnType<typeof fetchFacetedSearch>>['products']['items']> => {
+  const page = await getByosProductPage(categoryId, sort, currencyCode, customerAccessToken, after);
+  const nextCursor = page.products.pageInfo.endCursor;
+
+  if (!page.products.pageInfo.hasNextPage || !nextCursor) {
+    return page.products.items;
+  }
+
+  return [
+    ...page.products.items,
+    ...(await getRemainingByosProducts(
+      categoryId,
+      sort,
+      currencyCode,
+      customerAccessToken,
+      nextCursor,
+    )),
+  ];
+};
+
+const getAllByosProducts = async (
+  categoryId: number,
+  sort: string,
+  currencyCode: Awaited<ReturnType<typeof getPreferredCurrencyCode>>,
+  customerAccessToken?: string,
+) => {
+  const firstPage = await getByosProductPage(categoryId, sort, currencyCode, customerAccessToken);
+  const nextCursor = firstPage.products.pageInfo.endCursor;
+  const remainingItems =
+    firstPage.products.pageInfo.hasNextPage && nextCursor
+      ? await getRemainingByosProducts(
+          categoryId,
+          sort,
+          currencyCode,
+          customerAccessToken,
+          nextCursor,
+        )
+      : [];
+
+  return {
+    ...firstPage,
+    products: {
+      ...firstPage.products,
+      items: [...firstPage.products.items, ...remainingItems],
+      pageInfo: {
+        ...firstPage.products.pageInfo,
+        endCursor: null,
+        hasNextPage: false,
+      },
+    },
+  };
+};
+
 const compareLoader = createCompareLoader();
 
 const createCategorySearchParamsLoader = cache(
@@ -148,8 +223,13 @@ export default async function Category(props: Props) {
       : 'featured';
 
   const streamableFacetedSearch = Streamable.from(async () => {
-    const searchParams = await props.searchParams;
     const currencyCode = await getPreferredCurrencyCode();
+
+    if (isByos) {
+      return getAllByosProducts(categoryId, categoryDefaultSort, currencyCode, customerAccessToken);
+    }
+
+    const searchParams = await props.searchParams;
 
     const loadSearchParams = await createCategorySearchParamsLoader(
       categoryId,
@@ -309,7 +389,17 @@ export default async function Category(props: Props) {
     <>
       {isByos ? (
         <Stream value={streamableByosProducts}>
-          {(products) => <ByosBuilder description={category.description} products={products} />}
+          {(products) => (
+            <ByosBuilder
+              description={category.description}
+              heroImage={
+                category.defaultImage
+                  ? { src: category.defaultImage.url, alt: category.defaultImage.altText }
+                  : undefined
+              }
+              products={products}
+            />
+          )}
         </Stream>
       ) : (
         <ProductsListSection

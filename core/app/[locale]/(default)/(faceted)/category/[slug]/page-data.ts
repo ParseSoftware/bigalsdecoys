@@ -14,6 +14,10 @@ const CategoryPageQuery = graphql(
           name
           path
           description
+          defaultImage {
+            url(width: 1920)
+            altText
+          }
           defaultProductSort
           ...BreadcrumbsFragment
           seo {

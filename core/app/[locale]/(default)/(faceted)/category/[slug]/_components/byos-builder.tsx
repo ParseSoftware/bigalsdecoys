@@ -94,7 +94,7 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
             alt=""
             className="-z-20 object-cover opacity-45"
             fill
-            priority
+            preload
             sizes="100vw"
             src={backgroundImage.src}
           />
@@ -252,29 +252,30 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
           </div>
         </div>
 
-        <aside className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-white p-4 shadow-[0_-8px_24px_rgb(0_0_0_/_0.12)] lg:sticky lg:top-6 lg:order-none lg:border lg:border-contrast-200 lg:p-5 lg:shadow-none">
+        <aside className="fixed inset-x-0 bottom-0 z-20 flex max-h-[100vh-6rem] flex-col border-t-2 border-foreground bg-white p-4 shadow-[0_-8px_24px_rgb(0_0_0_/_0.12)] lg:sticky lg:top-6 lg:order-none lg:border lg:border-contrast-200 lg:p-5 lg:shadow-none">
           <div className="hidden lg:flex lg:items-baseline lg:justify-between lg:border-b lg:border-contrast-200 lg:pb-4">
             <h2 className="font-display text-2xl uppercase">Your spread</h2>
             <span className="text-sm text-contrast-500">{itemCount} items</span>
           </div>
-
-          {selectedProducts.length === 0 ? (
-            <p className="hidden py-6 text-sm leading-6 text-contrast-500 lg:block">
-              Select decoys to start building your spread.
-            </p>
-          ) : (
-            <ul className="hidden divide-y divide-contrast-200 lg:block">
-              {selectedProducts.map((product) => (
-                <li
-                  className="flex items-center justify-between gap-4 py-4 text-sm"
-                  key={product.id}
-                >
-                  <span className="min-w-0 font-semibold">{product.title}</span>
-                  <span className="shrink-0 text-contrast-500">x{quantities[product.id]}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="min-h-12 grow">
+            {selectedProducts.length === 0 ? (
+              <p className="hidden py-6 text-sm leading-6 text-contrast-500 lg:block">
+                Select decoys to start building your spread.
+              </p>
+            ) : (
+              <ul className="hidden divide-y divide-contrast-200 lg:block">
+                {selectedProducts.map((product) => (
+                  <li
+                    className="flex items-center justify-between gap-4 py-4 text-sm"
+                    key={product.id}
+                  >
+                    <span className="min-w-0 font-semibold">{product.title}</span>
+                    <span className="shrink-0 text-contrast-500">x{quantities[product.id]}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <div className="lg:border-t-2 lg:border-foreground lg:pt-4">
             <div className="hidden items-center justify-between text-sm text-contrast-500 lg:flex">

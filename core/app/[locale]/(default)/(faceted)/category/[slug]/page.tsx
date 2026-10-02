@@ -16,7 +16,7 @@ import { pageInfoTransformer } from '~/data-transformers/page-info-transformer';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
-import { isByosCategory } from '~/lib/byos';
+import { isByosCategory, isByosEnabled } from '~/lib/byos';
 import { pickPricesForTaxDisplay } from '~/lib/tax-pricing';
 
 import { MAX_COMPARE_LIMIT } from '../../../compare/page-data';
@@ -216,6 +216,10 @@ export default async function Category(props: Props) {
 
   const taxDisplay = settings?.tax?.plp;
   const isByos = isByosCategory(category.path);
+
+  if (isByos && !isByosEnabled()) {
+    return notFound();
+  }
 
   const categoryDefaultSort =
     category.defaultProductSort && category.defaultProductSort !== 'DEFAULT'

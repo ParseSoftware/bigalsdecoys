@@ -25,6 +25,7 @@ import { fetchFacetedSearch } from '../../fetch-faceted-search';
 
 import { CategoryViewed } from './_components/category-viewed';
 import { ByosBuilder } from './_components/byos-builder';
+import { ByosBuilderSkeleton } from './_components/byos-builder-skeleton';
 import { getCategoryPageData } from './page-data';
 
 const getCachedCategory = cache((categoryId: number) => {
@@ -427,7 +428,7 @@ export default async function Category(props: Props) {
   return (
     <>
       {isByos ? (
-        <Stream value={streamableByosProducts}>
+        <Stream fallback={<ByosBuilderSkeleton />} value={streamableByosProducts}>
           {(products) => (
             <ByosBuilder
               categories={(categoryTree[0]?.children ?? []).map((child) => ({

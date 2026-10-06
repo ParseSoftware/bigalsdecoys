@@ -26,6 +26,7 @@ export const ProductCardFragment = graphql(
       categories(first: 10) {
         edges {
           node {
+            entityId
             name
           }
         }

@@ -15,6 +15,7 @@ export interface ByosProduct {
   id: string;
   title: string;
   href: string;
+  categoryIds: number[];
   image?: { src: string; alt: string };
   price?: Price;
   unitPrice?: number;
@@ -23,14 +24,25 @@ export interface ByosProduct {
   requiresOptions: boolean;
 }
 
+interface ByosCategory {
+  id: number;
+  name: string;
+}
+
 interface Props {
+  categories: ByosCategory[];
   description?: string;
   heroImage?: { src: string; alt: string };
   products: ByosProduct[];
 }
 
-const DISCOUNT_ITEM_THRESHOLD = 12;
-const DISCOUNT_PERCENTAGE = 10;
+const MAX_BYOS_QUANTITY = 9999;
+const BASE_PRICE_TIER = { minimumQuantity: 0, unitPrice: 10 };
+const PRICE_TIERS = [
+  BASE_PRICE_TIER,
+  { minimumQuantity: 24, unitPrice: 9 },
+  { minimumQuantity: 72, unitPrice: 8 },
+];
 
 const formatCurrency = (value: number, currencyCode?: string) =>
   new Intl.NumberFormat(undefined, {
@@ -38,7 +50,7 @@ const formatCurrency = (value: number, currencyCode?: string) =>
     style: 'currency',
   }).format(value);
 
-export function ByosBuilder({ description, heroImage, products }: Props) {
+export function ByosBuilder({ categories, description, heroImage, products }: Props) {
   const router = useRouter();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [isPending, startTransition] = useTransition();
@@ -52,17 +64,41 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
     0,
   );
   const currencyCode = selectedProducts.find((product) => product.currencyCode)?.currencyCode;
-  const itemsUntilDiscount = Math.max(DISCOUNT_ITEM_THRESHOLD - itemCount, 0);
-  const hasDiscount = itemCount >= DISCOUNT_ITEM_THRESHOLD;
-  const estimatedDiscount = hasDiscount ? subtotal * (DISCOUNT_PERCENTAGE / 100) : 0;
-  const estimatedTotal = subtotal - estimatedDiscount;
-  const progress = Math.min((itemCount / DISCOUNT_ITEM_THRESHOLD) * 100, 100);
+  const activeTier =
+    PRICE_TIERS.findLast((tier) => itemCount >= tier.minimumQuantity) ?? BASE_PRICE_TIER;
+  const nextTier = PRICE_TIERS.find((tier) => tier.minimumQuantity > itemCount);
+  const itemsUntilNextTier = nextTier ? nextTier.minimumQuantity - itemCount : 0;
+  const tierRange = nextTier ? nextTier.minimumQuantity - activeTier.minimumQuantity : 1;
+  const progress = nextTier
+    ? Math.min(((itemCount - activeTier.minimumQuantity) / tierRange) * 100, 100)
+    : 100;
+  const estimatedTotal = activeTier.unitPrice * itemCount;
+  const estimatedSavings = Math.max(subtotal - estimatedTotal, 0);
   const backgroundImage = heroImage ?? products.find((product) => product.image)?.image;
+  const categorizedProductIds = new Set(
+    categories.flatMap((category) =>
+      products
+        .filter((product) => product.categoryIds.includes(category.id))
+        .map((product) => product.id),
+    ),
+  );
+  const productGroups = [
+    ...categories
+      .map((category) => ({
+        name: category.name,
+        products: products.filter((product) => product.categoryIds.includes(category.id)),
+      }))
+      .filter((category) => category.products.length > 0),
+    {
+      name: 'Other decoys',
+      products: products.filter((product) => !categorizedProductIds.has(product.id)),
+    },
+  ].filter((category) => category.products.length > 0);
 
   const updateQuantity = (productId: string, nextQuantity: number) => {
     setQuantities((currentQuantities) => ({
       ...currentQuantities,
-      [productId]: Math.max(0, Math.min(nextQuantity, 99)),
+      [productId]: Math.max(0, Math.min(nextQuantity, MAX_BYOS_QUANTITY)),
     }));
   };
 
@@ -117,18 +153,14 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
 
           <div className="border-l-2 border-primary pl-4">
             <div className="flex items-baseline justify-between gap-4 font-heading text-sm font-semibold uppercase tracking-[0.08em]">
-              <span>
-                {itemCount} of {DISCOUNT_ITEM_THRESHOLD} selected
-              </span>
-              <span className={hasDiscount ? 'text-green-300' : 'text-white'}>
-                {hasDiscount ? `${DISCOUNT_PERCENTAGE}% unlocked` : `${itemsUntilDiscount} to go`}
-              </span>
+              <span>{itemCount} decoys selected</span>
+              <span className="text-green-300">${activeTier.unitPrice} each</span>
             </div>
             <div
-              aria-label={`${itemCount} of ${DISCOUNT_ITEM_THRESHOLD} items selected for the ${DISCOUNT_PERCENTAGE}% spread discount`}
-              aria-valuemax={DISCOUNT_ITEM_THRESHOLD}
+              aria-label={`${itemCount} decoys selected at ${formatCurrency(activeTier.unitPrice, currencyCode)} each`}
+              aria-valuemax={nextTier?.minimumQuantity ?? itemCount}
               aria-valuemin={0}
-              aria-valuenow={Math.min(itemCount, DISCOUNT_ITEM_THRESHOLD)}
+              aria-valuenow={itemCount}
               className="mt-3 h-1.5 overflow-hidden bg-white/30"
               role="progressbar"
             >
@@ -138,9 +170,9 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
               />
             </div>
             <p className="mt-3 text-sm text-white/80">
-              {hasDiscount
-                ? `${DISCOUNT_PERCENTAGE}% automatic spread discount applied at checkout.`
-                : `Add ${itemsUntilDiscount} more item${itemsUntilDiscount === 1 ? '' : 's'} to unlock ${DISCOUNT_PERCENTAGE}% off.`}
+              {nextTier
+                ? `Add ${itemsUntilNextTier} more decoy${itemsUntilNextTier === 1 ? '' : 's'} to pay $${nextTier.unitPrice} each.`
+                : 'You have unlocked the lowest per-decoy price.'}
             </p>
           </div>
         </div>
@@ -160,95 +192,119 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
             <p className="shrink-0 text-sm text-contrast-500">{products.length} options</p>
           </header>
 
-          <div className="divide-y divide-contrast-200">
-            {products.map((product) => {
-              const quantity = quantities[product.id] ?? 0;
-              const canSelect = product.purchasable && !product.requiresOptions;
+          <div className="space-y-8">
+            {productGroups.map((group) => (
+              <section key={group.name}>
+                <h3 className="border-b border-contrast-200 pb-2 font-heading text-lg font-semibold uppercase tracking-[0.08em]">
+                  {group.name}
+                </h3>
+                <div className="divide-y divide-contrast-200">
+                  {group.products.map((product) => {
+                    const quantity = quantities[product.id] ?? 0;
+                    const canSelect = product.purchasable && !product.requiresOptions;
 
-              return (
-                <article
-                  className="grid min-w-0 grid-cols-[5rem_minmax(0,1fr)] gap-x-4 py-4 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:gap-x-5"
-                  key={product.id}
-                >
-                  <div className="group row-span-2 aspect-square overflow-hidden bg-contrast-100">
-                    {product.image ? (
-                      <Image
-                        alt={product.image.alt}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        src={product.image.src}
-                        height={104}
-                        width={104}
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-contrast-100" />
-                    )}
-                  </div>
-
-                  <div className="min-w-0 pt-1">
-                    <Link
-                      className="font-heading text-base font-semibold leading-tight hover:text-primary sm:text-lg"
-                      href={product.href}
-                    >
-                      {product.title}
-                    </Link>
-                    <p className="mt-1 text-sm text-contrast-500">
-                      {product.purchasable ? 'Ready for your spread' : 'Unavailable'}
-                    </p>
-                  </div>
-                  {product.price ? (
-                    <PriceLabel className="hidden shrink-0 pt-1 sm:block" price={product.price} />
-                  ) : null}
-
-                  {product.requiresOptions ? (
-                    <div className="col-span-2 mt-3 flex items-center justify-between gap-4 sm:col-span-1 sm:col-start-2">
-                      <Link
-                        className="text-sm font-semibold text-primary underline underline-offset-4"
-                        href={product.href}
+                    return (
+                      <article
+                        className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-x-4 py-4 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:gap-x-5"
+                        key={product.id}
                       >
-                        Choose options
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="col-span-2 mt-3 flex items-center justify-between gap-4 sm:col-span-1 sm:col-start-2">
-                      {product.price ? (
-                        <PriceLabel className="sm:hidden" price={product.price} />
-                      ) : (
-                        <span />
-                      )}
-                      <div
-                        className="inline-flex h-9 items-center border border-contrast-300"
-                        role="group"
-                      >
-                        <button
-                          aria-label={`Remove one ${product.title}`}
-                          className="grid h-full w-9 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
-                          disabled={!canSelect || quantity === 0}
-                          onClick={() => updateQuantity(product.id, quantity - 1)}
-                          type="button"
-                        >
-                          <Minus aria-hidden="true" size={16} />
-                        </button>
-                        <output
-                          aria-label={`${product.title} quantity`}
-                          className="grid h-full w-8 place-items-center border-x border-contrast-300 text-sm font-semibold"
-                        >
-                          {quantity}
-                        </output>
-                        <button
-                          aria-label={`Add one ${product.title}`}
-                          className="grid h-full w-9 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
-                          disabled={!canSelect || quantity === 99}
-                          onClick={() => updateQuantity(product.id, quantity + 1)}
-                          type="button"
-                        >
-                          <Plus aria-hidden="true" size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
+                        <div className="group row-span-2 aspect-square overflow-hidden bg-contrast-100">
+                          {product.image ? (
+                            <Image
+                              alt={product.image.alt}
+                              className="h-full w-full scale-150 object-cover transition duration-500 group-hover:scale-[1.6]"
+                              src={product.image.src}
+                              height={144}
+                              width={144}
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-contrast-100" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0 pt-1">
+                          <Link
+                            className="font-heading text-base font-semibold leading-tight hover:text-primary sm:text-lg"
+                            href={product.href}
+                          >
+                            {product.title}
+                          </Link>
+                          <p className="mt-1 text-sm text-contrast-500">
+                            {product.purchasable ? 'Ready for your spread' : 'Unavailable'}
+                          </p>
+                        </div>
+                        {product.price ? (
+                          <PriceLabel
+                            className="hidden shrink-0 pt-1 sm:block"
+                            price={product.price}
+                          />
+                        ) : null}
+
+                        {product.requiresOptions ? (
+                          <div className="col-span-2 mt-3 flex items-center justify-between gap-4 sm:col-span-1 sm:col-start-2">
+                            <Link
+                              className="text-sm font-semibold text-primary underline underline-offset-4"
+                              href={product.href}
+                            >
+                              Choose options
+                            </Link>
+                          </div>
+                        ) : (
+                          <div className="col-span-2 mt-3 flex items-center justify-between gap-4 sm:col-span-1 sm:col-start-2">
+                            {product.price ? (
+                              <PriceLabel className="sm:hidden" price={product.price} />
+                            ) : (
+                              <span />
+                            )}
+                            <div
+                              className="inline-flex h-10 items-center border border-contrast-300"
+                              role="group"
+                            >
+                              <button
+                                aria-label={`Remove one ${product.title}`}
+                                className="grid h-full w-10 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
+                                disabled={!canSelect || quantity === 0}
+                                onClick={() => updateQuantity(product.id, quantity - 1)}
+                                type="button"
+                              >
+                                <Minus aria-hidden="true" size={16} />
+                              </button>
+                              <input
+                                aria-label={`${product.title} quantity`}
+                                className="h-full w-14 border-x border-contrast-300 bg-transparent text-center text-sm font-semibold tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                                disabled={!canSelect}
+                                inputMode="numeric"
+                                max={MAX_BYOS_QUANTITY}
+                                min={0}
+                                onChange={(event) => {
+                                  const nextQuantity = Number(event.target.value);
+
+                                  updateQuantity(
+                                    product.id,
+                                    Number.isFinite(nextQuantity) ? nextQuantity : 0,
+                                  );
+                                }}
+                                type="number"
+                                value={quantity}
+                              />
+                              <button
+                                aria-label={`Add one ${product.title}`}
+                                className="grid h-full w-10 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
+                                disabled={!canSelect || quantity === MAX_BYOS_QUANTITY}
+                                onClick={() => updateQuantity(product.id, quantity + 1)}
+                                type="button"
+                              >
+                                <Plus aria-hidden="true" size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
 
@@ -282,15 +338,15 @@ export function ByosBuilder({ description, heroImage, products }: Props) {
               <span>Spread subtotal</span>
               <span>{formatCurrency(subtotal, currencyCode)}</span>
             </div>
-            {hasDiscount ? (
+            {estimatedSavings > 0 ? (
               <div className="hidden items-center justify-between pt-2 text-sm text-green-700 lg:flex">
-                <span>{DISCOUNT_PERCENTAGE}% spread discount</span>
-                <span>-{formatCurrency(estimatedDiscount, currencyCode)}</span>
+                <span>Spread pricing savings</span>
+                <span>-{formatCurrency(estimatedSavings, currencyCode)}</span>
               </div>
             ) : null}
             <div className="flex items-center justify-between font-heading text-lg font-semibold lg:mt-4">
-              <span className="uppercase">{hasDiscount ? 'Your total' : 'Your spread'}</span>
-              <span>{formatCurrency(hasDiscount ? estimatedTotal : subtotal, currencyCode)}</span>
+              <span className="uppercase">Your spread</span>
+              <span>{formatCurrency(estimatedTotal, currencyCode)}</span>
             </div>
             <button
               className="mt-3 flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 font-heading text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-contrast-300 lg:mt-5"

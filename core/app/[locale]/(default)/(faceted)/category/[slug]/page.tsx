@@ -76,29 +76,56 @@ const getRemainingByosProducts = async (
 };
 
 const getAllByosProducts = async (
-  categoryId: number,
+  categoryIds: number[],
   sort: string,
   currencyCode: Awaited<ReturnType<typeof getPreferredCurrencyCode>>,
   customerAccessToken?: string,
 ) => {
-  const firstPage = await getByosProductPage(categoryId, sort, currencyCode, customerAccessToken);
-  const nextCursor = firstPage.products.pageInfo.endCursor;
-  const remainingItems =
-    firstPage.products.pageInfo.hasNextPage && nextCursor
-      ? await getRemainingByosProducts(
-          categoryId,
-          sort,
-          currencyCode,
-          customerAccessToken,
-          nextCursor,
-        )
-      : [];
+  const [firstCategoryId, ...childCategoryIds] = categoryIds;
+
+  if (firstCategoryId == null) {
+    throw new Error('Build Your Spread requires at least one category.');
+  }
+
+  const getProductsForCategory = async (currentCategoryId: number) => {
+    const firstPage = await getByosProductPage(
+      currentCategoryId,
+      sort,
+      currencyCode,
+      customerAccessToken,
+    );
+    const nextCursor = firstPage.products.pageInfo.endCursor;
+    const remainingItems =
+      firstPage.products.pageInfo.hasNextPage && nextCursor
+        ? await getRemainingByosProducts(
+            currentCategoryId,
+            sort,
+            currencyCode,
+            customerAccessToken,
+            nextCursor,
+          )
+        : [];
+
+    return { firstPage, items: [...firstPage.products.items, ...remainingItems] };
+  };
+
+  const [{ firstPage, items }, ...childCategoryProducts] = await Promise.all([
+    getProductsForCategory(firstCategoryId),
+    ...childCategoryIds.map(getProductsForCategory),
+  ]);
+  const uniqueProducts = new Map(items.map((product) => [product.entityId, product]));
+
+  for (const childCategory of childCategoryProducts) {
+    for (const product of childCategory.items) {
+      uniqueProducts.set(product.entityId, product);
+    }
+  }
 
   return {
     ...firstPage,
     products: {
       ...firstPage.products,
-      items: [...firstPage.products.items, ...remainingItems],
+      items: [...uniqueProducts.values()],
       pageInfo: {
         ...firstPage.products.pageInfo,
         endCursor: null,
@@ -230,7 +257,12 @@ export default async function Category(props: Props) {
     const currencyCode = await getPreferredCurrencyCode();
 
     if (isByos) {
-      return getAllByosProducts(categoryId, categoryDefaultSort, currencyCode, customerAccessToken);
+      return getAllByosProducts(
+        [categoryId, ...(categoryTree[0]?.children.map((child) => child.entityId) ?? [])],
+        categoryDefaultSort,
+        currencyCode,
+        customerAccessToken,
+      );
     }
 
     const searchParams = await props.searchParams;
@@ -293,6 +325,9 @@ export default async function Category(props: Props) {
 
       return {
         ...product,
+        categoryIds: rawProduct
+          ? removeEdgesAndNodes(rawProduct.categories).map((category) => category.entityId)
+          : [],
         currencyCode: prices?.price.currencyCode,
         purchasable: product.purchasable ?? false,
         requiresOptions: product.requiresOptions ?? false,
@@ -395,6 +430,10 @@ export default async function Category(props: Props) {
         <Stream value={streamableByosProducts}>
           {(products) => (
             <ByosBuilder
+              categories={(categoryTree[0]?.children ?? []).map((child) => ({
+                id: child.entityId,
+                name: child.name,
+              }))}
               description={category.description}
               heroImage={
                 category.defaultImage

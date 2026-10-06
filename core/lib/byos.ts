@@ -52,15 +52,16 @@ const collectCategoryIds = async (
   category: CategoryTreeItem,
   customerAccessToken?: string,
 ): Promise<number[]> => {
+  if (isByosCategory(category.path)) {
+    return [];
+  }
+
   const children = await getCategoryChildren(category.entityId, customerAccessToken);
   const childCategoryIds = await Promise.all(
     children.map((child) => collectCategoryIds(child, customerAccessToken)),
   );
 
-  return [
-    ...(isByosCategory(category.path) ? [] : [category.entityId]),
-    ...childCategoryIds.flat(),
-  ];
+  return [category.entityId, ...childCategoryIds.flat()];
 };
 
 export const getOrdinaryCategoryIds = cache(async (customerAccessToken?: string) => {

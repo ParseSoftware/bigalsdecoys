@@ -7,11 +7,13 @@ import { z } from 'zod';
 import { addToOrCreateCart } from '~/lib/cart';
 import { MissingCartError } from '~/lib/cart/error';
 
+const MAX_BYOS_QUANTITY = 9999;
+
 const ByosItemsSchema = z
   .array(
     z.object({
       productEntityId: z.number().int().positive(),
-      quantity: z.number().int().positive().max(99),
+      quantity: z.number().int().positive().max(MAX_BYOS_QUANTITY),
     }),
   )
   .min(1);

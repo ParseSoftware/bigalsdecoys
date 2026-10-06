@@ -3,6 +3,7 @@
 import { Minus, Plus, ShoppingCart } from 'lucide-react';
 import { useState, useTransition } from 'react';
 
+import { Accordion, AccordionItem } from '@/vibes/soul/primitives/accordion';
 import { Price, PriceLabel } from '@/vibes/soul/primitives/price-label';
 import { toast } from '@/vibes/soul/primitives/toaster';
 import { Image } from '~/components/image';
@@ -193,12 +194,18 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
             <p className="shrink-0 text-sm text-contrast-500">{products.length} options</p>
           </header>
 
-          <div className="space-y-8">
+          <Accordion
+            className="divide-y divide-contrast-200"
+            defaultValue={productGroups.map((group) => group.name)}
+            type="multiple"
+          >
             {productGroups.map((group) => (
-              <section key={group.name}>
-                <h3 className="border-b border-contrast-200 pb-2 font-heading text-lg font-semibold uppercase tracking-[0.08em]">
-                  {group.name}
-                </h3>
+              <AccordionItem
+                className="border-b-0"
+                key={group.name}
+                title={`${group.name} (${group.products.length} options)`}
+                value={group.name}
+              >
                 <div className="divide-y divide-contrast-200">
                   {group.products.map((product) => {
                     const quantity = quantities[product.id] ?? 0;
@@ -292,9 +299,9 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                     );
                   })}
                 </div>
-              </section>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </div>
 
         <aside className="fixed inset-x-0 bottom-0 z-20 flex max-h-[100vh-6rem] flex-col border-t-2 border-foreground bg-white p-4 shadow-[0_-8px_24px_rgb(0_0_0_/_0.12)] lg:sticky lg:top-6 lg:order-none lg:border lg:border-contrast-200 lg:p-5 lg:shadow-none">

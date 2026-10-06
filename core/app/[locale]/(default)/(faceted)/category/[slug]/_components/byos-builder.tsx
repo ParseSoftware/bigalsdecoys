@@ -10,6 +10,7 @@ import { Link } from '~/components/link';
 import { useRouter } from '~/i18n/routing';
 
 import { addByosItems } from './add-byos-items';
+import { ByosProductImage } from './byos-product-image';
 
 export interface ByosProduct {
   id: string;
@@ -208,19 +209,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                         className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-x-4 py-4 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:gap-x-5"
                         key={product.id}
                       >
-                        <div className="group row-span-2 aspect-square overflow-hidden bg-contrast-100">
-                          {product.image ? (
-                            <Image
-                              alt={product.image.alt}
-                              className="h-full w-full scale-150 object-cover transition duration-500 group-hover:scale-[1.6]"
-                              src={product.image.src}
-                              height={144}
-                              width={144}
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-contrast-100" />
-                          )}
-                        </div>
+                        <ByosProductImage image={product.image} title={product.title} />
 
                         <div className="min-w-0 pt-1">
                           <Link

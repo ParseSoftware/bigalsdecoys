@@ -10,7 +10,7 @@ export function ByosBuilderSkeleton() {
           <div className="mx-auto grid min-h-56 max-w-screen-2xl gap-8 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-end lg:px-8 lg:py-11">
             <div className="space-y-3">
               <Skeleton.Box className="h-3 w-52 bg-white/20" />
-              <Skeleton.Box className="h-12 w-full max-w-xl bg-white/20 sm:h-15" />
+              <Skeleton.Box className="sm:h-15 h-12 w-full max-w-xl bg-white/20" />
               <Skeleton.Box className="h-4 w-full max-w-2xl bg-white/15" />
               <Skeleton.Box className="h-4 w-2/3 max-w-xl bg-white/15" />
             </div>
@@ -50,7 +50,7 @@ export function ByosBuilderSkeleton() {
                     </div>
                     <Skeleton.Box className="hidden h-5 w-14 sm:block" />
                     <div className="col-span-2 mt-3 flex justify-end sm:col-span-1 sm:col-start-2">
-                      <Skeleton.Box className="h-10 w-34" />
+                      <Skeleton.Box className="w-34 h-10" />
                     </div>
                   </div>
                 ))}

@@ -37,7 +37,7 @@ export function ByosProductImage({ image, title }: Props) {
       <div className="group/image relative row-span-2 aspect-square overflow-hidden bg-contrast-100">
         <button
           aria-label={`Open enlarged image of ${title}`}
-          className="block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+          className="block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
           onClick={() => setIsOpen(true)}
           onPointerMove={updateLensPosition}
           title="Zoom image"

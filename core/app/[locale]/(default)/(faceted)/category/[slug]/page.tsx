@@ -47,7 +47,7 @@ const getByosProductPage = (
     { after, category: categoryId, limit: BYOS_PAGE_SIZE, sort },
     currencyCode,
     customerAccessToken,
-    { allowByosCategory: true },
+    { allowByosCategory: true, includeProductImages: true },
   );
 
 const getRemainingByosProducts = async (
@@ -328,6 +328,18 @@ export default async function Category(props: Props) {
         ...product,
         categoryIds: rawProduct
           ? removeEdgesAndNodes(rawProduct.categories).map((category) => category.entityId)
+          : [],
+        images: rawProduct?.images
+          ? removeEdgesAndNodes(rawProduct.images)
+              .map((image) => ({
+                src: image.url,
+                alt: image.altText,
+                isDefault: image.isDefault,
+              }))
+              .sort(
+                (firstImage, secondImage) =>
+                  Number(secondImage.isDefault) - Number(firstImage.isDefault),
+              )
           : [],
         currencyCode: prices?.price.currencyCode,
         purchasable: product.purchasable ?? false,

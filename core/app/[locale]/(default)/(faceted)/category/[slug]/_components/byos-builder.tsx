@@ -19,6 +19,7 @@ export interface ByosProduct {
   href: string;
   categoryIds: number[];
   image?: { src: string; alt: string };
+  images: Array<{ src: string; alt: string }>;
   price?: Price;
   unitPrice?: number;
   currencyCode?: string;
@@ -138,7 +139,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
           />
         ) : null}
         <div className="absolute inset-0 -z-10 bg-foreground/70" />
-        <div className="mx-auto grid max-w-screen-2xl gap-8 px-4 py-9 sm:px-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-end lg:px-8 lg:py-11">
+        <div className="mx-auto max-w-screen-2xl px-4 py-9 sm:px-6 lg:px-8 lg:py-11">
           <div>
             <p className="font-heading text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Spread builder / Your hunt, your way
@@ -151,31 +152,6 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                 {description}
               </p>
             ) : null}
-          </div>
-
-          <div className="border-l-2 border-primary pl-4">
-            <div className="flex items-baseline justify-between gap-4 font-heading text-sm font-semibold uppercase tracking-[0.08em]">
-              <span>{itemCount} decoys selected</span>
-              <span className="text-green-300">${activeTier.unitPrice} each</span>
-            </div>
-            <div
-              aria-label={`${itemCount} decoys selected at ${formatCurrency(activeTier.unitPrice, currencyCode)} each`}
-              aria-valuemax={nextTier?.minimumQuantity ?? itemCount}
-              aria-valuemin={0}
-              aria-valuenow={itemCount}
-              className="mt-3 h-1.5 overflow-hidden bg-white/30"
-              role="progressbar"
-            >
-              <div
-                className="h-full bg-primary transition-[width] duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="mt-3 text-sm text-white/80">
-              {nextTier
-                ? `Add ${itemsUntilNextTier} more decoy${itemsUntilNextTier === 1 ? '' : 's'} to pay $${nextTier.unitPrice} each.`
-                : 'You have unlocked the lowest per-decoy price.'}
-            </p>
           </div>
         </div>
       </header>
@@ -216,18 +192,19 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                         className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-x-4 py-4 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:gap-x-5"
                         key={product.id}
                       >
-                        <ByosProductImage image={product.image} title={product.title} />
+                        <ByosProductImage
+                          image={product.image}
+                          images={product.images}
+                          title={product.title}
+                        />
 
                         <div className="min-w-0 pt-1">
                           <Link
-                            className="font-heading text-base font-semibold leading-tight hover:text-primary sm:text-lg"
+                            className="font-heading text-xl font-semibold leading-tight hover:text-primary sm:text-2xl"
                             href={product.href}
                           >
                             {product.title}
                           </Link>
-                          <p className="mt-1 text-sm text-contrast-500">
-                            {product.purchasable ? 'Ready for your spread' : 'Unavailable'}
-                          </p>
                         </div>
                         {product.price ? (
                           <PriceLabel
@@ -305,7 +282,31 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
         </div>
 
         <aside className="fixed inset-x-0 bottom-0 z-20 flex max-h-[100vh-6rem] flex-col border-t-2 border-foreground bg-white p-4 shadow-[0_-8px_24px_rgb(0_0_0_/_0.12)] lg:sticky lg:top-6 lg:order-none lg:border lg:border-contrast-200 lg:p-5 lg:shadow-none">
-          <div className="hidden lg:flex lg:items-baseline lg:justify-between lg:border-b lg:border-contrast-200 lg:pb-4">
+          <div className="border-b-2 border-foreground pb-4">
+            <div className="flex items-baseline justify-between gap-4 font-heading text-sm font-semibold uppercase tracking-[0.08em]">
+              <span>{itemCount} decoys selected</span>
+              <span className="text-green-700">${activeTier.unitPrice} each</span>
+            </div>
+            <div
+              aria-label={`${itemCount} decoys selected at ${formatCurrency(activeTier.unitPrice, currencyCode)} each`}
+              aria-valuemax={nextTier?.minimumQuantity ?? itemCount}
+              aria-valuemin={0}
+              aria-valuenow={itemCount}
+              className="mt-3 h-1.5 overflow-hidden bg-contrast-200"
+              role="progressbar"
+            >
+              <div
+                className="h-full bg-primary transition-[width] duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className="text-contrast-600 mt-3 text-sm leading-5">
+              {nextTier
+                ? `Add ${itemsUntilNextTier} more decoy${itemsUntilNextTier === 1 ? '' : 's'} to pay $${nextTier.unitPrice} each.`
+                : 'You have unlocked the lowest per-decoy price.'}
+            </p>
+          </div>
+          <div className="mt-4 hidden lg:flex lg:items-baseline lg:justify-between lg:border-b lg:border-contrast-200 lg:pb-4">
             <h2 className="font-display text-2xl uppercase">Your spread</h2>
             <span className="text-sm text-contrast-500">{itemCount} items</span>
           </div>

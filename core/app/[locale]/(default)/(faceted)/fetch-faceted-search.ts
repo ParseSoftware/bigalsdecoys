@@ -19,6 +19,7 @@ const GetProductSearchResultsQuery = graphql(
       $filters: SearchProductsFiltersInput!
       $sort: SearchProductsSortInput
       $currencyCode: currencyCode
+      $includeProductImages: Boolean!
     ) {
       site {
         search {
@@ -33,6 +34,15 @@ const GetProductSearchResultsQuery = graphql(
               edges {
                 node {
                   ...ProductCardFragment
+                  images(first: 6) @include(if: $includeProductImages) {
+                    edges {
+                      node {
+                        altText
+                        url: urlTemplate(lossy: true)
+                        isDefault
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -177,11 +187,12 @@ interface ProductSearch {
   after?: string | null;
   sort?: SearchProductsSortInput | null;
   filters: SearchProductsFiltersInput;
+  includeProductImages?: boolean;
 }
 
 const getProductSearchResults = cache(
   async (
-    { limit = 24, after, before, sort, filters }: ProductSearch,
+    { limit = 24, after, before, sort, filters, includeProductImages = false }: ProductSearch,
     currencyCode?: CurrencyCode,
     customerAccessToken?: string,
   ) => {
@@ -194,6 +205,7 @@ const getProductSearchResults = cache(
         ...filterArgs,
         ...paginationArgs,
         currencyCode,
+        includeProductImages,
       },
       customerAccessToken,
       fetchOptions: customerAccessToken ? { cache: 'no-store' } : { next: { revalidate: 300 } },
@@ -349,6 +361,7 @@ type PublicSearchParamsWithAttributes = z.input<typeof PublicSearchParamsSchema>
 
 interface FetchFacetedSearchOptions {
   allowByosCategory?: boolean;
+  includeProductImages?: boolean;
 }
 
 export const PublicToPrivateParams = PublicSearchParamsSchema.catchall(SearchParamToArray.nullish())
@@ -456,6 +469,7 @@ export const fetchFacetedSearch = cache(
           categoryEntityId,
           categoryEntityIds,
         },
+        includeProductImages: options.includeProductImages,
       },
       currencyCode,
       customerAccessToken,

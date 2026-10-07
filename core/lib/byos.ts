@@ -79,6 +79,6 @@ export const getOrdinaryCategoryIds = cache(async (customerAccessToken?: string)
 });
 
 export const isByosEnabled = () =>
-  process.env.NODE_ENV !== 'production' || process.env.VERCEL_ENV === 'preview';
+  process.env.NODE_ENV !== 'production' || process.env.SHOW_BYOS_NAVIGATION === 'true';
 
 export const shouldShowByosNavigation = isByosEnabled;

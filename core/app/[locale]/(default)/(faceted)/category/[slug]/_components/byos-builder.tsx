@@ -24,6 +24,7 @@ export interface ByosProduct {
   price?: Price;
   unitPrice?: number;
   currencyCode?: string;
+  inStock: boolean;
   purchasable: boolean;
   requiresOptions: boolean;
 }
@@ -58,7 +59,13 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
   const router = useRouter();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [isPending, startTransition] = useTransition();
-  const selectedProducts = products.filter((product) => (quantities[product.id] ?? 0) > 0);
+  const selectedProducts = products.filter(
+    (product) =>
+      product.inStock &&
+      product.purchasable &&
+      !product.requiresOptions &&
+      (quantities[product.id] ?? 0) > 0,
+  );
   const itemCount = selectedProducts.reduce(
     (total, product) => total + (quantities[product.id] ?? 0),
     0,
@@ -189,7 +196,8 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                 <div className="divide-y divide-contrast-200">
                   {group.products.map((product) => {
                     const quantity = quantities[product.id] ?? 0;
-                    const canSelect = product.purchasable && !product.requiresOptions;
+                    const canSelect =
+                      product.inStock && product.purchasable && !product.requiresOptions;
 
                     return (
                       <article
@@ -209,6 +217,9 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                           >
                             {product.title}
                           </Link>
+                          {!product.inStock ? (
+                            <p className="mt-1 text-sm font-semibold text-red-700">Out of stock</p>
+                          ) : null}
                         </div>
                         {product.price ? (
                           <PriceLabel

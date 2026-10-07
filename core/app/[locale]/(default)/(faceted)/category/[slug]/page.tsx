@@ -357,6 +357,7 @@ export default async function Category(props: Props) {
               )
           : [],
         currencyCode: prices?.price.currencyCode,
+        inStock: rawProduct?.inventory.isInStock ?? false,
         purchasable: product.purchasable ?? false,
         requiresOptions: product.requiresOptions ?? false,
         unitPrice: prices?.price.value,

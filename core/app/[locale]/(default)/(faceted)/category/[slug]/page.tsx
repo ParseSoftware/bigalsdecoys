@@ -28,6 +28,7 @@ import { fetchFacetedSearch } from '../../fetch-faceted-search';
 import { CategoryViewed } from './_components/category-viewed';
 import { ByosBuilder } from './_components/byos-builder';
 import { ByosBuilderSkeleton } from './_components/byos-builder-skeleton';
+import { getByosCartItems } from './_components/add-byos-items';
 import { getCategoryPageData } from './page-data';
 
 const getCachedCategory = cache((categoryId: number) => {
@@ -325,7 +326,7 @@ export default async function Category(props: Props) {
 
   const streamableByosProducts = Streamable.from(async () => {
     const format = await getFormatter();
-    const search = await streamableFacetedSearch;
+    const [search, cartItems] = await Promise.all([streamableFacetedSearch, getByosCartItems()]);
     const { defaultOutOfStockMessage, showOutOfStockMessage, showBackorderMessage } =
       settings?.inventory ?? {};
 
@@ -341,6 +342,9 @@ export default async function Category(props: Props) {
 
       return {
         ...product,
+        initialQuantity: cartItems
+          .filter((item) => item.productEntityId === Number(product.id))
+          .reduce((total, item) => total + item.quantity, 0),
         categoryIds: rawProduct
           ? removeEdgesAndNodes(rawProduct.categories).map((category) => category.entityId)
           : [],
@@ -470,6 +474,7 @@ export default async function Category(props: Props) {
                   : undefined
               }
               products={products}
+              key={products.map((product) => `${product.id}:${product.initialQuantity}`).join(',')}
             />
           )}
         </Stream>

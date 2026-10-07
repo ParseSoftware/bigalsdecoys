@@ -82,3 +82,23 @@ export const isByosEnabled = () =>
   process.env.NODE_ENV !== 'production' || process.env.SHOW_BYOS_NAVIGATION === 'true';
 
 export const shouldShowByosNavigation = isByosEnabled;
+
+export const getByosCategoryIds = cache(async (customerAccessToken?: string) => {
+  const { data } = await client.fetch({
+    document: GetRootCategoriesQuery,
+    customerAccessToken,
+    fetchOptions: { cache: 'no-store' },
+  });
+  const root = data.site.categoryTree.find((category) => isByosCategory(category.path));
+
+  if (!root) {
+    return [];
+  }
+
+  const children = await getCategoryChildren(root.entityId, customerAccessToken);
+  const descendants = await Promise.all(
+    children.map((child) => collectCategoryIds(child, customerAccessToken)),
+  );
+
+  return [root.entityId, ...descendants.flat()];
+});

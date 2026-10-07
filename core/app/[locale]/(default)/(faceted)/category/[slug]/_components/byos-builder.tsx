@@ -16,6 +16,7 @@ import { ByosProductImage } from './byos-product-image';
 
 export interface ByosProduct {
   id: string;
+  initialQuantity: number;
   title: string;
   href: string;
   categoryIds: number[];
@@ -57,14 +58,12 @@ const formatCurrency = (value: number, currencyCode?: string) =>
 
 export function ByosBuilder({ categories, description, heroImage, products }: Props) {
   const router = useRouter();
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [quantities, setQuantities] = useState<Record<string, number>>(() =>
+    Object.fromEntries(products.map((product) => [product.id, product.initialQuantity])),
+  );
   const [isPending, startTransition] = useTransition();
   const selectedProducts = products.filter(
-    (product) =>
-      product.inStock &&
-      product.purchasable &&
-      !product.requiresOptions &&
-      (quantities[product.id] ?? 0) > 0,
+    (product) => !product.requiresOptions && (quantities[product.id] ?? 0) > 0,
   );
   const itemCount = selectedProducts.reduce(
     (total, product) => total + (quantities[product.id] ?? 0),
@@ -109,9 +108,18 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
   ].filter((category) => category.products.length > 0);
 
   const updateQuantity = (productId: string, nextQuantity: number) => {
+    const product = products.find((item) => item.id === productId);
+    const canIncrease = product?.inStock && product.purchasable && !product.requiresOptions;
+
     setQuantities((currentQuantities) => ({
       ...currentQuantities,
-      [productId]: Math.max(0, Math.min(nextQuantity, MAX_BYOS_QUANTITY)),
+      [productId]: Math.max(
+        0,
+        Math.min(
+          nextQuantity,
+          canIncrease ? MAX_BYOS_QUANTITY : (currentQuantities[productId] ?? 0),
+        ),
+      ),
     }));
   };
 
@@ -130,7 +138,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
         return;
       }
 
-      toast.success('Spread added to cart.');
+      router.push('/cart');
       router.refresh();
     });
   };
@@ -251,7 +259,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                               <button
                                 aria-label={`Remove one ${product.title}`}
                                 className="grid h-full w-10 place-items-center transition-colors hover:bg-contrast-100 disabled:cursor-not-allowed disabled:text-contrast-300"
-                                disabled={!canSelect || quantity === 0}
+                                disabled={quantity === 0}
                                 onClick={() => updateQuantity(product.id, quantity - 1)}
                                 type="button"
                               >
@@ -260,7 +268,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                               <input
                                 aria-label={`${product.title} quantity`}
                                 className="h-full w-14 border-x border-contrast-300 bg-transparent text-center text-sm font-semibold tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                                disabled={!canSelect}
+                                disabled={!canSelect && quantity === 0}
                                 inputMode="numeric"
                                 max={MAX_BYOS_QUANTITY}
                                 min={0}
@@ -362,7 +370,10 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
             </div>
             <button
               className="mt-3 flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 font-heading text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-contrast-300 lg:mt-5"
-              disabled={itemCount === 0 || isPending}
+              disabled={
+                (itemCount === 0 && !products.some((product) => product.initialQuantity > 0)) ||
+                isPending
+              }
               onClick={addSelectionToCart}
               type="button"
             >

@@ -25,10 +25,10 @@ import { MAX_COMPARE_LIMIT } from '../../../compare/page-data';
 import { getCompareProducts } from '../../fetch-compare-products';
 import { fetchFacetedSearch } from '../../fetch-faceted-search';
 
-import { CategoryViewed } from './_components/category-viewed';
+import { getByosCartItems } from './_components/add-byos-items';
 import { ByosBuilder } from './_components/byos-builder';
 import { ByosBuilderSkeleton } from './_components/byos-builder-skeleton';
-import { getByosCartItems } from './_components/add-byos-items';
+import { CategoryViewed } from './_components/category-viewed';
 import { getCategoryPageData } from './page-data';
 
 const getCachedCategory = cache((categoryId: number) => {
@@ -473,8 +473,8 @@ export default async function Category(props: Props) {
                   ? { src: category.defaultImage.url, alt: category.defaultImage.altText }
                   : undefined
               }
-              products={products}
               key={products.map((product) => `${product.id}:${product.initialQuantity}`).join(',')}
+              products={products}
             />
           )}
         </Stream>

@@ -16,7 +16,8 @@ export function ByosProductImage({ image, images, title }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [lensPosition, setLensPosition] = useState({ x: 50, y: 50 });
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const galleryImages = images.length > 0 ? images : image ? [image] : [];
+  const imageArray = image ? [image] : [];
+  const galleryImages = images.length > 0 ? images : imageArray;
   const selectedImage = galleryImages[selectedImageIndex] ?? galleryImages[0];
 
   if (!selectedImage) {

@@ -41,60 +41,12 @@ const GetByosCartQuery = graphql(`
             selectedOptions {
               entityId
             }
-            catalogProductWithOptionSelections {
-              categories(first: 50) {
-                edges {
-                  node {
-                    entityId
-                  }
-                }
-              }
-              productOptions(first: 1) {
-                edges {
-                  node {
-                    entityId
-                  }
-                }
-              }
-            }
           }
         }
       }
     }
   }
 `);
-
-export async function getByosCartItems() {
-  const cartId = await getCartId();
-
-  if (!cartId) {
-    return [];
-  }
-
-  const customerAccessToken = await getSessionCustomerAccessToken();
-  const [categoryIds, { data }] = await Promise.all([
-    getByosCategoryIds(customerAccessToken),
-    client.fetch({
-      document: GetByosCartQuery,
-      variables: { cartId },
-      customerAccessToken,
-      fetchOptions: { cache: 'no-store' },
-    }),
-  ]);
-
-  return (data.site.cart?.lineItems.physicalItems ?? []).filter((item) => {
-    const product = item.catalogProductWithOptionSelections;
-
-    return (
-      item.isMutable &&
-      !item.parentEntityId &&
-      item.selectedOptions.length === 0 &&
-      product != null &&
-      (product.productOptions.edges?.length ?? 0) === 0 &&
-      (product.categories.edges ?? []).some(({ node }) => categoryIds.includes(node.entityId))
-    );
-  });
-}
 
 const GetByosProductAvailabilityQuery = graphql(`
   query GetByosProductAvailabilityQuery($entityIds: [Int!], $first: Int) {
@@ -128,9 +80,7 @@ const GetByosProductAvailabilityQuery = graphql(`
   }
 `);
 
-const getAvailableProductIds = async (entityIds: number[]) => {
-  const customerAccessToken = await getSessionCustomerAccessToken();
-  const categoryIds = await getByosCategoryIds(customerAccessToken);
+const getByosProducts = async (entityIds: number[], customerAccessToken?: string) => {
   const availabilityPages = await Promise.all(
     Array.from({ length: Math.ceil(entityIds.length / BYOS_AVAILABILITY_PAGE_SIZE) }, (_, index) =>
       client.fetch({
@@ -148,21 +98,66 @@ const getAvailableProductIds = async (entityIds: number[]) => {
     ),
   );
 
+  return availabilityPages.flatMap(({ data }) =>
+    (data.site.products.edges ?? []).map(({ node }) => node),
+  );
+};
+
+export async function getByosCartItems() {
+  const cartId = await getCartId();
+
+  if (!cartId) {
+    return [];
+  }
+
+  const customerAccessToken = await getSessionCustomerAccessToken();
+  const [categoryIds, { data }] = await Promise.all([
+    getByosCategoryIds(customerAccessToken),
+    client.fetch({
+      document: GetByosCartQuery,
+      variables: { cartId },
+      customerAccessToken,
+      fetchOptions: { cache: 'no-store' },
+    }),
+  ]);
+
+  const cartItems = (data.site.cart?.lineItems.physicalItems ?? []).filter(
+    (item) => item.isMutable && !item.parentEntityId && item.selectedOptions.length === 0,
+  );
+  const products = await getByosProducts(
+    [...new Set(cartItems.map((item) => item.productEntityId))],
+    customerAccessToken,
+  );
+  const eligibleProductIds = new Set(
+    products
+      .filter(
+        (product) =>
+          (product.productOptions.edges?.length ?? 0) === 0 &&
+          (product.categories.edges ?? []).some(({ node }) => categoryIds.includes(node.entityId)),
+      )
+      .map((product) => product.entityId),
+  );
+
+  return cartItems.filter((item) => eligibleProductIds.has(item.productEntityId));
+}
+
+const getAvailableProductIds = async (entityIds: number[]) => {
+  const customerAccessToken = await getSessionCustomerAccessToken();
+  const [categoryIds, products] = await Promise.all([
+    getByosCategoryIds(customerAccessToken),
+    getByosProducts(entityIds, customerAccessToken),
+  ]);
+
   return new Set(
-    availabilityPages.flatMap(({ data }) =>
-      (data.site.products.edges ?? [])
-        .map(({ node }) => node)
-        .filter(
-          (product) =>
-            product.inventory.isInStock &&
-            product.showCartAction &&
-            (product.productOptions.edges?.length ?? 0) === 0 &&
-            (product.categories.edges ?? []).some(({ node }) =>
-              categoryIds.includes(node.entityId),
-            ),
-        )
-        .map((product) => product.entityId),
-    ),
+    products
+      .filter(
+        (product) =>
+          product.inventory.isInStock &&
+          product.showCartAction &&
+          (product.productOptions.edges?.length ?? 0) === 0 &&
+          (product.categories.edges ?? []).some(({ node }) => categoryIds.includes(node.entityId)),
+      )
+      .map((product) => product.entityId),
   );
 };
 

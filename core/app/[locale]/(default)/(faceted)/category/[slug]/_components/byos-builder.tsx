@@ -9,6 +9,7 @@ import { toast } from '@/vibes/soul/primitives/toaster';
 import { Image } from '~/components/image';
 import { Link } from '~/components/link';
 import { useRouter } from '~/i18n/routing';
+import { getByosCategoryAnchor } from '~/lib/byos';
 
 import { addByosItems } from './add-byos-items';
 import { ByosProductImage } from './byos-product-image';
@@ -88,11 +89,13 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
   const productGroups = [
     ...categories
       .map((category) => ({
+        id: category.id,
         name: category.name,
         products: products.filter((product) => product.categoryIds.includes(category.id)),
       }))
       .filter((category) => category.products.length > 0),
     {
+      id: undefined,
       name: 'Other decoys',
       products: products.filter((product) => !categorizedProductIds.has(product.id)),
     },
@@ -178,6 +181,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
             {productGroups.map((group) => (
               <AccordionItem
                 className="border-b-0"
+                id={group.id ? getByosCategoryAnchor(group.id) : undefined}
                 key={group.name}
                 title={`${group.name} (${group.products.length} options)`}
                 value={group.name}

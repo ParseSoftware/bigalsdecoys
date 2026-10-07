@@ -11,7 +11,7 @@ import { revalidate } from '~/client/revalidate-target';
 import { TAGS } from '~/client/tags';
 import { logoTransformer } from '~/data-transformers/logo-transformer';
 import { getLocaleRouting } from '~/i18n/locale-config';
-import { isByosCategory, shouldShowByosNavigation } from '~/lib/byos';
+import { getByosCategoryAnchor, isByosCategory, shouldShowByosNavigation } from '~/lib/byos';
 import { getCartId } from '~/lib/cart';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 
@@ -130,19 +130,29 @@ export const Header = async () => {
     const slicedTree = filteredCategoryTree.slice(0, 5);
 
     return [
-      ...slicedTree.map(({ name, path, children }) => ({
-        className: undefined,
-        label: name,
-        href: path,
-        groups: children.map((firstChild) => ({
-          label: firstChild.name,
-          href: firstChild.path,
-          links: firstChild.children.map((secondChild) => ({
-            label: secondChild.name,
-            href: secondChild.path,
-          })),
-        })),
-      })),
+      ...slicedTree.map(({ name, path, children }) => {
+        const isByos = isByosCategory(path);
+
+        return {
+          className: undefined,
+          label: name,
+          href: path,
+          groups: children.map((firstChild) => {
+            const href = isByos
+              ? `${path}#${getByosCategoryAnchor(firstChild.entityId)}`
+              : firstChild.path;
+
+            return {
+              label: firstChild.name,
+              href,
+              links: firstChild.children.map((secondChild) => ({
+                label: secondChild.name,
+                href,
+              })),
+            };
+          }),
+        };
+      }),
       {
         label: t('sale'),
         href: SALE_FILTER_HREF,

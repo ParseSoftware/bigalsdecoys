@@ -16,8 +16,9 @@ import { pageInfoTransformer } from '~/data-transformers/page-info-transformer';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
-import { isByosCategory, isByosEnabled } from '~/lib/byos';
+import { getByosCategoryAnchor, isByosCategory, isByosEnabled } from '~/lib/byos';
 import { pickPricesForTaxDisplay } from '~/lib/tax-pricing';
+import { redirect } from '~/i18n/navigation-server';
 
 import { MAX_COMPARE_LIMIT } from '../../../compare/page-data';
 import { getCompareProducts } from '../../fetch-compare-products';
@@ -232,7 +233,8 @@ export default async function Category(props: Props) {
     return notFound();
   }
 
-  const breadcrumbs = removeEdgesAndNodes(category.breadcrumbs).map(({ name, path }) => ({
+  const categoryBreadcrumbs = removeEdgesAndNodes(category.breadcrumbs);
+  const breadcrumbs = categoryBreadcrumbs.map(({ name, path }) => ({
     label: name,
     href: path ?? '#',
   }));
@@ -244,6 +246,18 @@ export default async function Category(props: Props) {
 
   const taxDisplay = settings?.tax?.plp;
   const isByos = isByosCategory(category.path);
+  const byosRootIndex = categoryBreadcrumbs.findIndex(
+    (breadcrumb) => breadcrumb.path != null && isByosCategory(breadcrumb.path),
+  );
+  const byosRoot = categoryBreadcrumbs[byosRootIndex];
+  const byosChild = categoryBreadcrumbs[byosRootIndex + 1];
+
+  if (byosRoot?.path && byosChild) {
+    await redirect({
+      href: `${byosRoot.path}#${getByosCategoryAnchor(byosChild.entityId)}`,
+      locale,
+    });
+  }
 
   if (isByos && !isByosEnabled()) {
     return notFound();

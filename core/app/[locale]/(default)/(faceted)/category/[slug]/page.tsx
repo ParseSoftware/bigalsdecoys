@@ -16,7 +16,8 @@ import { pageInfoTransformer } from '~/data-transformers/page-info-transformer';
 import { productCardTransformer } from '~/data-transformers/product-card-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { getMetadataAlternates } from '~/lib/seo/canonical';
-import { getByosCategoryAnchor, isByosCategory, isByosEnabled } from '~/lib/byos';
+import { isByosCategory, isByosEnabled } from '~/lib/byos';
+import { getByosCategoryAnchor } from '~/lib/byos-anchor';
 import { pickPricesForTaxDisplay } from '~/lib/tax-pricing';
 import { redirect } from '~/i18n/navigation-server';
 

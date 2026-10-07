@@ -5,8 +5,6 @@ import { graphql } from '~/client/graphql';
 
 export const BYOS_CATEGORY_SLUG = 'build-your-spread';
 
-export const getByosCategoryAnchor = (categoryId: number) => `byos-category-${categoryId}`;
-
 interface CategoryTreeItem {
   entityId: number;
   path: string;

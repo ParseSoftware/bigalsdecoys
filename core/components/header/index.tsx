@@ -11,7 +11,8 @@ import { revalidate } from '~/client/revalidate-target';
 import { TAGS } from '~/client/tags';
 import { logoTransformer } from '~/data-transformers/logo-transformer';
 import { getLocaleRouting } from '~/i18n/locale-config';
-import { getByosCategoryAnchor, isByosCategory, shouldShowByosNavigation } from '~/lib/byos';
+import { isByosCategory, shouldShowByosNavigation } from '~/lib/byos';
+import { getByosCategoryAnchor } from '~/lib/byos-anchor';
 import { getCartId } from '~/lib/cart';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 

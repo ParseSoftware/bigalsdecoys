@@ -9,7 +9,7 @@ import { toast } from '@/vibes/soul/primitives/toaster';
 import { Image } from '~/components/image';
 import { Link } from '~/components/link';
 import { useRouter } from '~/i18n/routing';
-import { getByosCategoryAnchor } from '~/lib/byos';
+import { getByosCategoryAnchor } from '~/lib/byos-anchor';
 
 import { addByosItems } from './add-byos-items';
 import { ByosProductImage } from './byos-product-image';

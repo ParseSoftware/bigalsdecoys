@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  @apply scroll-smooth;
+}
+
 :root {
   /* Big Al's Decoys — brand palette */
   --primary: 29 78% 49%; /* prototype orange #e07b1c */

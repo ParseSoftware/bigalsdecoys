@@ -210,7 +210,8 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
 
                       return (
                         <article
-                          className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-x-4 py-4 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:gap-x-5"
+                          className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] grid-cols-[9rem_minmax(0,1fr)_auto] gap-x-4 py-4 sm:gap-x-5"
+                          id={`product-${product.id}`}
                           key={product.id}
                         >
                           <ByosProductImage
@@ -220,12 +221,12 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                           />
 
                           <div className="min-w-0 pt-1">
-                            <Link
+                            <span
                               className="font-heading text-xl font-semibold leading-tight hover:text-primary sm:text-2xl"
-                              href={product.href}
+                              // href={product.href}
                             >
                               {product.title}
-                            </Link>
+                            </span>
                             {!product.inStock ? (
                               <p className="mt-1 text-sm font-semibold text-red-700">
                                 Out of stock
@@ -349,7 +350,9 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
                         className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm"
                         key={product.id}
                       >
-                        <span className="min-w-0 font-semibold">{product.title}</span>
+                        <a href={`#product-${product.id}`} className="min-w-0 font-semibold">
+                          {product.title}
+                        </a>
                         <span className="shrink-0 text-contrast-500">
                           x{quantities[product.id]}
                         </span>

@@ -12,7 +12,7 @@ import CraftsmanshipImage from '../_images/Duck Lifestyle/instagram_CvucfnKOrOj.
 export const metadata: Metadata = {
   title: 'About Big Al’s',
   description:
-    'Big Al’s has handcrafted premium waterfowl silhouette decoys in the USA since the early 1970s. Learn the story behind the brand and the team carrying it forward.',
+    'Big Al’s has handcrafted premium waterfowl silhouette decoys in the USA since 2018. Learn the story behind the brand and the team carrying it forward.',
 };
 
 const values = [
@@ -49,7 +49,7 @@ export default function AboutPage() {
             className="object-cover opacity-70"
             fill
             placeholder="blur"
-            priority
+            preload
             sizes="100vw"
             src={HeroImage}
           />
@@ -83,9 +83,9 @@ export default function AboutPage() {
               Next Generation.
             </h2>
             <p className="mt-7 text-base leading-relaxed text-contrast-500">
-              Big Al’s started in the early 1970s, rooted in waterfowl hunting. The brand combined
-              an artist’s background with a family printing legacy to produce silhouette decoys with
-              precise color, detail, and an ultra-matte finish.
+              Big Al’s started in 2018, rooted in waterfowl hunting. The brand combined an artist’s
+              background with a family printing legacy to produce silhouette decoys with precise
+              color, detail, and an ultra-matte finish.
             </p>
             <p className="mt-6 text-base leading-relaxed text-contrast-500">
               One goal drove every decision: give hunters a premium silhouette decoy that actually
@@ -128,7 +128,7 @@ export default function AboutPage() {
       {/* Four pillars */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-          <h2 className="font-display mb-14 text-center uppercase text-foreground [font-size:clamp(2rem,4vw,3rem)]">
+          <h2 className="mb-14 text-center font-display uppercase text-foreground [font-size:clamp(2rem,4vw,3rem)]">
             What We Stand For.
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -140,7 +140,7 @@ export default function AboutPage() {
                 <div className="mb-5 flex h-10 w-10 items-center justify-center bg-ink">
                   <Icon className="h-[18px] w-[18px] text-primary" strokeWidth={1.5} />
                 </div>
-                <h3 className="font-display mb-3 text-lg uppercase leading-tight text-foreground">
+                <h3 className="mb-3 font-display text-lg uppercase leading-tight text-foreground">
                   {title}
                 </h3>
                 <p className="text-sm leading-relaxed text-contrast-500">{copy}</p>

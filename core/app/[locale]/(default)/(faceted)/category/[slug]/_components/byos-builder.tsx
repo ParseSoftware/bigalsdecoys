@@ -309,7 +309,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
           </div>
 
           <aside className="bottom-0 z-20 max-lg:sticky max-lg:-mx-4 max-lg:border-t">
-            <div className="sticky top-6 z-20 flex max-h-[calc(100vh-3rem)] min-w-72 flex-col bg-white py-4 lg:border lg:shadow-xl">
+            <div className="sticky top-6 z-20 flex max-h-[calc(100vh-3rem)] min-w-80 flex-col bg-white py-4 lg:border lg:shadow-xl">
               <div className="border-b-2 border-foreground px-4 pb-4">
                 <div className="flex items-baseline justify-between gap-4 font-heading text-sm font-semibold uppercase tracking-[0.08em]">
                   <span>{itemCount} decoys selected</span>
@@ -340,7 +340,7 @@ export function ByosBuilder({ categories, description, heroImage, products }: Pr
               </div>
               <div className="min-h-12 shrink grow overflow-auto">
                 {selectedProducts.length === 0 ? (
-                  <p className="hidden py-6 text-sm leading-6 text-contrast-500 lg:block">
+                  <p className="hidden px-4 py-6 text-sm leading-6 text-contrast-500 lg:block">
                     Select decoys to start building your spread.
                   </p>
                 ) : (
